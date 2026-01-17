@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Review</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Specific styles for the review cards */
+        .review-card {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: left;
+            background: #fff;
+        }
+        .correct { border-left: 10px solid #2ecc71; }
+        .wrong { border-left: 10px solid #e74c3c; background: #fff0f0; }
+        
+        .ans-tag {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+            margin-right: 10px;
+        }
+        .bg-green { background: #2ecc71; }
+        .bg-red { background: #e74c3c; }
+        .bg-blue { background: #3498db; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Session Review</h1>
+        <p><b>Date:</b> {{ session.date }} | <b>Mission:</b> {{ session.strand }} | <b>Mood:</b> {{ session.mood }}</p>
+        <h2>Score: {{ session.score_str }}</h2>
+        <hr>
+
+        {% for q in session.details %}
+        <div class="review-card {% if q.is_correct %}correct{% else %}wrong{% endif %}">
+            
+            <div style="font-size: 1.2rem; margin-bottom: 10px;">
+                {{ q.q_html | safe }}
+            </div>
+
+            {% if q.is_correct %}
+                <span class="ans-tag bg-green">✅ She answered: {{ q.user_ans }}</span>
+            {% else %}
+                <span class="ans-tag bg-red">❌ She answered: {{ q.user_ans }}</span>
+                <span class="ans-tag bg-blue">Correct answer: {{ q.correct_ans }}</span>
+            {% endif %}
+            
+        </div>
+        {% endfor %}
+
+        <br>
+        <a href="/history" class="btn-secondary">⬅️ Back to Logs</a>
+    </div>
+</body>
+</html>

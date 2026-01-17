@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Time!</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        /* Internal styles for the overlay logic */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #f0f8ff 0%, #e8f4fc 100%);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 100;
+            padding: 20px;
+        }
+        .overlay h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .mood-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+            max-width: 350px;
+        }
+        @media (min-width: 480px) {
+            .mood-grid {
+                grid-template-columns: repeat(4, 1fr);
+                max-width: 600px;
+            }
+        }
+        .mood-grid button {
+            font-size: 1.3rem;
+            padding: 20px 15px;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 80px;
+            font-family: inherit;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .mood-grid button:hover {
+            transform: translateY(-3px);
+            border-color: #3498db;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        .mood-grid button:focus {
+            outline: 3px solid #3498db;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Mood Check-in Overlay -->
+        <div id="mood-overlay" class="overlay" role="dialog" aria-labelledby="mood-title">
+            <h2 id="mood-title">How are you feeling today?</h2>
+            <p style="color:#666;margin-bottom:10px;">This helps us understand how you're doing!</p>
+            <div class="mood-grid" role="group" aria-label="Mood selection">
+                <button onclick="startGame('🤩 Excited')" aria-label="I'm feeling excited">🤩<br>Excited</button>
+                <button onclick="startGame('🙂 Calm')" aria-label="I'm feeling calm">🙂<br>Calm</button>
+                <button onclick="startGame('🥱 Tired')" aria-label="I'm feeling tired">🥱<br>Tired</button>
+                <button onclick="startGame('😤 Frustrated')" aria-label="I'm feeling frustrated">😤<br>Frustrated</button>
+            </div>
+        </div>
+
+        <!-- Main Game UI -->
+        <div id="game-ui" class="hidden">
+            <div class="header">
+                <span id="strand-badge">{{ strand|title }}</span>
+                <span id="streak-display" class="hidden"></span>
+                <span id="score-board">⭐ 0</span>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-text" id="progress-text">Question 1</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+
+            <div id="game-area">
+                <h2 id="question-text" aria-live="polite">Loading...</h2>
+                <div id="options-container" role="group" aria-label="Answer options"></div>
+                <p id="feedback" aria-live="assertive"></p>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button id="next-btn" class="hidden" onclick="loadQuestion()" aria-label="Next question">Next ➡️</button>
+                <button id="finish-btn" class="hidden" onclick="finishSession()" aria-label="Finish and save your progress">Finish & Save 💾</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mascot -->
+    <div id="mascot" class="mascot hidden">
+        <div class="mascot-bubble" id="mascot-text">You've got this!</div>
+        <div class="mascot-emoji" aria-hidden="true">🦊</div>
+    </div>
+
+<script>
+    // Game state
+    let currentScore = 0;
+    let totalQuestions = 0;
+    let currentStreak = 0;
+    let maxStreak = 0;
+    const strand = "{{ strand }}";
+    let sessionLog = [];
+    let startMood = "";
+
+    // Mascot messages
+    const mascotMessages = {
+        start: ["You've got this!", "Let's learn together!", "Math is fun!", "Ready to explore?"],
+        correct: ["Amazing!", "You're so smart!", "Keep going!", "Fantastic!", "Wonderful!", "Great job!"],
+        wrong: ["It's okay!", "You're learning!", "Try the next one!", "Keep trying!", "Almost there!"],
+        streak3: ["Wow! 3 in a row!", "You're on fire! 🔥"],
+        streak5: ["5 in a row! Super Star!", "Incredible!"],
+        finish: ["Great job today!", "You did awesome!", "See you next time!"]
+    };
+
+    function updateMascot(state) {
+        const messages = mascotMessages[state] || mascotMessages.start;
+        const msg = messages[Math.floor(Math.random() * messages.length)];
+        document.getElementById('mascot-text').innerText = msg;
+    }
+
+    function showAchievementBadge(title, subtitle) {
+        const badge = document.createElement('div');
+        badge.className = 'achievement-badge';
+        badge.innerHTML = `<h3>${title}</h3><p>${subtitle}</p>`;
+        badge.setAttribute('role', 'alert');
+        document.body.appendChild(badge);
+        setTimeout(() => badge.remove(), 3000);
+    }
+
+    function updateStreak(isCorrect) {
+        const streakDisplay = document.getElementById('streak-display');
+
+        if (isCorrect) {
+            currentStreak++;
+            maxStreak = Math.max(currentStreak, maxStreak);
+
+            if (currentStreak >= 3) {
+                streakDisplay.className = 'streak-counter';
+                streakDisplay.innerHTML = `🔥 ${currentStreak}`;
+            }
+
+            // Achievement badges at milestones
+            if (currentStreak === 3) {
+                showAchievementBadge("On Fire! 🔥", "3 in a row!");
+                updateMascot('streak3');
+            } else if (currentStreak === 5) {
+                showAchievementBadge("Super Star! ⭐", "5 in a row!");
+                updateMascot('streak5');
+            } else if (currentStreak === 10) {
+                showAchievementBadge("Math Wizard! 🧙", "10 in a row!");
+            }
+        } else {
+            currentStreak = 0;
+            streakDisplay.className = 'streak-counter hidden';
+        }
+    }
+
+    function updateProgress() {
+        document.getElementById('progress-text').innerText = `Question ${totalQuestions + 1}`;
+        // Progress bar fills based on questions answered (assuming ~10 questions per session)
+        const progress = Math.min((totalQuestions / 10) * 100, 100);
+        document.getElementById('progress-fill').style.width = `${progress}%`;
+    }
+
+    function startGame(mood) {
+        startMood = mood;
+        document.getElementById('mood-overlay').classList.add('hidden');
+        document.getElementById('game-ui').classList.remove('hidden');
+        document.getElementById('mascot').classList.remove('hidden');
+        updateMascot('start');
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        document.getElementById('feedback').innerHTML = "";
+        document.getElementById('next-btn').classList.add('hidden');
+        updateProgress();
+
+        fetch(`/api/get_question/${strand}`)
+            .then(r => r.json())
+            .then(data => {
+                window.currentQ = data;
+                document.getElementById('question-text').innerHTML = data.q;
+                const container = document.getElementById('options-container');
+                container.innerHTML = '';
+
+                data.options.forEach((opt, index) => {
+                    let btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerHTML = opt;
+                    btn.setAttribute('aria-label', `Option ${index + 1}: ${opt}`);
+                    btn.onclick = () => checkAnswer(opt, data.a);
+                    container.appendChild(btn);
+                });
+            })
+            .catch(err => {
+                console.error('Error loading question:', err);
+                document.getElementById('question-text').innerHTML = "Oops! Could not load question. Please try again.";
+            });
+    }
+
+    function checkAnswer(selected, correct) {
+        const feedback = document.getElementById('feedback');
+        totalQuestions++;
+        const isCorrect = String(selected) === String(correct);
+
+        sessionLog.push({
+            q_html: window.currentQ.q,
+            user_ans: selected,
+            correct_ans: correct,
+            is_correct: isCorrect
+        });
+
+        updateStreak(isCorrect);
+
+        if (isCorrect) {
+            currentScore++;
+            document.getElementById('score-board').innerText = `⭐ ${currentScore}`;
+            feedback.innerHTML = "<h2 style='color:#2ecc71'>🎉 Correct!</h2>";
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            if (currentStreak < 3) updateMascot('correct');
+        } else {
+            // Growth mindset feedback
+            const messages = [
+                "Not quite yet! Mistakes help your brain grow. 🧠",
+                "Close! Take a deep breath and try the next one.",
+                "That was tricky! You're still learning.",
+                "Keep going! Every mistake teaches you something new."
+            ];
+            const msg = messages[Math.floor(Math.random() * messages.length)];
+            feedback.innerHTML = `<h2 style='color:#e67e22'>${msg}</h2><p>The answer was <strong>${correct}</strong></p>`;
+            updateMascot('wrong');
+        }
+
+        document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+        document.getElementById('next-btn').classList.remove('hidden');
+        document.getElementById('finish-btn').classList.remove('hidden');
+
+        // Update progress bar
+        const progress = Math.min((totalQuestions / 10) * 100, 100);
+        document.getElementById('progress-fill').style.width = `${progress}%`;
+    }
+
+    function finishSession() {
+        updateMascot('finish');
+        const today = new Date().toLocaleString();
+
+        fetch('/api/save_session', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                date: today,
+                strand: strand,
+                mood: startMood,
+                score_str: `${currentScore}/${totalQuestions}`,
+                percent: Math.round((currentScore / totalQuestions) * 100),
+                details: sessionLog,
+                max_streak: maxStreak
+            })
+        }).then(() => window.location.href = '/history');
+    }
+
+    // Keyboard navigation for answer options (1-4 keys)
+    document.addEventListener('keydown', (e) => {
+        const options = document.querySelectorAll('.option-btn:not([disabled])');
+        if (e.key >= '1' && e.key <= '4') {
+            const index = parseInt(e.key) - 1;
+            if (options[index]) {
+                options[index].click();
+            }
+        }
+        // Enter or Space to go to next question
+        if (e.key === 'Enter' || e.key === ' ') {
+            const nextBtn = document.getElementById('next-btn');
+            if (!nextBtn.classList.contains('hidden')) {
+                e.preventDefault();
+                nextBtn.click();
+            }
+        }
+    });
+</script>
+</body>
+</html>

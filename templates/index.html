@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Adventure!</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🍁 Ontario Math Adventure 🍁</h1>
+        <p>Pick a mission, explorer!</p>
+        
+        <div class="menu-grid">
+            <a href="/quiz/number" class="card purple" aria-label="Numbers - Addition and Subtraction">1️⃣ Numbers</a>
+            <a href="/quiz/placevalue" class="card indigo" aria-label="Place Value - Tens and Ones">🔟 Place Value</a>
+            <a href="/quiz/algebra" class="card blue" aria-label="Patterns - Find what comes next">🧩 Patterns</a>
+            <a href="/quiz/spatial" class="card orange" aria-label="Shapes - Learn your shapes">🔺 Shapes</a>
+            <a href="/quiz/data" class="card green" aria-label="Graphs - Read simple graphs">📊 Graphs</a>
+            <a href="/quiz/financial" class="card gold" aria-label="Money - Canadian coins">💰 Money</a>
+            <a href="/quiz/time" class="card teal" aria-label="Time - Read clocks">🕐 Time</a>
+            <a href="/quiz/measurement" class="card pink" aria-label="Measurement - Compare lengths">📏 Measurement</a>
+            <a href="/quiz/wordproblems" class="card rose" aria-label="Word Problems - Math stories">📖 Word Problems</a>
+            <a href="/quiz/comparing" class="card cyan" aria-label="Comparing - Greater than or less than">⚖️ Compare</a>
+            <a href="/quiz/skipcounting" class="card lime" aria-label="Skip Counting - Count by 2s, 5s, 10s">🔢 Skip Counting</a>
+            <a href="/quiz/coding" class="card gray" aria-label="Coding - Help the robot">🤖 Coding</a>
+        </div>
+        
+        <br>
+        <a href="/history" class="btn-secondary">📜 View Quest Log</a>
+    </div>
+</body>
+</html>

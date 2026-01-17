@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quest Log</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>📜 Past Adventures</h1>
+
+        {% if history %}
+        <div class="history-list">
+            {% for item in history %}
+            <div class="history-card">
+                <div class="history-info">
+                    <span class="history-date">{{ item.date }}</span>
+                    <span class="history-strand">{{ item.strand }}</span>
+                    {% if item.mood %}<span class="history-mood">{{ item.mood }}</span>{% endif %}
+                </div>
+                <div class="history-score {% if item.percent >= 80 %}score-good{% else %}score-needs-work{% endif %}">
+                    {{ item.score_str }}
+                </div>
+                <a href="/review/{{ item.id }}" class="btn-small" aria-label="Review {{ item.strand }} session">🔍 Review</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>No adventures yet! Start your first quest to see your progress here.</p>
+        </div>
+        {% endif %}
+
+        <br>
+        <a href="/" class="btn-secondary">🏠 Back Home</a>
+    </div>
+</body>
+</html>
