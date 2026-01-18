@@ -1,11 +1,14 @@
 import json
 import os
-import uuid 
+import uuid
 from flask import Flask, render_template, request, jsonify
 from curriculum import generate_question
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
 app = Flask(__name__)
 HISTORY_FILE = 'history.json'
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
 # Valid strands for input validation
 VALID_STRANDS = {
@@ -13,20 +16,55 @@ VALID_STRANDS = {
     'placevalue', 'time', 'measurement', 'wordproblems', 'comparing', 'skipcounting'
 }
 
+def get_db_connection():
+    return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+
+def init_db():
+    if DATABASE_URL:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS history (
+                id TEXT PRIMARY KEY,
+                data JSONB NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        conn.commit()
+        cur.close()
+        conn.close()
+
 def load_history():
-    if not os.path.exists(HISTORY_FILE):
-        return []
-    with open(HISTORY_FILE, 'r') as f:
-        try:
-            return json.load(f)
-        except json.JSONDecodeError:
+    if not DATABASE_URL:
+        if not os.path.exists(HISTORY_FILE):
             return []
+        with open(HISTORY_FILE, 'r') as f:
+            try:
+                return json.load(f)
+            except json.JSONDecodeError:
+                return []
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT data FROM history ORDER BY created_at DESC')
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+    return [row['data'] for row in rows]
 
 def save_history(record):
-    history = load_history()
-    history.append(record)
-    with open(HISTORY_FILE, 'w') as f:
-        json.dump(history, f)
+    if not DATABASE_URL:
+        history = load_history()
+        history.append(record)
+        with open(HISTORY_FILE, 'w') as f:
+            json.dump(history, f)
+        return
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('INSERT INTO history (id, data) VALUES (%s, %s)',
+                (record['id'], json.dumps(record)))
+    conn.commit()
+    cur.close()
+    conn.close()
 
 @app.route('/')
 def index():
@@ -70,4 +108,8 @@ def review_session(session_id):
     return render_template('review.html', session=session)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    init_db()
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
+else:
+    init_db()
