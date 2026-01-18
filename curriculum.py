@@ -43,17 +43,7 @@ def generate_question(strand):
 
     # --- STRAND C: ALGEBRA (Patterns & Equalities) ---
     elif strand == 'algebra':
-        # Pattern Completion
-        patterns = [
-            (['🔴', '🔵', '🔴', '🔵'], '🔴'),
-            (['🔼', '🔼', '🔽', '🔼', '🔼'], '🔽'),
-            (['A', 'B', 'B', 'A', 'B'], 'B')
-        ]
-        pat, correct = random.choice(patterns)
-        display_pat = " ".join(pat) + " ... ?"
-        question = f"What comes next in the pattern?<br><br><b>{display_pat}</b>"
-        answer = correct
-        options = [correct, '❌', '❓'] # Simplified distractors
+        return AlgebraQuestions().generate()
 
     # --- STRAND D: DATA (Sorting & Graphs) ---
     elif strand == 'data':
@@ -70,16 +60,7 @@ def generate_question(strand):
 
     # --- STRAND E: SPATIAL SENSE (Shapes) ---
     elif strand == 'spatial':
-        shapes = {
-            'Triangle': '🔺',
-            'Circle': '🔵',
-            'Square': '🟥',
-            'Rectangle': '🟩'
-        }
-        target_name, target_emoji = random.choice(list(shapes.items()))
-        question = f"Which one is a <b>{target_name}</b>?"
-        answer = target_emoji
-        options = list(shapes.values())
+        return SpatialQuestions().generate()
 
     # Handle unknown strands
     else:
@@ -111,6 +92,195 @@ def generate_question(strand):
 # ============================================================
 # NEW CURRICULUM STRANDS FOR COMPLETE GRADE 1 COVERAGE
 # ============================================================
+
+class AlgebraQuestions:
+    """Grade 1 Algebra: Patterns, growing/shrinking patterns, equalities"""
+
+    def generate(self):
+        mode = random.choice(['pattern_ab', 'pattern_aab', 'pattern_abc', 'growing', 'shrinking', 'missing_number', 'equality'])
+
+        if mode == 'pattern_ab':
+            # Simple AB patterns
+            patterns = [
+                (['🔴', '🔵', '🔴', '🔵', '🔴'], '🔵', ['🔴', '🔵', '🟢']),
+                (['🌙', '⭐', '🌙', '⭐', '🌙'], '⭐', ['🌙', '⭐', '🌟']),
+                (['🐱', '🐶', '🐱', '🐶', '🐱'], '🐶', ['🐱', '🐶', '🐰']),
+                (['▲', '■', '▲', '■', '▲'], '■', ['▲', '■', '●']),
+                (['1', '2', '1', '2', '1'], '2', ['1', '2', '3']),
+            ]
+            pat, correct, opts = random.choice(patterns)
+            display = " ".join(pat) + " <b>?</b>"
+            question = f"What comes next in the pattern?<br><div style='font-size:2rem;margin:15px 0;'>{display}</div>"
+            options = opts
+            answer = correct
+
+        elif mode == 'pattern_aab':
+            # AAB patterns
+            patterns = [
+                (['🔴', '🔴', '🔵', '🔴', '🔴', '🔵', '🔴', '🔴'], '🔵', ['🔴', '🔵', '🟢']),
+                (['👏', '👏', '🙌', '👏', '👏', '🙌', '👏', '👏'], '🙌', ['👏', '🙌', '✋']),
+                (['🍎', '🍎', '🍊', '🍎', '🍎', '🍊', '🍎', '🍎'], '🍊', ['🍎', '🍊', '🍌']),
+            ]
+            pat, correct, opts = random.choice(patterns)
+            display = " ".join(pat) + " <b>?</b>"
+            question = f"What comes next in the pattern?<br><div style='font-size:1.8rem;margin:15px 0;'>{display}</div>"
+            options = opts
+            answer = correct
+
+        elif mode == 'pattern_abc':
+            # ABC patterns
+            patterns = [
+                (['🔴', '🔵', '🟢', '🔴', '🔵', '🟢', '🔴', '🔵'], '🟢', ['🔴', '🔵', '🟢']),
+                (['🍎', '🍊', '🍌', '🍎', '🍊', '🍌', '🍎', '🍊'], '🍌', ['🍎', '🍊', '🍌']),
+                (['A', 'B', 'C', 'A', 'B', 'C', 'A', 'B'], 'C', ['A', 'B', 'C']),
+            ]
+            pat, correct, opts = random.choice(patterns)
+            display = " ".join(pat) + " <b>?</b>"
+            question = f"What comes next in the pattern?<br><div style='font-size:1.8rem;margin:15px 0;'>{display}</div>"
+            options = opts
+            answer = correct
+
+        elif mode == 'growing':
+            # Growing number patterns
+            starts = [
+                ([1, 2, 3, 4], 5, [5, 6, 4]),
+                ([2, 4, 6, 8], 10, [10, 9, 12]),
+                ([5, 10, 15, 20], 25, [25, 22, 30]),
+                ([1, 3, 5, 7], 9, [9, 8, 11]),
+            ]
+            seq, correct, opts = random.choice(starts)
+            display = ", ".join(str(n) for n in seq) + ", <b>?</b>"
+            question = f"What number comes next?<br><div style='font-size:2rem;margin:15px 0;'>{display}</div>"
+            options = [str(o) for o in opts]
+            answer = str(correct)
+
+        elif mode == 'shrinking':
+            # Shrinking patterns
+            starts = [
+                ([10, 9, 8, 7], 6, [6, 5, 8]),
+                ([20, 18, 16, 14], 12, [12, 10, 13]),
+                ([15, 12, 9, 6], 3, [3, 4, 0]),
+            ]
+            seq, correct, opts = random.choice(starts)
+            display = ", ".join(str(n) for n in seq) + ", <b>?</b>"
+            question = f"The numbers are getting <b>smaller</b>. What comes next?<br><div style='font-size:2rem;margin:15px 0;'>{display}</div>"
+            options = [str(o) for o in opts]
+            answer = str(correct)
+
+        elif mode == 'missing_number':
+            # Find the missing number in addition
+            a = random.randint(1, 9)
+            b = random.randint(1, 9)
+            total = a + b
+            question = f"Find the missing number:<br><div style='font-size:2.5rem;margin:15px 0;'>{a} + <b>?</b> = {total}</div>"
+            answer = str(b)
+            options = [str(b), str(b + 1), str(b - 1) if b > 1 else str(b + 2)]
+
+        else:  # equality
+            # Balance/equality
+            a = random.randint(2, 8)
+            b = random.randint(1, a - 1)
+            c = a - b
+            question = f"Make both sides <b>equal</b>:<br><div style='font-size:2rem;margin:15px 0;'>{a} = {b} + <b>?</b></div>"
+            answer = str(c)
+            options = [str(c), str(c + 1), str(c - 1) if c > 1 else str(c + 2)]
+
+        random.shuffle(options)
+
+        return {
+            "type": "algebra",
+            "strand": "Patterns",
+            "q": question,
+            "a": answer,
+            "options": options
+        }
+
+
+class SpatialQuestions:
+    """Grade 1 Spatial Sense: 2D shapes, 3D shapes, position, symmetry"""
+
+    # SVG shapes with distinct proportions
+    SHAPES_2D = {
+        'Triangle': '<svg width="50" height="45" viewBox="0 0 50 45"><polygon points="25,2 48,43 2,43" fill="#e74c3c"/></svg>',
+        'Circle': '<svg width="50" height="50" viewBox="0 0 50 50"><circle cx="25" cy="25" r="22" fill="#3498db"/></svg>',
+        'Square': '<svg width="50" height="50" viewBox="0 0 50 50"><rect x="3" y="3" width="44" height="44" fill="#2ecc71"/></svg>',
+        'Rectangle': '<svg width="70" height="40" viewBox="0 0 70 40"><rect x="2" y="2" width="66" height="36" fill="#9b59b6"/></svg>',
+    }
+
+    SHAPES_3D = {
+        'Sphere': '<svg width="60" height="60" viewBox="0 0 60 60"><defs><radialGradient id="sg" cx="30%" cy="30%"><stop offset="0%" style="stop-color:#5dade2"/><stop offset="100%" style="stop-color:#2874a6"/></radialGradient></defs><circle cx="30" cy="30" r="26" fill="url(#sg)"/></svg>',
+        'Cube': '<svg width="60" height="60" viewBox="0 0 60 60"><polygon points="10,20 30,10 50,20 50,45 30,55 10,45" fill="#58d68d" stroke="#27ae60" stroke-width="2"/><polygon points="10,20 30,30 30,55 10,45" fill="#2ecc71"/><polygon points="30,30 50,20 50,45 30,55" fill="#1d8348"/><line x1="30" y1="10" x2="30" y2="30" stroke="#27ae60" stroke-width="2"/></svg>',
+        'Cylinder': '<svg width="50" height="65" viewBox="0 0 50 65"><ellipse cx="25" cy="12" rx="20" ry="10" fill="#af7ac5"/><rect x="5" y="12" width="40" height="40" fill="#9b59b6"/><ellipse cx="25" cy="52" rx="20" ry="10" fill="#7d3c98"/><ellipse cx="25" cy="12" rx="20" ry="10" fill="#d7bde2"/></svg>',
+        'Cone': '<svg width="50" height="60" viewBox="0 0 50 60"><polygon points="25,5 45,50 5,50" fill="#f5b041"/><ellipse cx="25" cy="50" rx="20" ry="8" fill="#d68910"/></svg>',
+    }
+
+    def generate(self):
+        mode = random.choice(['identify_2d', 'identify_2d', 'identify_3d', 'position', 'count_sides', 'same_shape'])
+
+        if mode == 'identify_2d':
+            target_name = random.choice(list(self.SHAPES_2D.keys()))
+            question = f"Which one is a <b>{target_name}</b>?"
+            answer = self.SHAPES_2D[target_name]
+            options = list(self.SHAPES_2D.values())
+            random.shuffle(options)
+
+        elif mode == 'identify_3d':
+            target_name = random.choice(list(self.SHAPES_3D.keys()))
+            question = f"Which one is a <b>{target_name}</b>?"
+            answer = self.SHAPES_3D[target_name]
+            options = list(self.SHAPES_3D.values())
+            random.shuffle(options)
+
+        elif mode == 'position':
+            positions = [
+                ('above', '🏠<br>🚗', 'house', 'car'),
+                ('below', '🌳<br>🐕', 'tree', 'dog'),
+                ('beside', '🧸 📚', 'teddy bear', 'book'),
+                ('between', '🍎 🍌 🍊', 'banana', 'apple and orange'),
+            ]
+            pos_word, visual, target, reference = random.choice(positions)
+            question = f"Look at the picture:<br><div style='font-size:2.5rem;margin:15px 0;'>{visual}</div><br>What is <b>{pos_word}</b> the {reference}?"
+            answer = target
+            all_items = ['house', 'car', 'tree', 'dog', 'teddy bear', 'book', 'banana', 'apple', 'orange']
+            wrong = [i for i in all_items if i != target][:2]
+            options = [target] + wrong
+            random.shuffle(options)
+
+        elif mode == 'count_sides':
+            side_shapes = [
+                ('Triangle', 3, self.SHAPES_2D['Triangle']),
+                ('Square', 4, self.SHAPES_2D['Square']),
+                ('Rectangle', 4, self.SHAPES_2D['Rectangle']),
+            ]
+            name, sides, svg = random.choice(side_shapes)
+            question = f"How many <b>sides</b> does this shape have?<br><div style='margin:15px 0;'>{svg}</div>"
+            answer = str(sides)
+            options = ['3', '4', '5']
+            if answer not in options:
+                options[2] = answer
+            random.shuffle(options)
+
+        else:  # same_shape
+            shape_pairs = [
+                ('Triangle', '<svg width="40" height="35"><polygon points="20,2 38,33 2,33" fill="#e74c3c"/></svg>', '<svg width="50" height="45"><polygon points="25,2 48,43 2,43" fill="#c0392b"/></svg>'),
+                ('Circle', '<svg width="35" height="35"><circle cx="17" cy="17" r="15" fill="#3498db"/></svg>', '<svg width="50" height="50"><circle cx="25" cy="25" r="22" fill="#2980b9"/></svg>'),
+                ('Square', '<svg width="35" height="35"><rect x="2" y="2" width="31" height="31" fill="#2ecc71"/></svg>', '<svg width="50" height="50"><rect x="2" y="2" width="46" height="46" fill="#27ae60"/></svg>'),
+            ]
+            name, small, big = random.choice(shape_pairs)
+            question = f"These shapes are both the same type. What shape are they?<br><div style='margin:15px 0;display:flex;justify-content:center;gap:20px;align-items:center;'>{small}{big}</div>"
+            answer = name
+            options = ['Triangle', 'Circle', 'Square', 'Rectangle']
+            options = [o for o in options if o != name][:2] + [name]
+            random.shuffle(options)
+
+        return {
+            "type": "spatial",
+            "strand": "Spatial",
+            "q": question,
+            "a": answer,
+            "options": options
+        }
+
 
 class PlaceValueQuestions:
     """Grade 1 Place Value: Understanding tens and ones (numbers to 50)"""
@@ -557,9 +727,11 @@ class MoneyCounting:
             }
 
 
-class CodingMaze:
+class CodingQuestions:
+    """Grade 1 Coding: Sequential thinking, debugging, conditionals, loops"""
+
     def __init__(self):
-        self.grid_size = 3  # Keep it small for Grade 1 (3x3)
+        self.grid_size = 3
         self.moves = {
             '⬆️': (-1, 0),
             '⬇️': (1, 0),
@@ -568,20 +740,27 @@ class CodingMaze:
         }
 
     def generate(self):
-        """Generates a 'Get the Robot to the Star' puzzle."""
-        
-        # 1. Place Robot and Star (Start & End)
-        # We use simple (row, col) coordinates
+        mode = random.choice(['maze', 'maze', 'debug', 'conditional', 'repeat', 'sequence'])
+        if mode == 'maze':
+            return self._generate_maze()
+        elif mode == 'debug':
+            return self._generate_debug()
+        elif mode == 'conditional':
+            return self._generate_conditional()
+        elif mode == 'repeat':
+            return self._generate_repeat()
+        else:
+            return self._generate_sequence()
+
+    def _generate_maze(self):
+        """Get the Robot to the Star puzzle."""
         cells = [(r, c) for r in range(self.grid_size) for c in range(self.grid_size)]
         start, end = random.sample(cells, 2)
-        
-        # 2. Calculate the Correct Path (The "Algorithm")
-        # For Grade 1, we want the simplest path (Manhattan distance)
+
         path = []
         curr_r, curr_c = start
         target_r, target_c = end
-        
-        # Move Vertically
+
         while curr_r != target_r:
             if target_r > curr_r:
                 path.append('⬇️')
@@ -589,8 +768,7 @@ class CodingMaze:
             else:
                 path.append('⬆️')
                 curr_r -= 1
-                
-        # Move Horizontally
+
         while curr_c != target_c:
             if target_c > curr_c:
                 path.append('➡️')
@@ -598,36 +776,29 @@ class CodingMaze:
             else:
                 path.append('⬅️')
                 curr_c -= 1
-        
-        # 3. Generate "Buggy" Code (Wrong Options)
+
         correct_code = " ".join(path)
-        options = set()
-        options.add(correct_code)
-        
+        options = {correct_code}
+
         while len(options) < 3:
-            # Create mutations (wrong directions, extra steps, missing steps)
             fake_path = path.copy()
             if len(fake_path) > 1:
-                random.shuffle(fake_path) # Wrong order
+                random.shuffle(fake_path)
             else:
-                fake_path.append(random.choice(list(self.moves.keys()))) # Extra step
-            
+                fake_path.append(random.choice(list(self.moves.keys())))
             fake_str = " ".join(fake_path)
             if fake_str != correct_code:
                 options.add(fake_str)
 
-        # 4. Render the Grid (ASCII/HTML)
-        # We render a table to send to the frontend
         grid_html = "<table class='maze-grid'>"
         for r in range(self.grid_size):
             grid_html += "<tr>"
             for c in range(self.grid_size):
-                cell_content = "⬜" # Empty
+                cell_content = "⬜"
                 if (r, c) == start:
                     cell_content = "🤖"
                 elif (r, c) == end:
                     cell_content = "⭐"
-                
                 grid_html += f"<td>{cell_content}</td>"
             grid_html += "</tr>"
         grid_html += "</table>"
@@ -635,7 +806,226 @@ class CodingMaze:
         return {
             "type": "coding",
             "strand": "Coding",
-            "q": f"Which code gets the Robot to the Star?<br>{grid_html}",
+            "q": f"Which code gets the Robot 🤖 to the Star ⭐?<br>{grid_html}",
             "a": correct_code,
             "options": list(options)
         }
+
+    def _generate_debug(self):
+        """Find the bug in the code."""
+        scenarios = [
+            {
+                "task": "The robot wants to go <b>RIGHT</b> then <b>DOWN</b>.",
+                "buggy": "⬇️ ➡️",
+                "correct": "➡️ ⬇️",
+                "bug_explanation": "The steps are in the wrong order!"
+            },
+            {
+                "task": "The robot wants to go <b>UP</b> twice.",
+                "buggy": "⬆️ ⬇️",
+                "correct": "⬆️ ⬆️",
+                "bug_explanation": "The second step goes the wrong way!"
+            },
+            {
+                "task": "The robot wants to go <b>LEFT</b> then <b>LEFT</b> again.",
+                "buggy": "⬅️ ➡️",
+                "correct": "⬅️ ⬅️",
+                "bug_explanation": "The second step goes the wrong way!"
+            },
+            {
+                "task": "The robot wants to go <b>DOWN</b> then <b>RIGHT</b>.",
+                "buggy": "➡️ ⬇️",
+                "correct": "⬇️ ➡️",
+                "bug_explanation": "The steps are backwards!"
+            },
+        ]
+        scenario = random.choice(scenarios)
+
+        question = f'''
+            {scenario["task"]}<br><br>
+            <div style="background:#fff3cd;padding:15px;border-radius:10px;margin:10px 0;">
+                <b>Code:</b> <span style="font-size:1.5rem;">{scenario["buggy"]}</span>
+            </div>
+            <p>This code has a <b>bug</b>! Which code is correct?</p>
+        '''
+
+        wrong_options = [
+            scenario["buggy"],
+            scenario["buggy"].replace("⬆️", "⬇️") if "⬆️" in scenario["buggy"] else scenario["buggy"] + " ➡️"
+        ]
+        options = [scenario["correct"]] + [w for w in wrong_options if w != scenario["correct"]][:2]
+        random.shuffle(options)
+
+        return {
+            "type": "coding",
+            "strand": "Coding",
+            "q": question,
+            "a": scenario["correct"],
+            "options": options
+        }
+
+    def _generate_conditional(self):
+        """If-then scenarios for Grade 1."""
+        scenarios = [
+            {
+                "condition": "If it is <b>sunny ☀️</b>, go to the park. If it is <b>rainy 🌧️</b>, stay home.",
+                "weather": "sunny ☀️",
+                "answer": "Go to the park",
+                "options": ["Go to the park", "Stay home", "Go to school"]
+            },
+            {
+                "condition": "If it is <b>sunny ☀️</b>, go to the park. If it is <b>rainy 🌧️</b>, stay home.",
+                "weather": "rainy 🌧️",
+                "answer": "Stay home",
+                "options": ["Go to the park", "Stay home", "Go swimming"]
+            },
+            {
+                "condition": "If the light is <b>green 🟢</b>, walk. If the light is <b>red 🔴</b>, stop.",
+                "weather": "green 🟢",
+                "answer": "Walk",
+                "options": ["Walk", "Stop", "Run"]
+            },
+            {
+                "condition": "If the light is <b>green 🟢</b>, walk. If the light is <b>red 🔴</b>, stop.",
+                "weather": "red 🔴",
+                "answer": "Stop",
+                "options": ["Walk", "Stop", "Jump"]
+            },
+            {
+                "condition": "If you are <b>hungry 🍽️</b>, eat food. If you are <b>thirsty 💧</b>, drink water.",
+                "weather": "hungry 🍽️",
+                "answer": "Eat food",
+                "options": ["Eat food", "Drink water", "Go to sleep"]
+            },
+            {
+                "condition": "If you are <b>hungry 🍽️</b>, eat food. If you are <b>thirsty 💧</b>, drink water.",
+                "weather": "thirsty 💧",
+                "answer": "Drink water",
+                "options": ["Eat food", "Drink water", "Watch TV"]
+            },
+        ]
+        scenario = random.choice(scenarios)
+
+        question = f'''
+            <div style="background:#e8f4fc;padding:15px;border-radius:10px;margin:10px 0;">
+                <b>Rule:</b> {scenario["condition"]}
+            </div>
+            <p>Today it is <b>{scenario["weather"]}</b>. What should you do?</p>
+        '''
+
+        options = scenario["options"].copy()
+        random.shuffle(options)
+
+        return {
+            "type": "coding",
+            "strand": "Coding",
+            "q": question,
+            "a": scenario["answer"],
+            "options": options
+        }
+
+    def _generate_repeat(self):
+        """Loop/repeat patterns."""
+        patterns = [
+            {
+                "instruction": "Do this <b>3 times</b>: Clap 👏",
+                "answer": "👏 👏 👏",
+                "options": ["👏 👏 👏", "👏 👏", "👏 👏 👏 👏"]
+            },
+            {
+                "instruction": "Do this <b>2 times</b>: Jump ⬆️ then Spin 🔄",
+                "answer": "⬆️ 🔄 ⬆️ 🔄",
+                "options": ["⬆️ 🔄 ⬆️ 🔄", "⬆️ ⬆️ 🔄 🔄", "⬆️ 🔄"]
+            },
+            {
+                "instruction": "Do this <b>4 times</b>: Step ➡️",
+                "answer": "➡️ ➡️ ➡️ ➡️",
+                "options": ["➡️ ➡️ ➡️ ➡️", "➡️ ➡️ ➡️", "➡️ ➡️"]
+            },
+            {
+                "instruction": "Do this <b>2 times</b>: Wave 👋",
+                "answer": "👋 👋",
+                "options": ["👋 👋", "👋 👋 👋", "👋"]
+            },
+        ]
+        pattern = random.choice(patterns)
+
+        question = f'''
+            <div style="background:#f0fff0;padding:15px;border-radius:10px;margin:10px 0;">
+                <b>Instruction:</b> {pattern["instruction"]}
+            </div>
+            <p>What does this look like?</p>
+        '''
+
+        options = pattern["options"].copy()
+        random.shuffle(options)
+
+        return {
+            "type": "coding",
+            "strand": "Coding",
+            "q": question,
+            "a": pattern["answer"],
+            "options": options
+        }
+
+    def _generate_sequence(self):
+        """Order the steps correctly."""
+        sequences = [
+            {
+                "task": "How do you make a sandwich?",
+                "correct": "Get bread → Add filling → Close sandwich",
+                "options": [
+                    "Get bread → Add filling → Close sandwich",
+                    "Add filling → Get bread → Close sandwich",
+                    "Close sandwich → Get bread → Add filling"
+                ]
+            },
+            {
+                "task": "How do you brush your teeth?",
+                "correct": "Get toothbrush → Add toothpaste → Brush teeth",
+                "options": [
+                    "Get toothbrush → Add toothpaste → Brush teeth",
+                    "Brush teeth → Add toothpaste → Get toothbrush",
+                    "Add toothpaste → Brush teeth → Get toothbrush"
+                ]
+            },
+            {
+                "task": "How do you get dressed?",
+                "correct": "Put on shirt → Put on pants → Put on shoes",
+                "options": [
+                    "Put on shirt → Put on pants → Put on shoes",
+                    "Put on shoes → Put on shirt → Put on pants",
+                    "Put on pants → Put on shoes → Put on shirt"
+                ]
+            },
+            {
+                "task": "How do you plant a seed?",
+                "correct": "Dig a hole → Put in seed → Cover with soil",
+                "options": [
+                    "Dig a hole → Put in seed → Cover with soil",
+                    "Put in seed → Dig a hole → Cover with soil",
+                    "Cover with soil → Put in seed → Dig a hole"
+                ]
+            },
+        ]
+        seq = random.choice(sequences)
+
+        question = f'''
+            <p><b>{seq["task"]}</b></p>
+            <p>Put the steps in the <b>correct order</b>:</p>
+        '''
+
+        options = seq["options"].copy()
+        random.shuffle(options)
+
+        return {
+            "type": "coding",
+            "strand": "Coding",
+            "q": question,
+            "a": seq["correct"],
+            "options": options
+        }
+
+
+# Keep the old class name for backwards compatibility
+CodingMaze = CodingQuestions

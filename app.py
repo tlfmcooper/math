@@ -199,7 +199,7 @@ def logout():
 def quiz(strand):
     if strand not in VALID_STRANDS:
         return "Invalid strand", 400
-    return render_template('quiz.html', strand=strand)
+    return render_template('quiz.html', strand=strand, user=current_user)
 
 @app.route('/api/get_question/<strand>')
 def api_question(strand):
@@ -224,6 +224,10 @@ def history():
 
 @app.route('/review/<session_id>')
 def review_session(session_id):
+    # Handle local reviews (stored in browser localStorage)
+    if session_id == 'local':
+        return render_template('review.html', session=None, user=current_user, is_local=True)
+
     user_id = current_user.id if current_user.is_authenticated else None
     history_data = load_history(user_id)
     # Find the specific session by ID
@@ -232,7 +236,7 @@ def review_session(session_id):
     if not session_data:
         return "Session not found", 404
 
-    return render_template('review.html', session=session_data, user=current_user)
+    return render_template('review.html', session=session_data, user=current_user, is_local=False)
 
 if __name__ == '__main__':
     init_db()

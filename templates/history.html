@@ -16,30 +16,92 @@
     <div class="container">
         <h1>📜 Past Adventures</h1>
 
-        {% if history %}
-        <div class="history-list">
-            {% for item in history %}
-            <div class="history-card">
-                <div class="history-info">
-                    <span class="history-date">{{ item.date }}</span>
-                    <span class="history-strand">{{ item.strand }}</span>
-                    {% if item.mood %}<span class="history-mood">{{ item.mood }}</span>{% endif %}
+        <!-- User header for context -->
+        <div class="user-header" style="margin-bottom: 20px;">
+            {% if user.is_authenticated %}
+                <span class="user-info">
+                    {% if user.picture %}<img src="{{ user.picture }}" alt="" class="user-avatar">{% endif %}
+                    {{ user.name or user.email }}
+                </span>
+            {% else %}
+                <span class="user-info">Guest Mode <span class="local-badge">Local Only</span></span>
+                <a href="/login" class="btn-small">Sign in to Sync</a>
+            {% endif %}
+        </div>
+
+        <div id="history-container">
+            {% if history %}
+            <div class="history-list" id="server-history">
+                {% for item in history %}
+                <div class="history-card">
+                    <div class="history-info">
+                        <span class="history-date">{{ item.date }}</span>
+                        <span class="history-strand">{{ item.strand }}</span>
+                        {% if item.mood %}<span class="history-mood">{{ item.mood }}</span>{% endif %}
+                    </div>
+                    <div class="history-score {% if item.percent >= 80 %}score-good{% else %}score-needs-work{% endif %}">
+                        {{ item.score_str }}
+                    </div>
+                    <a href="/review/{{ item.id }}" class="btn-small" aria-label="Review {{ item.strand }} session">🔍 Review</a>
                 </div>
-                <div class="history-score {% if item.percent >= 80 %}score-good{% else %}score-needs-work{% endif %}">
-                    {{ item.score_str }}
-                </div>
-                <a href="/review/{{ item.id }}" class="btn-small" aria-label="Review {{ item.strand }} session">🔍 Review</a>
+                {% endfor %}
             </div>
-            {% endfor %}
+            {% endif %}
+
+            <!-- Local history placeholder (filled by JS for guests) -->
+            <div class="history-list" id="local-history"></div>
+
+            <div id="empty-state" class="empty-state" style="{% if history %}display:none{% endif %}">
+                <p>No adventures yet! Start your first quest to see your progress here.</p>
+            </div>
         </div>
-        {% else %}
-        <div class="empty-state">
-            <p>No adventures yet! Start your first quest to see your progress here.</p>
-        </div>
-        {% endif %}
 
         <br>
         <a href="/" class="btn-secondary">🏠 Back Home</a>
     </div>
+
+    <script>
+        // Load and display local history for guests
+        (function() {
+            const isLoggedIn = {{ 'true' if user.is_authenticated else 'false' }};
+            const localHistory = JSON.parse(localStorage.getItem('mathHistory') || '[]');
+            const localContainer = document.getElementById('local-history');
+            const emptyState = document.getElementById('empty-state');
+
+            if (!isLoggedIn && localHistory.length > 0) {
+                emptyState.style.display = 'none';
+
+                localHistory.forEach(item => {
+                    const scoreClass = item.percent >= 80 ? 'score-good' : 'score-needs-work';
+                    const card = document.createElement('div');
+                    card.className = 'history-card';
+                    card.innerHTML = `
+                        <div class="history-info">
+                            <span class="history-date">${item.date} <span class="local-badge">Local</span></span>
+                            <span class="history-strand">${item.strand}</span>
+                            ${item.mood ? `<span class="history-mood">${item.mood}</span>` : ''}
+                        </div>
+                        <div class="history-score ${scoreClass}">
+                            ${item.score_str}
+                        </div>
+                        <button class="btn-small" onclick="viewLocalReview('${item.id}')">🔍 Review</button>
+                    `;
+                    localContainer.appendChild(card);
+                });
+            } else if (!isLoggedIn && localHistory.length === 0) {
+                emptyState.style.display = 'block';
+            }
+        })();
+
+        // View local review (stored in localStorage)
+        function viewLocalReview(id) {
+            const localHistory = JSON.parse(localStorage.getItem('mathHistory') || '[]');
+            const session = localHistory.find(s => s.id === id);
+            if (session) {
+                localStorage.setItem('currentReview', JSON.stringify(session));
+                window.location.href = '/review/local';
+            }
+        }
+    </script>
 </body>
 </html>

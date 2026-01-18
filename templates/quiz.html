@@ -262,23 +262,49 @@
         document.getElementById('progress-fill').style.width = `${progress}%`;
     }
 
-    function finishSession() {
+    async function finishSession() {
+        const btn = document.getElementById('finish-btn');
+        btn.disabled = true;
+        btn.innerHTML = 'Saving... <span class="spinner"></span>';
+
         updateMascot('finish');
         const today = new Date().toLocaleString();
+        const sessionData = {
+            date: today,
+            strand: strand,
+            mood: startMood,
+            score_str: `${currentScore}/${totalQuestions}`,
+            percent: Math.round((currentScore / totalQuestions) * 100),
+            details: sessionLog,
+            max_streak: maxStreak
+        };
 
-        fetch('/api/save_session', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                date: today,
-                strand: strand,
-                mood: startMood,
-                score_str: `${currentScore}/${totalQuestions}`,
-                percent: Math.round((currentScore / totalQuestions) * 100),
-                details: sessionLog,
-                max_streak: maxStreak
-            })
-        }).then(() => window.location.href = '/history');
+        // Check if user is logged in (passed from template)
+        const isGuest = {{ 'false' if user.is_authenticated else 'true' }};
+
+        if (isGuest) {
+            // Save to localStorage for guests
+            const localHistory = JSON.parse(localStorage.getItem('mathHistory') || '[]');
+            sessionData.id = 'local-' + Date.now();
+            sessionData.isLocal = true;
+            localHistory.unshift(sessionData);
+            localStorage.setItem('mathHistory', JSON.stringify(localHistory.slice(0, 50)));
+            window.location.href = '/history';
+        } else {
+            // Save to server for logged-in users
+            try {
+                await fetch('/api/save_session', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(sessionData)
+                });
+                window.location.href = '/history';
+            } catch (err) {
+                btn.disabled = false;
+                btn.innerHTML = 'Finish & Save 💾';
+                alert('Could not save. Please try again.');
+            }
+        }
     }
 
     // Keyboard navigation for answer options (1-4 keys)

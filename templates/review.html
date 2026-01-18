@@ -23,7 +23,7 @@
         }
         .correct { border-left: 10px solid #2ecc71; }
         .wrong { border-left: 10px solid #e74c3c; background: #fff0f0; }
-        
+
         .ans-tag {
             display: inline-block;
             padding: 5px 10px;
@@ -40,26 +40,73 @@
 <body>
     <div class="container">
         <h1>📊 Session Review</h1>
+
+        {% if is_local %}
+        <!-- Local session review - data loaded from localStorage -->
+        <div id="local-review-content">
+            <p>Loading...</p>
+        </div>
+
+        <script>
+            (function() {
+                const session = JSON.parse(localStorage.getItem('currentReview') || 'null');
+                const container = document.getElementById('local-review-content');
+
+                if (!session) {
+                    container.innerHTML = '<p>Session not found. <a href="/history">Back to History</a></p>';
+                    return;
+                }
+
+                let html = `
+                    <p><b>Date:</b> ${session.date} | <b>Mission:</b> ${session.strand} | <b>Mood:</b> ${session.mood || 'N/A'}
+                    <span class="local-badge">Local</span></p>
+                    <h2>Score: ${session.score_str}</h2>
+                    <hr>
+                `;
+
+                session.details.forEach(q => {
+                    const cardClass = q.is_correct ? 'correct' : 'wrong';
+                    html += `
+                        <div class="review-card ${cardClass}">
+                            <div style="font-size: 1.2rem; margin-bottom: 10px;">
+                                ${q.q_html}
+                            </div>
+                            ${q.is_correct
+                                ? `<span class="ans-tag bg-green">✅ Answered: ${q.user_ans}</span>`
+                                : `<span class="ans-tag bg-red">❌ Answered: ${q.user_ans}</span>
+                                   <span class="ans-tag bg-blue">Correct: ${q.correct_ans}</span>`
+                            }
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+            })();
+        </script>
+
+        {% else %}
+        <!-- Server-side session review -->
         <p><b>Date:</b> {{ session.date }} | <b>Mission:</b> {{ session.strand }} | <b>Mood:</b> {{ session.mood }}</p>
         <h2>Score: {{ session.score_str }}</h2>
         <hr>
 
         {% for q in session.details %}
         <div class="review-card {% if q.is_correct %}correct{% else %}wrong{% endif %}">
-            
+
             <div style="font-size: 1.2rem; margin-bottom: 10px;">
                 {{ q.q_html | safe }}
             </div>
 
             {% if q.is_correct %}
-                <span class="ans-tag bg-green">✅ She answered: {{ q.user_ans }}</span>
+                <span class="ans-tag bg-green">✅ Answered: {{ q.user_ans }}</span>
             {% else %}
-                <span class="ans-tag bg-red">❌ She answered: {{ q.user_ans }}</span>
-                <span class="ans-tag bg-blue">Correct answer: {{ q.correct_ans }}</span>
+                <span class="ans-tag bg-red">❌ Answered: {{ q.user_ans }}</span>
+                <span class="ans-tag bg-blue">Correct: {{ q.correct_ans }}</span>
             {% endif %}
-            
+
         </div>
         {% endfor %}
+        {% endif %}
 
         <br>
         <a href="/history" class="btn-secondary">⬅️ Back to Logs</a>
