@@ -691,6 +691,33 @@ p {
 }
 
 /* ============================================
+   USER HEADER STYLES
+   ============================================ */
+.user-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 5px 0;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* ============================================
    CLOCK SVG STYLES
    ============================================ */
 .clock {
