@@ -35,35 +35,60 @@
     box-sizing: border-box;
 }
 
-body {
-    font-family: 'Nunito', 'Segoe UI', Tahoma, sans-serif;
-    background: linear-gradient(135deg, var(--bg-light) 0%, #e8f4fc 100%);
-    min-height: 100vh;
-    text-align: center;
-    padding: 15px;
-    margin: 0;
-    color: var(--text-dark);
-    line-height: 1.5;
+html {
+    /* Improve text rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
-/* Main container - responsive */
+body {
+    font-family: 'Nunito', 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    text-align: center;
+    padding: 20px;
+    margin: 0;
+    color: var(--text-dark);
+    line-height: 1.6;
+    /* Better font rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Main container - now transparent on homepage, white on quiz/history */
 .container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: transparent;
+    padding: 20px;
+}
+
+/* Container with card background (for quiz, history, review pages) */
+.container-card {
     max-width: 800px;
     margin: 0 auto;
     background: var(--bg-white);
     padding: 25px 20px;
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
 }
 
 @media (min-width: 480px) {
     .container {
         padding: 30px;
     }
+    .container-card {
+        padding: 30px;
+    }
 }
 
 @media (min-width: 768px) {
     .container {
+        padding: 40px;
+    }
+    .container-card {
         padding: 40px;
     }
 }
@@ -881,4 +906,70 @@ p {
     padding: 2px 8px;
     border-radius: 10px;
     margin-left: 8px;
+}
+
+/* ============================================
+   HOMEPAGE SPECIFIC STYLES
+   Cards directly on gradient, no white container
+   ============================================ */
+.home-container {
+    background: transparent;
+}
+
+.home-title {
+    color: white;
+    font-size: 2rem;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    margin-bottom: 5px;
+}
+
+@media (min-width: 480px) {
+    .home-title {
+        font-size: 2.5rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .home-title {
+        font-size: 3rem;
+    }
+}
+
+.home-subtitle {
+    color: rgba(255,255,255,0.9);
+    font-size: 1.2rem;
+    margin-bottom: 25px;
+}
+
+.home-header .user-info {
+    color: rgba(255,255,255,0.9);
+}
+
+.home-header .user-avatar {
+    border: 2px solid rgba(255,255,255,0.5);
+}
+
+/* Light button variant for use on dark/gradient backgrounds */
+.btn-light {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: 2px solid rgba(255,255,255,0.3);
+    backdrop-filter: blur(10px);
+}
+
+.btn-light:hover {
+    background: rgba(255,255,255,0.3);
+    border-color: rgba(255,255,255,0.5);
+}
+
+/* Secondary button light variant */
+a.btn-secondary.btn-light {
+    color: rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.1);
+    border-radius: var(--radius-small);
+}
+
+a.btn-secondary.btn-light:hover {
+    background: rgba(255,255,255,0.2);
+    color: white;
 }
