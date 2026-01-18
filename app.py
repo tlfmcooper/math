@@ -1,6 +1,9 @@
 import json
 import os
 import uuid
+from dotenv import load_dotenv
+load_dotenv()  # Load .env file before accessing env vars
+
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 from curriculum import generate_question
 import psycopg2
@@ -134,6 +137,12 @@ def save_history(record, user_id=None):
     conn.close()
 
 def get_or_create_user(google_id, email, name, picture):
+    if not DATABASE_URL:
+        # For local dev without DB, create a simple user object
+        # Use google_id hash as a simple numeric ID
+        user_id = abs(hash(google_id)) % 1000000
+        return User(user_id, google_id, email, name, picture)
+
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('SELECT id, google_id, email, name, picture FROM users WHERE google_id = %s', (google_id,))
