@@ -10,8 +10,12 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from authlib.integrations.flask_client import OAuth
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
+# Fix for running behind a reverse proxy (Railway, Heroku, etc.)
+# This ensures url_for generates https:// URLs in production
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 HISTORY_FILE = 'history.json'
 DATABASE_URL = os.environ.get('DATABASE_URL')
