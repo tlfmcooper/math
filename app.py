@@ -25,13 +25,16 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# OAuth setup
+# OAuth setup - use static endpoints to avoid slow metadata fetch on startup
 oauth = OAuth(app)
 google = oauth.register(
     name='google',
     client_id=os.environ.get('GOOGLE_CLIENT_ID'),
     client_secret=os.environ.get('GOOGLE_CLIENT_SECRET'),
-    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+    authorize_url='https://accounts.google.com/o/oauth2/v2/auth',
+    access_token_url='https://oauth2.googleapis.com/token',
+    userinfo_endpoint='https://openidconnect.googleapis.com/v1/userinfo',
+    jwks_uri='https://www.googleapis.com/oauth2/v3/certs',
     client_kwargs={'scope': 'openid email profile'}
 )
 
