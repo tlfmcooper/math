@@ -8,6 +8,7 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, s
 from curriculum import generate_question, set_translator
 import psycopg2
 from psycopg2.extras import RealDictCursor
+from psycopg2 import pool
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from authlib.integrations.flask_client import OAuth
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -20,6 +21,21 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 HISTORY_FILE = 'history.json'
 DATABASE_URL = os.environ.get('DATABASE_URL')
+
+# Database connection pool (lazy initialization)
+_db_pool = None
+_db_initialized = False
+
+def get_db_pool():
+    """Get or create the database connection pool."""
+    global _db_pool
+    if _db_pool is None and DATABASE_URL:
+        _db_pool = pool.ThreadedConnectionPool(
+            minconn=1,
+            maxconn=10,
+            dsn=DATABASE_URL
+        )
+    return _db_pool
 
 # Flask-Babel configuration for i18n
 app.config['BABEL_DEFAULT_LOCALE'] = 'en'
@@ -72,14 +88,18 @@ def load_user(user_id):
     if not DATABASE_URL:
         return None
     conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('SELECT id, google_id, email, name, picture FROM users WHERE id = %s', (user_id,))
-    row = cur.fetchone()
-    cur.close()
-    conn.close()
-    if row:
-        return User(row['id'], row['google_id'], row['email'], row['name'], row['picture'])
-    return None
+    if not conn:
+        return None
+    try:
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        cur.execute('SELECT id, google_id, email, name, picture FROM users WHERE id = %s', (user_id,))
+        row = cur.fetchone()
+        cur.close()
+        if row:
+            return User(row['id'], row['google_id'], row['email'], row['name'], row['picture'])
+        return None
+    finally:
+        release_db_connection(conn)
 
 # Valid strands for input validation
 VALID_STRANDS = {
@@ -88,11 +108,31 @@ VALID_STRANDS = {
 }
 
 def get_db_connection():
-    return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+    """Get a connection from the pool."""
+    db_pool = get_db_pool()
+    if db_pool:
+        conn = db_pool.getconn()
+        # Set cursor factory for this connection
+        return conn
+    return None
+
+def release_db_connection(conn):
+    """Return a connection to the pool."""
+    db_pool = get_db_pool()
+    if db_pool and conn:
+        db_pool.putconn(conn)
 
 def init_db():
-    if DATABASE_URL:
-        conn = get_db_connection()
+    """Initialize database tables. Only runs once per process."""
+    global _db_initialized
+    if _db_initialized or not DATABASE_URL:
+        return
+
+    conn = get_db_connection()
+    if not conn:
+        return
+
+    try:
         cur = conn.cursor()
         # Users table
         cur.execute('''
@@ -127,7 +167,9 @@ def init_db():
         cur.execute('CREATE INDEX IF NOT EXISTS idx_history_user_id ON history(user_id)')
         conn.commit()
         cur.close()
-        conn.close()
+        _db_initialized = True
+    finally:
+        release_db_connection(conn)
 
 def load_history(user_id=None):
     if not DATABASE_URL:
@@ -139,15 +181,19 @@ def load_history(user_id=None):
             except json.JSONDecodeError:
                 return []
     conn = get_db_connection()
-    cur = conn.cursor()
-    if user_id:
-        cur.execute('SELECT data FROM history WHERE user_id = %s ORDER BY created_at DESC', (user_id,))
-    else:
-        cur.execute('SELECT data FROM history WHERE user_id IS NULL ORDER BY created_at DESC')
-    rows = cur.fetchall()
-    cur.close()
-    conn.close()
-    return [row['data'] for row in rows]
+    if not conn:
+        return []
+    try:
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        if user_id:
+            cur.execute('SELECT data FROM history WHERE user_id = %s ORDER BY created_at DESC', (user_id,))
+        else:
+            cur.execute('SELECT data FROM history WHERE user_id IS NULL ORDER BY created_at DESC')
+        rows = cur.fetchall()
+        cur.close()
+        return [row['data'] for row in rows]
+    finally:
+        release_db_connection(conn)
 
 def save_history(record, user_id=None):
     if not DATABASE_URL:
@@ -157,12 +203,16 @@ def save_history(record, user_id=None):
             json.dump(history, f)
         return
     conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('INSERT INTO history (id, data, user_id) VALUES (%s, %s, %s)',
-                (record['id'], json.dumps(record), user_id))
-    conn.commit()
-    cur.close()
-    conn.close()
+    if not conn:
+        return
+    try:
+        cur = conn.cursor()
+        cur.execute('INSERT INTO history (id, data, user_id) VALUES (%s, %s, %s)',
+                    (record['id'], json.dumps(record), user_id))
+        conn.commit()
+        cur.close()
+    finally:
+        release_db_connection(conn)
 
 def get_or_create_user(google_id, email, name, picture):
     if not DATABASE_URL:
@@ -172,22 +222,26 @@ def get_or_create_user(google_id, email, name, picture):
         return User(user_id, google_id, email, name, picture)
 
     conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('SELECT id, google_id, email, name, picture FROM users WHERE google_id = %s', (google_id,))
-    row = cur.fetchone()
-    if row:
-        user = User(row['id'], row['google_id'], row['email'], row['name'], row['picture'])
-    else:
-        cur.execute(
-            'INSERT INTO users (google_id, email, name, picture) VALUES (%s, %s, %s, %s) RETURNING id',
-            (google_id, email, name, picture)
-        )
-        user_id = cur.fetchone()['id']
-        conn.commit()
-        user = User(user_id, google_id, email, name, picture)
-    cur.close()
-    conn.close()
-    return user
+    if not conn:
+        return None
+    try:
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        cur.execute('SELECT id, google_id, email, name, picture FROM users WHERE google_id = %s', (google_id,))
+        row = cur.fetchone()
+        if row:
+            user = User(row['id'], row['google_id'], row['email'], row['name'], row['picture'])
+        else:
+            cur.execute(
+                'INSERT INTO users (google_id, email, name, picture) VALUES (%s, %s, %s, %s) RETURNING id',
+                (google_id, email, name, picture)
+            )
+            user_id = cur.fetchone()['id']
+            conn.commit()
+            user = User(user_id, google_id, email, name, picture)
+        cur.close()
+        return user
+    finally:
+        release_db_connection(conn)
 
 @app.route('/')
 def index():
