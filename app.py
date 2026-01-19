@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()  # Load .env file before accessing env vars
 
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session, g
-from curriculum import generate_question
+from curriculum import generate_question, set_translator
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
@@ -33,6 +33,9 @@ def get_locale():
     return request.accept_languages.best_match(['en', 'fr'], default='en')
 
 babel = Babel(app, locale_selector=get_locale)
+
+# Set the translator for curriculum.py to use
+set_translator(_)
 
 @app.before_request
 def before_request():

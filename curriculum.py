@@ -1,5 +1,19 @@
 import random
-from flask_babel import gettext as _, lazy_gettext as _l
+
+# Translation function - will be set by app.py when Flask app context is available
+# This avoids importing Flask-Babel at module load time which causes slowness
+_translate = None
+
+def set_translator(translator_func):
+    """Called by app.py to set the translation function."""
+    global _translate
+    _translate = translator_func
+
+def _(text):
+    """Translate text if translator is available, otherwise return as-is."""
+    if _translate is not None:
+        return _translate(text)
+    return text
 
 def generate_question(strand):
     """Generates a random question based on Ontario Gr 1 Curriculum strands."""
@@ -672,15 +686,21 @@ class SkipCountingQuestions:
 
 
 class MoneyCounting:
-    def __init__(self):
-        # Canadian Coins: (Value in cents, CSS Class, Label for Accessibility)
-        self.coins = [
-            {"val": 5,   "css": "nickel",   "name": _("Nickel")},
-            {"val": 10,  "css": "dime",     "name": _("Dime")},
-            {"val": 25,  "css": "quarter",  "name": _("Quarter")},
-            {"val": 100, "css": "loonie",   "name": _("Loonie") + " ($1)"},
-            {"val": 200, "css": "toonie",   "name": _("Toonie") + " ($2)"}
-        ]
+    # Define coins as class-level data without translations
+    COINS_DATA = [
+        {"val": 5,   "css": "nickel",   "name_key": "Nickel"},
+        {"val": 10,  "css": "dime",     "name_key": "Dime"},
+        {"val": 25,  "css": "quarter",  "name_key": "Quarter"},
+        {"val": 100, "css": "loonie",   "name_key": "Loonie", "suffix": " ($1)"},
+        {"val": 200, "css": "toonie",   "name_key": "Toonie", "suffix": " ($2)"}
+    ]
+
+    def _get_coin_name(self, coin_data):
+        """Get translated coin name."""
+        name = _(coin_data["name_key"])
+        if "suffix" in coin_data:
+            name += coin_data["suffix"]
+        return name
 
     def generate(self):
         # 50% Chance: Identify a single coin
@@ -688,16 +708,16 @@ class MoneyCounting:
         mode = random.choice(['identify', 'count'])
 
         if mode == 'identify':
-            target = random.choice(self.coins)
+            target = random.choice(self.COINS_DATA)
             question_html = f"""
                 <div class='coin-container'>
                     <div class='coin {target['css']}'></div>
                 </div>
                 <br>""" + _("What is this coin?")
 
-            answer = target['name']
+            answer = self._get_coin_name(target)
             # Distractors: Other coin names
-            options = [c['name'] for c in self.coins if c['name'] != answer]
+            options = [self._get_coin_name(c) for c in self.COINS_DATA if c['name_key'] != target['name_key']]
             random.shuffle(options)
             options = options[:2] + [answer]
             random.shuffle(options)
@@ -714,8 +734,8 @@ class MoneyCounting:
             # Grade 1 Limit: Keep total under $5 (500 cents) generally
             # Generate 2-5 coins
             pile = []
-            for _ in range(random.randint(2, 4)):
-                pile.append(random.choice(self.coins))
+            for _i in range(random.randint(2, 4)):
+                pile.append(random.choice(self.COINS_DATA))
 
             total_cents = sum(c['val'] for c in pile)
 
