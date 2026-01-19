@@ -1,4 +1,26 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="80" fill="#667eea"/>
-  <text x="256" y="320" font-family="Arial, sans-serif" font-size="280" font-weight="bold" fill="white" text-anchor="middle">+</text>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="512" height="512" rx="80" fill="url(#bg)"/>
+  <!-- Maple Leaf -->
+  <g transform="translate(256,270)" fill="white">
+    <path d="M0,-150 L22,-95 L75,-110 L48,-68 L95,-40 L54,-27 L68,15 L32,0 L0,70 L-32,0 L-68,15 L-54,-27 L-95,-40 L-48,-68 L-75,-110 L-22,-95 Z" opacity="0.95"/>
+    <!-- Stem -->
+    <rect x="-12" y="55" width="24" height="55" rx="6" opacity="0.9"/>
+  </g>
+  <!-- Math symbols -->
+  <text x="140" y="160" font-family="Arial, sans-serif" font-size="64" font-weight="bold" fill="white" opacity="0.8">+</text>
+  <text x="340" y="145" font-family="Arial, sans-serif" font-size="52" font-weight="bold" fill="white" opacity="0.7">÷</text>
+  <text x="110" y="400" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="white" opacity="0.7">×</text>
+  <text x="365" y="415" font-family="Arial, sans-serif" font-size="56" font-weight="bold" fill="white" opacity="0.75">=</text>
+  <!-- Small shapes -->
+  <circle cx="420" cy="250" r="16" fill="white" opacity="0.5"/>
+  <rect x="70" y="235" width="28" height="28" rx="3" fill="white" opacity="0.5" transform="rotate(15,84,249)"/>
+  <!-- Triangle -->
+  <polygon points="430,340 445,370 415,370" fill="white" opacity="0.45"/>
 </svg>

@@ -1,0 +1,809 @@
+# French translations for Ontario Math Adventure
+# Copyright (C) 2024
+# This file is distributed under the same license as the project.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Ontario Math Adventure 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-18 12:00+0000\n"
+"PO-Revision-Date: 2024-01-18 12:00+0000\n"
+"Last-Translator: \n"
+"Language: fr\n"
+"Language-Team: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# Main Title
+msgid "Ontario Math Adventure"
+msgstr "Aventure Mathématique Ontario"
+
+msgid "Fun Grade 1 math practice aligned with the Ontario curriculum"
+msgstr "Pratique de maths amusante de 1re année alignée sur le curriculum de l'Ontario"
+
+msgid "Pick a mission, explorer!"
+msgstr "Choisis une mission, explorateur!"
+
+# Authentication
+msgid "Sign in with Google"
+msgstr "Se connecter avec Google"
+
+msgid "or"
+msgstr "ou"
+
+msgid "Continue as Guest"
+msgstr "Continuer en invité"
+
+msgid "Guest progress saved on this device only"
+msgstr "Le progrès en mode invité est sauvegardé sur cet appareil seulement"
+
+msgid "Logout"
+msgstr "Déconnexion"
+
+msgid "Sign in to Sync"
+msgstr "Connecte-toi pour synchroniser"
+
+# Menu Items (Strands)
+msgid "Numbers"
+msgstr "Nombres"
+
+msgid "Numbers - Addition and Subtraction"
+msgstr "Nombres - Addition et soustraction"
+
+msgid "Place Value"
+msgstr "Valeur de position"
+
+msgid "Place Value - Tens and Ones"
+msgstr "Valeur de position - Dizaines et unités"
+
+msgid "Patterns"
+msgstr "Suites"
+
+msgid "Patterns - Find what comes next"
+msgstr "Suites - Trouve ce qui vient ensuite"
+
+msgid "Shapes"
+msgstr "Formes"
+
+msgid "Shapes - Learn your shapes"
+msgstr "Formes - Apprends tes formes"
+
+msgid "Graphs"
+msgstr "Graphiques"
+
+msgid "Graphs - Read simple graphs"
+msgstr "Graphiques - Lis des graphiques simples"
+
+msgid "Money"
+msgstr "Argent"
+
+msgid "Money - Canadian coins"
+msgstr "Argent - Pièces canadiennes"
+
+msgid "Time"
+msgstr "L'heure"
+
+msgid "Time - Read clocks"
+msgstr "L'heure - Lis les horloges"
+
+msgid "Measurement"
+msgstr "Mesure"
+
+msgid "Measurement - Compare lengths"
+msgstr "Mesure - Compare les longueurs"
+
+msgid "Word Problems"
+msgstr "Problèmes écrits"
+
+msgid "Word Problems - Math stories"
+msgstr "Problèmes écrits - Histoires mathématiques"
+
+msgid "Compare"
+msgstr "Comparer"
+
+msgid "Comparing"
+msgstr "Comparer"
+
+msgid "Comparing - Greater than or less than"
+msgstr "Comparer - Plus grand ou plus petit"
+
+msgid "Skip Counting"
+msgstr "Compter par bonds"
+
+msgid "Skip Counting - Count by 2s, 5s, 10s"
+msgstr "Compter par bonds - Compte par 2, 5, 10"
+
+msgid "Coding"
+msgstr "Codage"
+
+msgid "Coding - Help the robot"
+msgstr "Codage - Aide le robot"
+
+msgid "View Quest Log"
+msgstr "Voir le journal de quêtes"
+
+# Quiz Page
+msgid "Quiz Time!"
+msgstr "C'est l'heure du quiz!"
+
+msgid "How are you feeling today?"
+msgstr "Comment te sens-tu aujourd'hui?"
+
+msgid "This helps us understand how you are doing!"
+msgstr "Cela nous aide à comprendre comment tu vas!"
+
+msgid "Mood selection"
+msgstr "Sélection de l'humeur"
+
+msgid "Excited"
+msgstr "Excité"
+
+msgid "I am feeling excited"
+msgstr "Je me sens excité"
+
+msgid "Calm"
+msgstr "Calme"
+
+msgid "I am feeling calm"
+msgstr "Je me sens calme"
+
+msgid "Tired"
+msgstr "Fatigué"
+
+msgid "I am feeling tired"
+msgstr "Je me sens fatigué"
+
+msgid "Frustrated"
+msgstr "Frustré"
+
+msgid "I am feeling frustrated"
+msgstr "Je me sens frustré"
+
+msgid "Question"
+msgstr "Question"
+
+msgid "Loading..."
+msgstr "Chargement..."
+
+msgid "Answer options"
+msgstr "Options de réponse"
+
+msgid "Next question"
+msgstr "Question suivante"
+
+msgid "Next"
+msgstr "Suivant"
+
+msgid "Finish and save your progress"
+msgstr "Terminer et sauvegarder ton progrès"
+
+msgid "Finish & Save"
+msgstr "Terminer et sauvegarder"
+
+msgid "Correct!"
+msgstr "Correct!"
+
+msgid "Oops! Could not load question. Please try again."
+msgstr "Oups! Impossible de charger la question. Réessaie."
+
+msgid "Saving..."
+msgstr "Sauvegarde en cours..."
+
+msgid "Could not save. Please try again."
+msgstr "Impossible de sauvegarder. Réessaie."
+
+msgid "The answer was"
+msgstr "La réponse était"
+
+# Mascot messages
+msgid "You have got this!"
+msgstr "Tu peux y arriver!"
+
+msgid "Let us learn together!"
+msgstr "Apprenons ensemble!"
+
+msgid "Math is fun!"
+msgstr "Les maths c'est amusant!"
+
+msgid "Ready to explore?"
+msgstr "Prêt à explorer?"
+
+msgid "Amazing!"
+msgstr "Incroyable!"
+
+msgid "You are so smart!"
+msgstr "Tu es tellement intelligent!"
+
+msgid "Keep going!"
+msgstr "Continue!"
+
+msgid "Fantastic!"
+msgstr "Fantastique!"
+
+msgid "Wonderful!"
+msgstr "Merveilleux!"
+
+msgid "Great job!"
+msgstr "Bon travail!"
+
+msgid "It is okay!"
+msgstr "C'est correct!"
+
+msgid "You are learning!"
+msgstr "Tu apprends!"
+
+msgid "Try the next one!"
+msgstr "Essaie la prochaine!"
+
+msgid "Keep trying!"
+msgstr "Continue d'essayer!"
+
+msgid "Almost there!"
+msgstr "Presque!"
+
+msgid "Wow! 3 in a row!"
+msgstr "Wow! 3 de suite!"
+
+msgid "You are on fire!"
+msgstr "Tu es en feu!"
+
+msgid "5 in a row! Super Star!"
+msgstr "5 de suite! Super Star!"
+
+msgid "Incredible!"
+msgstr "Incroyable!"
+
+msgid "Great job today!"
+msgstr "Bon travail aujourd'hui!"
+
+msgid "You did awesome!"
+msgstr "Tu as été super!"
+
+msgid "See you next time!"
+msgstr "À la prochaine!"
+
+# Growth mindset feedback
+msgid "Not quite yet! Mistakes help your brain grow."
+msgstr "Pas encore! Les erreurs aident ton cerveau à grandir."
+
+msgid "Close! Take a deep breath and try the next one."
+msgstr "Presque! Prends une grande respiration et essaie la prochaine."
+
+msgid "That was tricky! You are still learning."
+msgstr "C'était difficile! Tu continues à apprendre."
+
+msgid "Keep going! Every mistake teaches you something new."
+msgstr "Continue! Chaque erreur t'apprend quelque chose de nouveau."
+
+# Achievements
+msgid "On Fire!"
+msgstr "En feu!"
+
+msgid "3 in a row!"
+msgstr "3 de suite!"
+
+msgid "Super Star!"
+msgstr "Super Star!"
+
+msgid "5 in a row!"
+msgstr "5 de suite!"
+
+msgid "Math Wizard!"
+msgstr "Magicien des maths!"
+
+msgid "10 in a row!"
+msgstr "10 de suite!"
+
+# History Page
+msgid "Quest Log"
+msgstr "Journal de quêtes"
+
+msgid "Past Adventures"
+msgstr "Aventures passées"
+
+msgid "Guest Mode"
+msgstr "Mode invité"
+
+msgid "Local Only"
+msgstr "Local seulement"
+
+msgid "Local"
+msgstr "Local"
+
+msgid "Review"
+msgstr "Réviser"
+
+msgid "No adventures yet! Start your first quest to see your progress here."
+msgstr "Pas encore d'aventures! Commence ta première quête pour voir ton progrès ici."
+
+msgid "Back Home"
+msgstr "Retour à l'accueil"
+
+# Review Page
+msgid "Session Review"
+msgstr "Révision de session"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "Mission"
+msgstr "Mission"
+
+msgid "Mood"
+msgstr "Humeur"
+
+msgid "Score"
+msgstr "Score"
+
+msgid "Answered"
+msgstr "Répondu"
+
+msgid "Correct"
+msgstr "Correct"
+
+msgid "Session not found."
+msgstr "Session non trouvée."
+
+msgid "Back to History"
+msgstr "Retour à l'historique"
+
+msgid "Back to Logs"
+msgstr "Retour aux journaux"
+
+# Curriculum - Number strand
+msgid "What is"
+msgstr "Combien fait"
+
+# Curriculum - Data strand
+msgid "Cats"
+msgstr "Chats"
+
+msgid "Dogs"
+msgstr "Chiens"
+
+msgid "Birds"
+msgstr "Oiseaux"
+
+msgid "Look at the graph. Which group has more?"
+msgstr "Regarde le graphique. Quel groupe a plus?"
+
+# Curriculum - Algebra strand
+msgid "What comes next in the pattern?"
+msgstr "Que vient ensuite dans la suite?"
+
+msgid "What number comes next?"
+msgstr "Quel nombre vient ensuite?"
+
+msgid "The numbers are getting smaller. What comes next?"
+msgstr "Les nombres deviennent plus petits. Que vient ensuite?"
+
+msgid "Find the missing number:"
+msgstr "Trouve le nombre manquant:"
+
+msgid "Make both sides equal:"
+msgstr "Rends les deux côtés égaux:"
+
+# Curriculum - Spatial strand
+msgid "Triangle"
+msgstr "Triangle"
+
+msgid "Circle"
+msgstr "Cercle"
+
+msgid "Square"
+msgstr "Carré"
+
+msgid "Rectangle"
+msgstr "Rectangle"
+
+msgid "Sphere"
+msgstr "Sphère"
+
+msgid "Cube"
+msgstr "Cube"
+
+msgid "Cylinder"
+msgstr "Cylindre"
+
+msgid "Cone"
+msgstr "Cône"
+
+msgid "Which one is a"
+msgstr "Lequel est un"
+
+msgid "Look at the picture:"
+msgstr "Regarde l'image:"
+
+msgid "the"
+msgstr "le/la"
+
+msgid "above"
+msgstr "au-dessus de"
+
+msgid "below"
+msgstr "en-dessous de"
+
+msgid "beside"
+msgstr "à côté de"
+
+msgid "between"
+msgstr "entre"
+
+msgid "house"
+msgstr "maison"
+
+msgid "car"
+msgstr "voiture"
+
+msgid "tree"
+msgstr "arbre"
+
+msgid "dog"
+msgstr "chien"
+
+msgid "teddy bear"
+msgstr "ourson"
+
+msgid "book"
+msgstr "livre"
+
+msgid "banana"
+msgstr "banane"
+
+msgid "apple"
+msgstr "pomme"
+
+msgid "orange"
+msgstr "orange"
+
+msgid "apple and orange"
+msgstr "pomme et orange"
+
+msgid "How many sides does this shape have?"
+msgstr "Combien de côtés a cette forme?"
+
+msgid "These shapes are both the same type. What shape are they?"
+msgstr "Ces formes sont du même type. Quelle forme sont-elles?"
+
+msgid "Spatial"
+msgstr "Spatial"
+
+# Curriculum - Place Value strand
+msgid "How many tens are in the number"
+msgstr "Combien de dizaines y a-t-il dans le nombre"
+
+msgid "How many ones are in the number"
+msgstr "Combien d'unités y a-t-il dans le nombre"
+
+msgid "tens"
+msgstr "dizaines"
+
+msgid "ones"
+msgstr "unités"
+
+msgid "and"
+msgstr "et"
+
+msgid "Break apart"
+msgstr "Décompose"
+
+msgid "into tens and ones:"
+msgstr "en dizaines et unités:"
+
+# Curriculum - Time strand
+msgid "What time does the clock show?"
+msgstr "Quelle heure indique l'horloge?"
+
+msgid "What time do most kids"
+msgstr "À quelle heure la plupart des enfants"
+
+msgid "wake up for school"
+msgstr "se réveillent pour l'école"
+
+msgid "eat lunch"
+msgstr "mangent le dîner"
+
+msgid "eat dinner"
+msgstr "mangent le souper"
+
+msgid "go to bed"
+msgstr "vont au lit"
+
+# Curriculum - Measurement strand
+msgid "pencil"
+msgstr "crayon"
+
+msgid "crayon"
+msgstr "crayon de cire"
+
+msgid "marker"
+msgstr "marqueur"
+
+msgid "eraser"
+msgstr "efface"
+
+msgid "Which is longer?"
+msgstr "Lequel est plus long?"
+
+msgid "They are the same"
+msgstr "Ils sont pareils"
+
+msgid "How many"
+msgstr "Combien de"
+
+msgid "long is this line?"
+msgstr "de long fait cette ligne?"
+
+msgid "Put these in order from shortest to longest:"
+msgstr "Mets ces éléments en ordre du plus court au plus long:"
+
+msgid "Ant"
+msgstr "Fourmi"
+
+msgid "Cat"
+msgstr "Chat"
+
+msgid "Elephant"
+msgstr "Éléphant"
+
+# Curriculum - Word Problems strand
+msgid "Sara has {a} apples. Mom gives her {b} more. How many apples does Sara have now?"
+msgstr "Sara a {a} pommes. Maman lui en donne {b} de plus. Combien de pommes Sara a-t-elle maintenant?"
+
+msgid "There are {a} birds in a tree. {b} more birds fly in. How many birds are there now?"
+msgstr "Il y a {a} oiseaux dans un arbre. {b} autres oiseaux arrivent. Combien d'oiseaux y a-t-il maintenant?"
+
+msgid "Tom has {a} cookies. He bakes {b} more. How many cookies does he have?"
+msgstr "Tom a {a} biscuits. Il en fait cuire {b} de plus. Combien de biscuits a-t-il?"
+
+msgid "You have {a} stickers. Your friend gives you {b} more. How many stickers do you have?"
+msgstr "Tu as {a} autocollants. Ton ami t'en donne {b} de plus. Combien d'autocollants as-tu?"
+
+msgid "You have {a} balloons. {b} pop! How many balloons are left?"
+msgstr "Tu as {a} ballons. {b} éclatent! Combien de ballons reste-t-il?"
+
+msgid "There are {a} cookies. You eat {b}. How many cookies are left?"
+msgstr "Il y a {a} biscuits. Tu en manges {b}. Combien de biscuits reste-t-il?"
+
+msgid "{a} frogs are on a log. {b} jump away. How many frogs are still on the log?"
+msgstr "{a} grenouilles sont sur un rondin. {b} sautent. Combien de grenouilles sont encore sur le rondin?"
+
+msgid "Mom baked {a} cupcakes. You ate {b}. How many are left?"
+msgstr "Maman a fait {a} petits gâteaux. Tu en as mangé {b}. Combien en reste-t-il?"
+
+# Curriculum - Comparing strand
+msgid "Which number is greater?"
+msgstr "Quel nombre est plus grand?"
+
+msgid "They are equal"
+msgstr "Ils sont égaux"
+
+msgid "Fill in the blank:"
+msgstr "Remplis le blanc:"
+
+msgid "Choose the correct symbol:"
+msgstr "Choisis le bon symbole:"
+
+msgid "Look at the number line. Which number is greater than"
+msgstr "Regarde la droite numérique. Quel nombre est plus grand que"
+
+# Curriculum - Skip Counting strand
+msgid "Count by"
+msgstr "Compte par"
+
+msgid "What comes next?"
+msgstr "Que vient ensuite?"
+
+msgid "What is the missing number?"
+msgstr "Quel est le nombre manquant?"
+
+msgid "How many in total?"
+msgstr "Combien au total?"
+
+msgid "pairs of shoes"
+msgstr "paires de chaussures"
+
+msgid "hands (5 fingers each)"
+msgstr "mains (5 doigts chacune)"
+
+msgid "groups of 10"
+msgstr "groupes de 10"
+
+# Curriculum - Money strand
+msgid "Financial"
+msgstr "Financier"
+
+msgid "Nickel"
+msgstr "Pièce de 5 cents"
+
+msgid "Dime"
+msgstr "Pièce de 10 cents"
+
+msgid "Quarter"
+msgstr "Pièce de 25 cents"
+
+msgid "Loonie"
+msgstr "Huard"
+
+msgid "Toonie"
+msgstr "Pièce de 2 dollars"
+
+msgid "What is this coin?"
+msgstr "Quelle est cette pièce?"
+
+msgid "How much money is this?"
+msgstr "Combien d'argent est-ce?"
+
+# Curriculum - Coding strand
+msgid "Which code gets the Robot to the Star?"
+msgstr "Quel code amène le Robot à l'Étoile?"
+
+msgid "The robot wants to go RIGHT then DOWN."
+msgstr "Le robot veut aller à DROITE puis en BAS."
+
+msgid "The robot wants to go UP twice."
+msgstr "Le robot veut aller en HAUT deux fois."
+
+msgid "The robot wants to go LEFT then LEFT again."
+msgstr "Le robot veut aller à GAUCHE puis encore à GAUCHE."
+
+msgid "The robot wants to go DOWN then RIGHT."
+msgstr "Le robot veut aller en BAS puis à DROITE."
+
+msgid "The steps are in the wrong order!"
+msgstr "Les étapes sont dans le mauvais ordre!"
+
+msgid "The second step goes the wrong way!"
+msgstr "La deuxième étape va dans la mauvaise direction!"
+
+msgid "The steps are backwards!"
+msgstr "Les étapes sont à l'envers!"
+
+msgid "Code:"
+msgstr "Code:"
+
+msgid "This code has a bug! Which code is correct?"
+msgstr "Ce code a un bogue! Quel code est correct?"
+
+msgid "If it is sunny, go to the park. If it is rainy, stay home."
+msgstr "S'il fait soleil, va au parc. S'il pleut, reste à la maison."
+
+msgid "If the light is green, walk. If the light is red, stop."
+msgstr "Si le feu est vert, marche. Si le feu est rouge, arrête."
+
+msgid "If you are hungry, eat food. If you are thirsty, drink water."
+msgstr "Si tu as faim, mange. Si tu as soif, bois de l'eau."
+
+msgid "sunny"
+msgstr "ensoleillé"
+
+msgid "rainy"
+msgstr "pluvieux"
+
+msgid "green"
+msgstr "vert"
+
+msgid "red"
+msgstr "rouge"
+
+msgid "hungry"
+msgstr "affamé"
+
+msgid "thirsty"
+msgstr "assoiffé"
+
+msgid "Go to the park"
+msgstr "Va au parc"
+
+msgid "Stay home"
+msgstr "Reste à la maison"
+
+msgid "Go to school"
+msgstr "Va à l'école"
+
+msgid "Go swimming"
+msgstr "Va nager"
+
+msgid "Walk"
+msgstr "Marche"
+
+msgid "Stop"
+msgstr "Arrête"
+
+msgid "Run"
+msgstr "Cours"
+
+msgid "Jump"
+msgstr "Saute"
+
+msgid "Eat food"
+msgstr "Mange"
+
+msgid "Drink water"
+msgstr "Bois de l'eau"
+
+msgid "Go to sleep"
+msgstr "Va dormir"
+
+msgid "Watch TV"
+msgstr "Regarde la télé"
+
+msgid "Rule:"
+msgstr "Règle:"
+
+msgid "Today it is"
+msgstr "Aujourd'hui c'est"
+
+msgid "What should you do?"
+msgstr "Que dois-tu faire?"
+
+msgid "Do this 3 times: Clap"
+msgstr "Fais ceci 3 fois: Tape des mains"
+
+msgid "Do this 2 times: Jump then Spin"
+msgstr "Fais ceci 2 fois: Saute puis Tourne"
+
+msgid "Do this 4 times: Step right"
+msgstr "Fais ceci 4 fois: Pas à droite"
+
+msgid "Do this 2 times: Wave"
+msgstr "Fais ceci 2 fois: Fais signe"
+
+msgid "Instruction:"
+msgstr "Instruction:"
+
+msgid "What does this look like?"
+msgstr "À quoi ça ressemble?"
+
+msgid "How do you make a sandwich?"
+msgstr "Comment fais-tu un sandwich?"
+
+msgid "Get bread"
+msgstr "Prends du pain"
+
+msgid "Add filling"
+msgstr "Ajoute la garniture"
+
+msgid "Close sandwich"
+msgstr "Ferme le sandwich"
+
+msgid "How do you brush your teeth?"
+msgstr "Comment te brosses-tu les dents?"
+
+msgid "Get toothbrush"
+msgstr "Prends la brosse à dents"
+
+msgid "Add toothpaste"
+msgstr "Ajoute le dentifrice"
+
+msgid "Brush teeth"
+msgstr "Brosse les dents"
+
+msgid "How do you get dressed?"
+msgstr "Comment t'habilles-tu?"
+
+msgid "Put on shirt"
+msgstr "Mets le chandail"
+
+msgid "Put on pants"
+msgstr "Mets le pantalon"
+
+msgid "Put on shoes"
+msgstr "Mets les chaussures"
+
+msgid "How do you plant a seed?"
+msgstr "Comment plantes-tu une graine?"
+
+msgid "Dig a hole"
+msgstr "Creuse un trou"
+
+msgid "Put in seed"
+msgstr "Mets la graine"
+
+msgid "Cover with soil"
+msgstr "Couvre de terre"
+
+msgid "Put the steps in the correct order:"
+msgstr "Mets les étapes dans le bon ordre:"

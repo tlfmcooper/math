@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "authlib>=1.6.6",
+    "flask-babel>=4.0.0",
     "flask-login>=0.6.3",
     "flask>=3.1.2",
     "psycopg2>=2.9.11",

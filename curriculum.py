@@ -1,4 +1,5 @@
 import random
+from flask_babel import gettext as _, lazy_gettext as _l
 
 def generate_question(strand):
     """Generates a random question based on Ontario Gr 1 Curriculum strands."""
@@ -26,16 +27,16 @@ def generate_question(strand):
         if op == '+':
             a = random.randint(1, 25)
             b = random.randint(1, 25)
-            question = f"What is {a} + {b}?"
+            question = _("What is") + f" {a} + {b}?"
             answer = a + b
             options = [answer, answer + random.randint(1, 3), answer - random.randint(1, 3)]
         else:
             a = random.randint(10, 50)
             b = random.randint(1, a)  # Ensure positive result
-            question = f"What is {a} - {b}?"
+            question = _("What is") + f" {a} - {b}?"
             answer = a - b
             options = [answer, answer + random.randint(1, 5), answer - random.randint(1, 5)]
-        
+
         # Visual Aid (Emojis) for smaller numbers
         if a <= 10 and b <= 10:
             emoji = random.choice(['🍎', '⭐', '🐸', '🍪'])
@@ -48,13 +49,13 @@ def generate_question(strand):
     # --- STRAND D: DATA (Sorting & Graphs) ---
     elif strand == 'data':
         # Simple Logic: "Which has more?"
-        t1, t2 = random.sample(['Cats 🐱', 'Dogs 🐶', 'Birds 🐦'], 2)
+        t1, t2 = random.sample([_('Cats') + ' 🐱', _('Dogs') + ' 🐶', _('Birds') + ' 🐦'], 2)
         v1, v2 = random.randint(3, 9), random.randint(3, 9)
         while v1 == v2: v2 = random.randint(3, 9) # Ensure not equal
-        
+
         # Generate a mini text-graph
         graph = f"{t1}: { '█' * v1 } ({v1})<br>{t2}: { '█' * v2 } ({v2})"
-        question = f"Look at the graph. Which group has <b>more</b>?<br><div class='graph'>{graph}</div>"
+        question = _("Look at the graph. Which group has more?") + f"<br><div class='graph'>{graph}</div>"
         answer = t1 if v1 > v2 else t2
         options = [t1, t2]
 
@@ -110,7 +111,7 @@ class AlgebraQuestions:
             ]
             pat, correct, opts = random.choice(patterns)
             display = " ".join(pat) + " <b>?</b>"
-            question = f"What comes next in the pattern?<br><div style='font-size:2rem;margin:15px 0;'>{display}</div>"
+            question = _("What comes next in the pattern?") + f"<br><div style='font-size:2rem;margin:15px 0;'>{display}</div>"
             options = opts
             answer = correct
 
@@ -123,7 +124,7 @@ class AlgebraQuestions:
             ]
             pat, correct, opts = random.choice(patterns)
             display = " ".join(pat) + " <b>?</b>"
-            question = f"What comes next in the pattern?<br><div style='font-size:1.8rem;margin:15px 0;'>{display}</div>"
+            question = _("What comes next in the pattern?") + f"<br><div style='font-size:1.8rem;margin:15px 0;'>{display}</div>"
             options = opts
             answer = correct
 
@@ -136,7 +137,7 @@ class AlgebraQuestions:
             ]
             pat, correct, opts = random.choice(patterns)
             display = " ".join(pat) + " <b>?</b>"
-            question = f"What comes next in the pattern?<br><div style='font-size:1.8rem;margin:15px 0;'>{display}</div>"
+            question = _("What comes next in the pattern?") + f"<br><div style='font-size:1.8rem;margin:15px 0;'>{display}</div>"
             options = opts
             answer = correct
 
@@ -150,7 +151,7 @@ class AlgebraQuestions:
             ]
             seq, correct, opts = random.choice(starts)
             display = ", ".join(str(n) for n in seq) + ", <b>?</b>"
-            question = f"What number comes next?<br><div style='font-size:2rem;margin:15px 0;'>{display}</div>"
+            question = _("What number comes next?") + f"<br><div style='font-size:2rem;margin:15px 0;'>{display}</div>"
             options = [str(o) for o in opts]
             answer = str(correct)
 
@@ -163,7 +164,7 @@ class AlgebraQuestions:
             ]
             seq, correct, opts = random.choice(starts)
             display = ", ".join(str(n) for n in seq) + ", <b>?</b>"
-            question = f"The numbers are getting <b>smaller</b>. What comes next?<br><div style='font-size:2rem;margin:15px 0;'>{display}</div>"
+            question = _("The numbers are getting smaller. What comes next?") + f"<br><div style='font-size:2rem;margin:15px 0;'>{display}</div>"
             options = [str(o) for o in opts]
             answer = str(correct)
 
@@ -172,7 +173,7 @@ class AlgebraQuestions:
             a = random.randint(1, 9)
             b = random.randint(1, 9)
             total = a + b
-            question = f"Find the missing number:<br><div style='font-size:2.5rem;margin:15px 0;'>{a} + <b>?</b> = {total}</div>"
+            question = _("Find the missing number:") + f"<br><div style='font-size:2.5rem;margin:15px 0;'>{a} + <b>?</b> = {total}</div>"
             answer = str(b)
             options = [str(b), str(b + 1), str(b - 1) if b > 1 else str(b + 2)]
 
@@ -181,7 +182,7 @@ class AlgebraQuestions:
             a = random.randint(2, 8)
             b = random.randint(1, a - 1)
             c = a - b
-            question = f"Make both sides <b>equal</b>:<br><div style='font-size:2rem;margin:15px 0;'>{a} = {b} + <b>?</b></div>"
+            question = _("Make both sides equal:") + f"<br><div style='font-size:2rem;margin:15px 0;'>{a} = {b} + <b>?</b></div>"
             answer = str(c)
             options = [str(c), str(c + 1), str(c - 1) if c > 1 else str(c + 2)]
 
@@ -189,7 +190,7 @@ class AlgebraQuestions:
 
         return {
             "type": "algebra",
-            "strand": "Patterns",
+            "strand": _("Patterns"),
             "q": question,
             "a": answer,
             "options": options
@@ -214,34 +215,56 @@ class SpatialQuestions:
         'Cone': '<svg width="50" height="60" viewBox="0 0 50 60"><polygon points="25,5 45,50 5,50" fill="#f5b041"/><ellipse cx="25" cy="50" rx="20" ry="8" fill="#d68910"/></svg>',
     }
 
+    def _get_shape_name(self, key):
+        """Get translated shape name"""
+        shape_names = {
+            'Triangle': _('Triangle'),
+            'Circle': _('Circle'),
+            'Square': _('Square'),
+            'Rectangle': _('Rectangle'),
+            'Sphere': _('Sphere'),
+            'Cube': _('Cube'),
+            'Cylinder': _('Cylinder'),
+            'Cone': _('Cone'),
+        }
+        return shape_names.get(key, key)
+
     def generate(self):
         mode = random.choice(['identify_2d', 'identify_2d', 'identify_3d', 'position', 'count_sides', 'same_shape'])
 
         if mode == 'identify_2d':
-            target_name = random.choice(list(self.SHAPES_2D.keys()))
-            question = f"Which one is a <b>{target_name}</b>?"
-            answer = self.SHAPES_2D[target_name]
+            target_key = random.choice(list(self.SHAPES_2D.keys()))
+            target_name = self._get_shape_name(target_key)
+            question = _("Which one is a") + f" <b>{target_name}</b>?"
+            answer = self.SHAPES_2D[target_key]
             options = list(self.SHAPES_2D.values())
             random.shuffle(options)
 
         elif mode == 'identify_3d':
-            target_name = random.choice(list(self.SHAPES_3D.keys()))
-            question = f"Which one is a <b>{target_name}</b>?"
-            answer = self.SHAPES_3D[target_name]
+            target_key = random.choice(list(self.SHAPES_3D.keys()))
+            target_name = self._get_shape_name(target_key)
+            question = _("Which one is a") + f" <b>{target_name}</b>?"
+            answer = self.SHAPES_3D[target_key]
             options = list(self.SHAPES_3D.values())
             random.shuffle(options)
 
         elif mode == 'position':
             positions = [
-                ('above', '🏠<br>🚗', 'house', 'car'),
-                ('below', '🌳<br>🐕', 'tree', 'dog'),
-                ('beside', '🧸 📚', 'teddy bear', 'book'),
-                ('between', '🍎 🍌 🍊', 'banana', 'apple and orange'),
+                ('above', '🏠<br>🚗', _('house'), _('car')),
+                ('below', '🌳<br>🐕', _('tree'), _('dog')),
+                ('beside', '🧸 📚', _('teddy bear'), _('book')),
+                ('between', '🍎 🍌 🍊', _('banana'), _('apple and orange')),
             ]
             pos_word, visual, target, reference = random.choice(positions)
-            question = f"Look at the picture:<br><div style='font-size:2.5rem;margin:15px 0;'>{visual}</div><br>What is <b>{pos_word}</b> the {reference}?"
+            pos_word_translated = {
+                'above': _('above'),
+                'below': _('below'),
+                'beside': _('beside'),
+                'between': _('between'),
+            }[pos_word]
+            question = _("Look at the picture:") + f"<br><div style='font-size:2.5rem;margin:15px 0;'>{visual}</div><br>" + _("What is") + f" <b>{pos_word_translated}</b> " + _("the") + f" {reference}?"
             answer = target
-            all_items = ['house', 'car', 'tree', 'dog', 'teddy bear', 'book', 'banana', 'apple', 'orange']
+            all_items = [_('house'), _('car'), _('tree'), _('dog'), _('teddy bear'), _('book'), _('banana'), _('apple'), _('orange')]
             wrong = [i for i in all_items if i != target][:2]
             options = [target] + wrong
             random.shuffle(options)
@@ -253,7 +276,7 @@ class SpatialQuestions:
                 ('Rectangle', 4, self.SHAPES_2D['Rectangle']),
             ]
             name, sides, svg = random.choice(side_shapes)
-            question = f"How many <b>sides</b> does this shape have?<br><div style='margin:15px 0;'>{svg}</div>"
+            question = _("How many sides does this shape have?") + f"<br><div style='margin:15px 0;'>{svg}</div>"
             answer = str(sides)
             options = ['3', '4', '5']
             if answer not in options:
@@ -267,15 +290,16 @@ class SpatialQuestions:
                 ('Square', '<svg width="35" height="35"><rect x="2" y="2" width="31" height="31" fill="#2ecc71"/></svg>', '<svg width="50" height="50"><rect x="2" y="2" width="46" height="46" fill="#27ae60"/></svg>'),
             ]
             name, small, big = random.choice(shape_pairs)
-            question = f"These shapes are both the same type. What shape are they?<br><div style='margin:15px 0;display:flex;justify-content:center;gap:20px;align-items:center;'>{small}{big}</div>"
-            answer = name
-            options = ['Triangle', 'Circle', 'Square', 'Rectangle']
-            options = [o for o in options if o != name][:2] + [name]
+            translated_name = self._get_shape_name(name)
+            question = _("These shapes are both the same type. What shape are they?") + f"<br><div style='margin:15px 0;display:flex;justify-content:center;gap:20px;align-items:center;'>{small}{big}</div>"
+            answer = translated_name
+            options = [self._get_shape_name('Triangle'), self._get_shape_name('Circle'), self._get_shape_name('Square'), self._get_shape_name('Rectangle')]
+            options = [o for o in options if o != translated_name][:2] + [translated_name]
             random.shuffle(options)
 
         return {
             "type": "spatial",
-            "strand": "Spatial",
+            "strand": _("Spatial"),
             "q": question,
             "a": answer,
             "options": options
@@ -294,7 +318,7 @@ class PlaceValueQuestions:
             ones = num % 10
             # Visual: Base-10 blocks (brown squares for tens, yellow for ones)
             blocks_visual = "🟫 " * tens + "🟨 " * ones if ones > 0 else "🟫 " * tens
-            question = f"How many <b>tens</b> are in the number {num}?<br><div style='font-size:1.5rem;margin:10px 0'>{blocks_visual.strip()}</div>"
+            question = _("How many tens are in the number") + f" {num}?<br><div style='font-size:1.5rem;margin:10px 0'>{blocks_visual.strip()}</div>"
             answer = str(tens)
             options = [str(tens), str(tens + 1) if tens < 5 else str(tens - 1), str(ones)]
 
@@ -303,7 +327,7 @@ class PlaceValueQuestions:
             tens = num // 10
             ones = num % 10
             blocks_visual = "🟫 " * tens + "🟨 " * ones if ones > 0 else "🟫 " * tens
-            question = f"How many <b>ones</b> are in the number {num}?<br><div style='font-size:1.5rem;margin:10px 0'>{blocks_visual.strip()}</div>"
+            question = _("How many ones are in the number") + f" {num}?<br><div style='font-size:1.5rem;margin:10px 0'>{blocks_visual.strip()}</div>"
             answer = str(ones)
             options = [str(ones), str(tens), str((ones + 2) % 10)]
 
@@ -311,7 +335,9 @@ class PlaceValueQuestions:
             tens = random.randint(1, 4)
             ones = random.randint(0, 9)
             correct = tens * 10 + ones
-            question = f"<b>{tens} tens</b> and <b>{ones} ones</b> = ?"
+            tens_word = _("tens")
+            ones_word = _("ones")
+            question = f"<b>{tens} {tens_word}</b> " + _("and") + f" <b>{ones} {ones_word}</b> = ?"
             answer = str(correct)
             options = [str(correct), str(correct + 10), str(correct + 1) if ones < 9 else str(correct - 1)]
 
@@ -319,12 +345,14 @@ class PlaceValueQuestions:
             num = random.randint(11, 49)
             tens = num // 10
             ones = num % 10
-            question = f"Break apart <b>{num}</b> into tens and ones:"
-            answer = f"{tens} tens, {ones} ones"
+            question = _("Break apart") + f" <b>{num}</b> " + _("into tens and ones:")
+            tens_word = _("tens")
+            ones_word = _("ones")
+            answer = f"{tens} {tens_word}, {ones} {ones_word}"
             options = [
-                f"{tens} tens, {ones} ones",
-                f"{tens + 1} tens, {ones} ones",
-                f"{tens} tens, {ones + 1} ones" if ones < 9 else f"{tens} tens, {ones - 1} ones"
+                f"{tens} {tens_word}, {ones} {ones_word}",
+                f"{tens + 1} {tens_word}, {ones} {ones_word}",
+                f"{tens} {tens_word}, {ones + 1 if ones < 9 else ones - 1} {ones_word}"
             ]
 
         # Deduplicate options
@@ -340,7 +368,7 @@ class PlaceValueQuestions:
 
         return {
             "type": "placevalue",
-            "strand": "Place Value",
+            "strand": _("Place Value"),
             "q": question,
             "a": answer,
             "options": unique
@@ -376,7 +404,7 @@ class TimeTellingQuestions:
         if mode == 'read_oclock':
             hour = random.randint(1, 12)
             clock_html = self._draw_clock(hour, 0)
-            question = f"What time does the clock show?{clock_html}"
+            question = _("What time does the clock show?") + clock_html
             answer = f"{hour}:00"
             other_hour = (hour % 12) + 1
             options = [f"{hour}:00", f"{other_hour}:00", f"{hour}:30"]
@@ -384,20 +412,20 @@ class TimeTellingQuestions:
         elif mode == 'read_half':
             hour = random.randint(1, 12)
             clock_html = self._draw_clock(hour, 30)
-            question = f"What time does the clock show?{clock_html}"
+            question = _("What time does the clock show?") + clock_html
             answer = f"{hour}:30"
             other_hour = (hour % 12) + 1
             options = [f"{hour}:30", f"{hour}:00", f"{other_hour}:00"]
 
         else:  # activity matching
             activities = [
-                ("wake up for school", "7:00"),
-                ("eat lunch", "12:00"),
-                ("eat dinner", "6:00"),
-                ("go to bed", "8:00"),
+                (_("wake up for school"), "7:00"),
+                (_("eat lunch"), "12:00"),
+                (_("eat dinner"), "6:00"),
+                (_("go to bed"), "8:00"),
             ]
             activity, time = random.choice(activities)
-            question = f"What time do most kids <b>{activity}</b>?"
+            question = _("What time do most kids") + f" <b>{activity}</b>?"
             answer = time
             all_times = ["7:00", "12:00", "6:00", "8:00", "3:00"]
             options = [t for t in all_times if t != time][:2] + [time]
@@ -405,7 +433,7 @@ class TimeTellingQuestions:
         random.shuffle(options)
         return {
             "type": "time",
-            "strand": "Time",
+            "strand": _("Time"),
             "q": question,
             "a": answer,
             "options": options
@@ -420,11 +448,11 @@ class MeasurementQuestions:
 
         if mode == 'compare':
             items = [
-                ("pencil", 5, "✏️"),
-                ("crayon", 3, "🖍️"),
-                ("marker", 6, "🖊️"),
-                ("eraser", 2, "🧽"),
-                ("book", 8, "📕"),
+                (_("pencil"), 5, "✏️"),
+                (_("crayon"), 3, "🖍️"),
+                (_("marker"), 6, "🖊️"),
+                (_("eraser"), 2, "🧽"),
+                (_("book"), 8, "📕"),
             ]
             item1 = random.choice(items)
             item2 = random.choice([i for i in items if i[0] != item1[0]])
@@ -432,7 +460,7 @@ class MeasurementQuestions:
             bar1 = "█" * item1[1]
             bar2 = "█" * item2[1]
 
-            question = f'''Which is <b>longer</b>?<br>
+            question = _("Which is longer?") + f'''<br>
             <div style="text-align:left;margin:15px;font-family:monospace;">
                 <div>{item1[2]} {item1[0].title()}: <span style="color:#3498db">{bar1}</span></div>
                 <div>{item2[2]} {item2[0].title()}: <span style="color:#e74c3c">{bar2}</span></div>
@@ -442,14 +470,14 @@ class MeasurementQuestions:
                 answer = item1[0].title()
             else:
                 answer = item2[0].title()
-            options = [item1[0].title(), item2[0].title(), "They are the same"]
+            options = [item1[0].title(), item2[0].title(), _("They are the same")]
 
         elif mode == 'count_units':
             units = random.randint(3, 7)
             unit_emoji = random.choice(["📎", "🧱", "📏"])
             line = "━" * (units * 2)
 
-            question = f'''How many {unit_emoji} long is this line?<br>
+            question = _("How many") + f" {unit_emoji} " + _("long is this line?") + f'''<br>
             <div style="margin:15px 0;font-size:1.5rem;">{line}</div>
             <div style="font-size:1.3rem;">{unit_emoji * units}</div>'''
 
@@ -457,18 +485,18 @@ class MeasurementQuestions:
             options = [str(units), str(units + 1), str(units - 1)]
 
         else:  # order by size
-            question = "Put these in order from <b>shortest to longest</b>:<br><br>🐜 Ant, 🐱 Cat, 🐘 Elephant"
-            answer = "Ant, Cat, Elephant"
+            question = _("Put these in order from shortest to longest:") + "<br><br>🐜 " + _("Ant") + ", 🐱 " + _("Cat") + ", 🐘 " + _("Elephant")
+            answer = _("Ant") + ", " + _("Cat") + ", " + _("Elephant")
             options = [
-                "Ant, Cat, Elephant",
-                "Elephant, Cat, Ant",
-                "Cat, Ant, Elephant"
+                _("Ant") + ", " + _("Cat") + ", " + _("Elephant"),
+                _("Elephant") + ", " + _("Cat") + ", " + _("Ant"),
+                _("Cat") + ", " + _("Ant") + ", " + _("Elephant")
             ]
 
         random.shuffle(options)
         return {
             "type": "measurement",
-            "strand": "Measurement",
+            "strand": _("Measurement"),
             "q": question,
             "a": answer,
             "options": options
@@ -483,10 +511,10 @@ class WordProblemQuestions:
 
         if mode == 'addition':
             templates = [
-                ("Sara has {a} 🍎 apples. Mom gives her {b} more. How many apples does Sara have now?", "🍎"),
-                ("There are {a} 🐦 birds in a tree. {b} more birds fly in. How many birds are there now?", "🐦"),
-                ("Tom has {a} 🍪 cookies. He bakes {b} more. How many cookies does he have?", "🍪"),
-                ("You have {a} ⭐ stickers. Your friend gives you {b} more. How many stickers do you have?", "⭐"),
+                (_("Sara has {a} apples. Mom gives her {b} more. How many apples does Sara have now?"), "🍎"),
+                (_("There are {a} birds in a tree. {b} more birds fly in. How many birds are there now?"), "🐦"),
+                (_("Tom has {a} cookies. He bakes {b} more. How many cookies does he have?"), "🍪"),
+                (_("You have {a} stickers. Your friend gives you {b} more. How many stickers do you have?"), "⭐"),
             ]
             template, emoji = random.choice(templates)
             a = random.randint(2, 8)
@@ -499,10 +527,10 @@ class WordProblemQuestions:
 
         else:  # subtraction
             templates = [
-                ("You have {a} 🎈 balloons. {b} pop! How many balloons are left?", "🎈"),
-                ("There are {a} 🍪 cookies. You eat {b}. How many cookies are left?", "🍪"),
-                ("{a} 🐸 frogs are on a log. {b} jump away. How many frogs are still on the log?", "🐸"),
-                ("Mom baked {a} 🧁 cupcakes. You ate {b}. How many are left?", "🧁"),
+                (_("You have {a} balloons. {b} pop! How many balloons are left?"), "🎈"),
+                (_("There are {a} cookies. You eat {b}. How many cookies are left?"), "🍪"),
+                (_("{a} frogs are on a log. {b} jump away. How many frogs are still on the log?"), "🐸"),
+                (_("Mom baked {a} cupcakes. You ate {b}. How many are left?"), "🧁"),
             ]
             template, emoji = random.choice(templates)
             a = random.randint(5, 10)
@@ -516,7 +544,7 @@ class WordProblemQuestions:
 
         return {
             "type": "wordproblems",
-            "strand": "Word Problems",
+            "strand": _("Word Problems"),
             "q": question,
             "a": str(answer),
             "options": options
@@ -535,15 +563,15 @@ class ComparingQuestions:
             while a == b:
                 b = random.randint(1, 50)
 
-            question = f"Which number is <b>greater</b>?<br><div style='font-size:2.5rem;margin:15px 0;'>{a} &nbsp;&nbsp; or &nbsp;&nbsp; {b}</div>"
+            question = _("Which number is greater?") + f"<br><div style='font-size:2.5rem;margin:15px 0;'>{a} &nbsp;&nbsp; " + _("or") + f" &nbsp;&nbsp; {b}</div>"
             answer = str(max(a, b))
-            options = [str(a), str(b), "They are equal"]
+            options = [str(a), str(b), _("They are equal")]
 
         elif mode == 'fill_symbol':
             a = random.randint(1, 30)
             b = random.randint(1, 30)
 
-            question = f"Fill in the blank:<br><div style='font-size:2.5rem;margin:15px 0;'>{a} &nbsp; ⬜ &nbsp; {b}</div><p>Choose the correct symbol:</p>"
+            question = _("Fill in the blank:") + f"<br><div style='font-size:2.5rem;margin:15px 0;'>{a} &nbsp; ⬜ &nbsp; {b}</div><p>" + _("Choose the correct symbol:") + "</p>"
 
             if a > b:
                 answer = ">"
@@ -555,8 +583,8 @@ class ComparingQuestions:
 
         else:  # number_line
             target = random.randint(5, 15)
-            question = f'''Look at the number line. Which number is <b>greater than {target}</b>?<br>
-            <div style="margin:15px 0;font-family:monospace;">
+            question = _("Look at the number line. Which number is greater than") + f" {target}?<br>"
+            question += f'''<div style="margin:15px 0;font-family:monospace;">
                 ◀─ {target-3} ─ {target-2} ─ {target-1} ─ <b>{target}</b> ─ {target+1} ─ {target+2} ─ {target+3} ─▶
             </div>'''
             answer = str(target + random.randint(1, 3))
@@ -567,7 +595,7 @@ class ComparingQuestions:
         random.shuffle(options)
         return {
             "type": "comparing",
-            "strand": "Comparing",
+            "strand": _("Comparing"),
             "q": question,
             "a": answer,
             "options": options
@@ -586,7 +614,7 @@ class SkipCountingQuestions:
             sequence = [start + skip * i for i in range(4)]
             display = ", ".join(str(n) for n in sequence) + ", ?"
 
-            question = f"Count by <b>{skip}s</b>. What comes next?<br><div style='font-size:1.8rem;margin:15px 0;'>{display}</div>"
+            question = _("Count by") + f" <b>{skip}s</b>. " + _("What comes next?") + f"<br><div style='font-size:1.8rem;margin:15px 0;'>{display}</div>"
             answer = str(sequence[-1] + skip)
             options = [
                 str(sequence[-1] + skip),
@@ -602,7 +630,7 @@ class SkipCountingQuestions:
             display_seq = [str(n) if i != gap_idx else "?" for i, n in enumerate(sequence)]
             display = ", ".join(display_seq)
 
-            question = f"Count by <b>{skip}s</b>. What is the missing number?<br><div style='font-size:1.8rem;margin:15px 0;'>{display}</div>"
+            question = _("Count by") + f" <b>{skip}s</b>. " + _("What is the missing number?") + f"<br><div style='font-size:1.8rem;margin:15px 0;'>{display}</div>"
             answer = str(missing)
             options = [str(missing), str(missing + 1), str(missing - 1)]
 
@@ -610,16 +638,16 @@ class SkipCountingQuestions:
             count = random.randint(3, 6)
             if skip == 2:
                 emoji = "👟"
-                item = "pairs of shoes"
+                item = _("pairs of shoes")
             elif skip == 5:
                 emoji = "🖐️"
-                item = "hands (5 fingers each)"
+                item = _("hands (5 fingers each)")
             else:  # 10
                 emoji = "🔟"
-                item = "groups of 10"
+                item = _("groups of 10")
 
             total = count * skip
-            question = f"Count by <b>{skip}s</b>. How many in total?<br><div style='font-size:2rem;margin:15px 0;'>{emoji * count}</div><p>{count} {item}</p>"
+            question = _("Count by") + f" <b>{skip}s</b>. " + _("How many in total?") + f"<br><div style='font-size:2rem;margin:15px 0;'>{emoji * count}</div><p>{count} {item}</p>"
             answer = str(total)
             options = [str(total), str(total + skip), str(total - skip) if total > skip else str(total + skip * 2)]
 
@@ -636,7 +664,7 @@ class SkipCountingQuestions:
 
         return {
             "type": "skipcounting",
-            "strand": "Skip Counting",
+            "strand": _("Skip Counting"),
             "q": question,
             "a": answer,
             "options": unique
@@ -647,36 +675,36 @@ class MoneyCounting:
     def __init__(self):
         # Canadian Coins: (Value in cents, CSS Class, Label for Accessibility)
         self.coins = [
-            {"val": 5,   "css": "nickel",   "name": "Nickel"},
-            {"val": 10,  "css": "dime",     "name": "Dime"},
-            {"val": 25,  "css": "quarter",  "name": "Quarter"},
-            {"val": 100, "css": "loonie",   "name": "Loonie ($1)"},
-            {"val": 200, "css": "toonie",   "name": "Toonie ($2)"}
+            {"val": 5,   "css": "nickel",   "name": _("Nickel")},
+            {"val": 10,  "css": "dime",     "name": _("Dime")},
+            {"val": 25,  "css": "quarter",  "name": _("Quarter")},
+            {"val": 100, "css": "loonie",   "name": _("Loonie") + " ($1)"},
+            {"val": 200, "css": "toonie",   "name": _("Toonie") + " ($2)"}
         ]
 
     def generate(self):
         # 50% Chance: Identify a single coin
         # 50% Chance: Count a small pile
         mode = random.choice(['identify', 'count'])
-        
+
         if mode == 'identify':
             target = random.choice(self.coins)
             question_html = f"""
                 <div class='coin-container'>
                     <div class='coin {target['css']}'></div>
                 </div>
-                <br>What is this coin?"""
-            
+                <br>""" + _("What is this coin?")
+
             answer = target['name']
             # Distractors: Other coin names
             options = [c['name'] for c in self.coins if c['name'] != answer]
             random.shuffle(options)
             options = options[:2] + [answer]
             random.shuffle(options)
-            
+
             return {
                 "type": "financial",
-                "strand": "Financial",
+                "strand": _("Financial"),
                 "q": question_html,
                 "a": answer,
                 "options": options
@@ -688,22 +716,22 @@ class MoneyCounting:
             pile = []
             for _ in range(random.randint(2, 4)):
                 pile.append(random.choice(self.coins))
-            
+
             total_cents = sum(c['val'] for c in pile)
-            
+
             # Format the answer ($3.25 or 45¢)
             if total_cents >= 100:
                 answer_str = f"${total_cents/100:.2f}"
             else:
                 answer_str = f"{total_cents}¢"
-            
+
             # Generate the Visual Pile
             coins_html = ""
             for c in pile:
                 coins_html += f"<div class='coin {c['css']}'></div>"
-            
-            question_html = f"How much money is this?<br><div class='coin-container'>{coins_html}</div>"
-            
+
+            question_html = _("How much money is this?") + f"<br><div class='coin-container'>{coins_html}</div>"
+
             # Generate Smart Distractors (off by 5, 10, or 25 cents)
             distractors = set()
             while len(distractors) < 2:
@@ -714,13 +742,13 @@ class MoneyCounting:
                         distractors.add(f"${fake_val/100:.2f}")
                     else:
                         distractors.add(f"{fake_val}¢")
-            
+
             options = list(distractors) + [answer_str]
             random.shuffle(options)
-            
+
             return {
                 "type": "financial",
-                "strand": "Financial",
+                "strand": _("Financial"),
                 "q": question_html,
                 "a": answer_str,
                 "options": options
@@ -805,8 +833,8 @@ class CodingQuestions:
 
         return {
             "type": "coding",
-            "strand": "Coding",
-            "q": f"Which code gets the Robot 🤖 to the Star ⭐?<br>{grid_html}",
+            "strand": _("Coding"),
+            "q": _("Which code gets the Robot to the Star?") + f"<br>{grid_html}",
             "a": correct_code,
             "options": list(options)
         }
@@ -815,28 +843,28 @@ class CodingQuestions:
         """Find the bug in the code."""
         scenarios = [
             {
-                "task": "The robot wants to go <b>RIGHT</b> then <b>DOWN</b>.",
+                "task": _("The robot wants to go RIGHT then DOWN."),
                 "buggy": "⬇️ ➡️",
                 "correct": "➡️ ⬇️",
-                "bug_explanation": "The steps are in the wrong order!"
+                "bug_explanation": _("The steps are in the wrong order!")
             },
             {
-                "task": "The robot wants to go <b>UP</b> twice.",
+                "task": _("The robot wants to go UP twice."),
                 "buggy": "⬆️ ⬇️",
                 "correct": "⬆️ ⬆️",
-                "bug_explanation": "The second step goes the wrong way!"
+                "bug_explanation": _("The second step goes the wrong way!")
             },
             {
-                "task": "The robot wants to go <b>LEFT</b> then <b>LEFT</b> again.",
+                "task": _("The robot wants to go LEFT then LEFT again."),
                 "buggy": "⬅️ ➡️",
                 "correct": "⬅️ ⬅️",
-                "bug_explanation": "The second step goes the wrong way!"
+                "bug_explanation": _("The second step goes the wrong way!")
             },
             {
-                "task": "The robot wants to go <b>DOWN</b> then <b>RIGHT</b>.",
+                "task": _("The robot wants to go DOWN then RIGHT."),
                 "buggy": "➡️ ⬇️",
                 "correct": "⬇️ ➡️",
-                "bug_explanation": "The steps are backwards!"
+                "bug_explanation": _("The steps are backwards!")
             },
         ]
         scenario = random.choice(scenarios)
@@ -844,9 +872,9 @@ class CodingQuestions:
         question = f'''
             {scenario["task"]}<br><br>
             <div style="background:#fff3cd;padding:15px;border-radius:10px;margin:10px 0;">
-                <b>Code:</b> <span style="font-size:1.5rem;">{scenario["buggy"]}</span>
+                <b>''' + _("Code:") + f'''</b> <span style="font-size:1.5rem;">{scenario["buggy"]}</span>
             </div>
-            <p>This code has a <b>bug</b>! Which code is correct?</p>
+            <p>''' + _("This code has a bug! Which code is correct?") + '''</p>
         '''
 
         wrong_options = [
@@ -858,7 +886,7 @@ class CodingQuestions:
 
         return {
             "type": "coding",
-            "strand": "Coding",
+            "strand": _("Coding"),
             "q": question,
             "a": scenario["correct"],
             "options": options
@@ -868,49 +896,49 @@ class CodingQuestions:
         """If-then scenarios for Grade 1."""
         scenarios = [
             {
-                "condition": "If it is <b>sunny ☀️</b>, go to the park. If it is <b>rainy 🌧️</b>, stay home.",
-                "weather": "sunny ☀️",
-                "answer": "Go to the park",
-                "options": ["Go to the park", "Stay home", "Go to school"]
+                "condition": _("If it is sunny, go to the park. If it is rainy, stay home."),
+                "weather": _("sunny") + " ☀️",
+                "answer": _("Go to the park"),
+                "options": [_("Go to the park"), _("Stay home"), _("Go to school")]
             },
             {
-                "condition": "If it is <b>sunny ☀️</b>, go to the park. If it is <b>rainy 🌧️</b>, stay home.",
-                "weather": "rainy 🌧️",
-                "answer": "Stay home",
-                "options": ["Go to the park", "Stay home", "Go swimming"]
+                "condition": _("If it is sunny, go to the park. If it is rainy, stay home."),
+                "weather": _("rainy") + " 🌧️",
+                "answer": _("Stay home"),
+                "options": [_("Go to the park"), _("Stay home"), _("Go swimming")]
             },
             {
-                "condition": "If the light is <b>green 🟢</b>, walk. If the light is <b>red 🔴</b>, stop.",
-                "weather": "green 🟢",
-                "answer": "Walk",
-                "options": ["Walk", "Stop", "Run"]
+                "condition": _("If the light is green, walk. If the light is red, stop."),
+                "weather": _("green") + " 🟢",
+                "answer": _("Walk"),
+                "options": [_("Walk"), _("Stop"), _("Run")]
             },
             {
-                "condition": "If the light is <b>green 🟢</b>, walk. If the light is <b>red 🔴</b>, stop.",
-                "weather": "red 🔴",
-                "answer": "Stop",
-                "options": ["Walk", "Stop", "Jump"]
+                "condition": _("If the light is green, walk. If the light is red, stop."),
+                "weather": _("red") + " 🔴",
+                "answer": _("Stop"),
+                "options": [_("Walk"), _("Stop"), _("Jump")]
             },
             {
-                "condition": "If you are <b>hungry 🍽️</b>, eat food. If you are <b>thirsty 💧</b>, drink water.",
-                "weather": "hungry 🍽️",
-                "answer": "Eat food",
-                "options": ["Eat food", "Drink water", "Go to sleep"]
+                "condition": _("If you are hungry, eat food. If you are thirsty, drink water."),
+                "weather": _("hungry") + " 🍽️",
+                "answer": _("Eat food"),
+                "options": [_("Eat food"), _("Drink water"), _("Go to sleep")]
             },
             {
-                "condition": "If you are <b>hungry 🍽️</b>, eat food. If you are <b>thirsty 💧</b>, drink water.",
-                "weather": "thirsty 💧",
-                "answer": "Drink water",
-                "options": ["Eat food", "Drink water", "Watch TV"]
+                "condition": _("If you are hungry, eat food. If you are thirsty, drink water."),
+                "weather": _("thirsty") + " 💧",
+                "answer": _("Drink water"),
+                "options": [_("Eat food"), _("Drink water"), _("Watch TV")]
             },
         ]
         scenario = random.choice(scenarios)
 
         question = f'''
             <div style="background:#e8f4fc;padding:15px;border-radius:10px;margin:10px 0;">
-                <b>Rule:</b> {scenario["condition"]}
+                <b>''' + _("Rule:") + f'''</b> {scenario["condition"]}
             </div>
-            <p>Today it is <b>{scenario["weather"]}</b>. What should you do?</p>
+            <p>''' + _("Today it is") + f''' <b>{scenario["weather"]}</b>. ''' + _("What should you do?") + '''</p>
         '''
 
         options = scenario["options"].copy()
@@ -918,7 +946,7 @@ class CodingQuestions:
 
         return {
             "type": "coding",
-            "strand": "Coding",
+            "strand": _("Coding"),
             "q": question,
             "a": scenario["answer"],
             "options": options
@@ -928,22 +956,22 @@ class CodingQuestions:
         """Loop/repeat patterns."""
         patterns = [
             {
-                "instruction": "Do this <b>3 times</b>: Clap 👏",
+                "instruction": _("Do this 3 times: Clap"),
                 "answer": "👏 👏 👏",
                 "options": ["👏 👏 👏", "👏 👏", "👏 👏 👏 👏"]
             },
             {
-                "instruction": "Do this <b>2 times</b>: Jump ⬆️ then Spin 🔄",
+                "instruction": _("Do this 2 times: Jump then Spin"),
                 "answer": "⬆️ 🔄 ⬆️ 🔄",
                 "options": ["⬆️ 🔄 ⬆️ 🔄", "⬆️ ⬆️ 🔄 🔄", "⬆️ 🔄"]
             },
             {
-                "instruction": "Do this <b>4 times</b>: Step ➡️",
+                "instruction": _("Do this 4 times: Step right"),
                 "answer": "➡️ ➡️ ➡️ ➡️",
                 "options": ["➡️ ➡️ ➡️ ➡️", "➡️ ➡️ ➡️", "➡️ ➡️"]
             },
             {
-                "instruction": "Do this <b>2 times</b>: Wave 👋",
+                "instruction": _("Do this 2 times: Wave"),
                 "answer": "👋 👋",
                 "options": ["👋 👋", "👋 👋 👋", "👋"]
             },
@@ -952,9 +980,9 @@ class CodingQuestions:
 
         question = f'''
             <div style="background:#f0fff0;padding:15px;border-radius:10px;margin:10px 0;">
-                <b>Instruction:</b> {pattern["instruction"]}
+                <b>''' + _("Instruction:") + f'''</b> {pattern["instruction"]}
             </div>
-            <p>What does this look like?</p>
+            <p>''' + _("What does this look like?") + '''</p>
         '''
 
         options = pattern["options"].copy()
@@ -962,7 +990,7 @@ class CodingQuestions:
 
         return {
             "type": "coding",
-            "strand": "Coding",
+            "strand": _("Coding"),
             "q": question,
             "a": pattern["answer"],
             "options": options
@@ -972,39 +1000,39 @@ class CodingQuestions:
         """Order the steps correctly."""
         sequences = [
             {
-                "task": "How do you make a sandwich?",
-                "correct": "Get bread → Add filling → Close sandwich",
+                "task": _("How do you make a sandwich?"),
+                "correct": _("Get bread") + " → " + _("Add filling") + " → " + _("Close sandwich"),
                 "options": [
-                    "Get bread → Add filling → Close sandwich",
-                    "Add filling → Get bread → Close sandwich",
-                    "Close sandwich → Get bread → Add filling"
+                    _("Get bread") + " → " + _("Add filling") + " → " + _("Close sandwich"),
+                    _("Add filling") + " → " + _("Get bread") + " → " + _("Close sandwich"),
+                    _("Close sandwich") + " → " + _("Get bread") + " → " + _("Add filling")
                 ]
             },
             {
-                "task": "How do you brush your teeth?",
-                "correct": "Get toothbrush → Add toothpaste → Brush teeth",
+                "task": _("How do you brush your teeth?"),
+                "correct": _("Get toothbrush") + " → " + _("Add toothpaste") + " → " + _("Brush teeth"),
                 "options": [
-                    "Get toothbrush → Add toothpaste → Brush teeth",
-                    "Brush teeth → Add toothpaste → Get toothbrush",
-                    "Add toothpaste → Brush teeth → Get toothbrush"
+                    _("Get toothbrush") + " → " + _("Add toothpaste") + " → " + _("Brush teeth"),
+                    _("Brush teeth") + " → " + _("Add toothpaste") + " → " + _("Get toothbrush"),
+                    _("Add toothpaste") + " → " + _("Brush teeth") + " → " + _("Get toothbrush")
                 ]
             },
             {
-                "task": "How do you get dressed?",
-                "correct": "Put on shirt → Put on pants → Put on shoes",
+                "task": _("How do you get dressed?"),
+                "correct": _("Put on shirt") + " → " + _("Put on pants") + " → " + _("Put on shoes"),
                 "options": [
-                    "Put on shirt → Put on pants → Put on shoes",
-                    "Put on shoes → Put on shirt → Put on pants",
-                    "Put on pants → Put on shoes → Put on shirt"
+                    _("Put on shirt") + " → " + _("Put on pants") + " → " + _("Put on shoes"),
+                    _("Put on shoes") + " → " + _("Put on shirt") + " → " + _("Put on pants"),
+                    _("Put on pants") + " → " + _("Put on shoes") + " → " + _("Put on shirt")
                 ]
             },
             {
-                "task": "How do you plant a seed?",
-                "correct": "Dig a hole → Put in seed → Cover with soil",
+                "task": _("How do you plant a seed?"),
+                "correct": _("Dig a hole") + " → " + _("Put in seed") + " → " + _("Cover with soil"),
                 "options": [
-                    "Dig a hole → Put in seed → Cover with soil",
-                    "Put in seed → Dig a hole → Cover with soil",
-                    "Cover with soil → Put in seed → Dig a hole"
+                    _("Dig a hole") + " → " + _("Put in seed") + " → " + _("Cover with soil"),
+                    _("Put in seed") + " → " + _("Dig a hole") + " → " + _("Cover with soil"),
+                    _("Cover with soil") + " → " + _("Put in seed") + " → " + _("Dig a hole")
                 ]
             },
         ]
@@ -1012,7 +1040,7 @@ class CodingQuestions:
 
         question = f'''
             <p><b>{seq["task"]}</b></p>
-            <p>Put the steps in the <b>correct order</b>:</p>
+            <p>''' + _("Put the steps in the correct order:") + '''</p>
         '''
 
         options = seq["options"].copy()
@@ -1020,7 +1048,7 @@ class CodingQuestions:
 
         return {
             "type": "coding",
-            "strand": "Coding",
+            "strand": _("Coding"),
             "q": question,
             "a": seq["correct"],
             "options": options

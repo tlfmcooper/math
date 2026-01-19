@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="6" fill="url(#bg)"/>
+  <!-- Simplified Maple Leaf -->
+  <g transform="translate(16,17)" fill="white">
+    <path d="M0,-9 L1.5,-6 L5,-6.5 L3,-4 L6,-2.5 L3.5,-1.5 L4,1 L2,0 L0,4 L-2,0 L-4,1 L-3.5,-1.5 L-6,-2.5 L-3,-4 L-5,-6.5 L-1.5,-6 Z" opacity="0.95"/>
+    <rect x="-1" y="3" width="2" height="4" rx="0.5" opacity="0.9"/>
+  </g>
+</svg>

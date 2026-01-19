@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ g.locale }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Quest Log</title>
+    <title>{{ _('Quest Log') }}</title>
     <!-- Preconnect for faster font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,10 +17,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.svg') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icons/favicon.svg') }}">
 </head>
 <body>
     <div class="container-card">
-        <h1>📜 Past Adventures</h1>
+        <h1>📜 {{ _('Past Adventures') }}</h1>
 
         <!-- User header for context -->
         <div class="user-header" style="margin-bottom: 20px;">
@@ -30,8 +31,8 @@
                     {{ user.name or user.email }}
                 </span>
             {% else %}
-                <span class="user-info">Guest Mode <span class="local-badge">Local Only</span></span>
-                <a href="/login" class="btn-small">Sign in to Sync</a>
+                <span class="user-info">{{ _('Guest Mode') }} <span class="local-badge">{{ _('Local Only') }}</span></span>
+                <a href="/login" class="btn-small">{{ _('Sign in to Sync') }}</a>
             {% endif %}
         </div>
 
@@ -48,7 +49,7 @@
                     <div class="history-score {% if item.percent >= 80 %}score-good{% else %}score-needs-work{% endif %}">
                         {{ item.score_str }}
                     </div>
-                    <a href="/review/{{ item.id }}" class="btn-small" aria-label="Review {{ item.strand }} session">🔍 Review</a>
+                    <a href="/review/{{ item.id }}" class="btn-small" aria-label="{{ _('Review') }} {{ item.strand }}">🔍 {{ _('Review') }}</a>
                 </div>
                 {% endfor %}
             </div>
@@ -58,15 +59,21 @@
             <div class="history-list" id="local-history"></div>
 
             <div id="empty-state" class="empty-state" style="{% if history %}display:none{% endif %}">
-                <p>No adventures yet! Start your first quest to see your progress here.</p>
+                <p>{{ _('No adventures yet! Start your first quest to see your progress here.') }}</p>
             </div>
         </div>
 
         <br>
-        <a href="/" class="btn-secondary">🏠 Back Home</a>
+        <a href="/" class="btn-secondary">🏠 {{ _('Back Home') }}</a>
     </div>
 
     <script>
+        // Translations for JavaScript
+        const i18n = {
+            local: "{{ _('Local') }}",
+            review: "{{ _('Review') }}"
+        };
+
         // Load and display local history for guests
         (function() {
             const isLoggedIn = {{ 'true' if user.is_authenticated else 'false' }};
@@ -83,14 +90,14 @@
                     card.className = 'history-card';
                     card.innerHTML = `
                         <div class="history-info">
-                            <span class="history-date">${item.date} <span class="local-badge">Local</span></span>
+                            <span class="history-date">${item.date} <span class="local-badge">${i18n.local}</span></span>
                             <span class="history-strand">${item.strand}</span>
                             ${item.mood ? `<span class="history-mood">${item.mood}</span>` : ''}
                         </div>
                         <div class="history-score ${scoreClass}">
                             ${item.score_str}
                         </div>
-                        <button class="btn-small" onclick="viewLocalReview('${item.id}')">🔍 Review</button>
+                        <button class="btn-small" onclick="viewLocalReview('${item.id}')">🔍 ${i18n.review}</button>
                     `;
                     localContainer.appendChild(card);
                 });

@@ -972,3 +972,36 @@ a.btn-secondary.btn-light:hover {
     background: rgba(255,255,255,0.2);
     color: white;
 }
+
+/* ============================================
+   LANGUAGE SWITCHER
+   ============================================ */
+.lang-switcher {
+    display: flex;
+    gap: 2px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 2px;
+    margin-right: auto;
+}
+
+.lang-switcher a {
+    display: block;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    color: rgba(255,255,255,0.8);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.lang-switcher a:hover {
+    background: rgba(255,255,255,0.15);
+    color: white;
+}
+
+.lang-switcher a.active {
+    background: rgba(255,255,255,0.25);
+    color: white;
+}

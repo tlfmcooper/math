@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ g.locale }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Quiz Time!</title>
+    <title>{{ _('Quiz Time!') }}</title>
     <!-- Preconnect for faster font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,6 +18,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.svg') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icons/favicon.svg') }}">
     <!-- Load confetti async -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js" async></script>
     <style>
@@ -76,13 +77,13 @@
 
         <!-- Mood Check-in Overlay -->
         <div id="mood-overlay" class="overlay" role="dialog" aria-labelledby="mood-title">
-            <h2 id="mood-title">How are you feeling today?</h2>
-            <p style="color:#666;margin-bottom:10px;">This helps us understand how you're doing!</p>
-            <div class="mood-grid" role="group" aria-label="Mood selection">
-                <button onclick="startGame('🤩 Excited')" aria-label="I'm feeling excited">🤩<br>Excited</button>
-                <button onclick="startGame('🙂 Calm')" aria-label="I'm feeling calm">🙂<br>Calm</button>
-                <button onclick="startGame('🥱 Tired')" aria-label="I'm feeling tired">🥱<br>Tired</button>
-                <button onclick="startGame('😤 Frustrated')" aria-label="I'm feeling frustrated">😤<br>Frustrated</button>
+            <h2 id="mood-title">{{ _('How are you feeling today?') }}</h2>
+            <p style="color:#666;margin-bottom:10px;">{{ _('This helps us understand how you are doing!') }}</p>
+            <div class="mood-grid" role="group" aria-label="{{ _('Mood selection') }}">
+                <button onclick="startGame('🤩 {{ _('Excited') }}')" aria-label="{{ _('I am feeling excited') }}">🤩<br>{{ _('Excited') }}</button>
+                <button onclick="startGame('🙂 {{ _('Calm') }}')" aria-label="{{ _('I am feeling calm') }}">🙂<br>{{ _('Calm') }}</button>
+                <button onclick="startGame('🥱 {{ _('Tired') }}')" aria-label="{{ _('I am feeling tired') }}">🥱<br>{{ _('Tired') }}</button>
+                <button onclick="startGame('😤 {{ _('Frustrated') }}')" aria-label="{{ _('I am feeling frustrated') }}">😤<br>{{ _('Frustrated') }}</button>
             </div>
         </div>
 
@@ -96,32 +97,64 @@
 
             <!-- Progress Bar -->
             <div class="progress-container">
-                <div class="progress-text" id="progress-text">Question 1</div>
+                <div class="progress-text" id="progress-text">{{ _('Question') }} 1</div>
                 <div class="progress-bar">
                     <div class="progress-fill" id="progress-fill"></div>
                 </div>
             </div>
 
             <div id="game-area">
-                <h2 id="question-text" aria-live="polite">Loading...</h2>
-                <div id="options-container" role="group" aria-label="Answer options"></div>
+                <h2 id="question-text" aria-live="polite">{{ _('Loading...') }}</h2>
+                <div id="options-container" role="group" aria-label="{{ _('Answer options') }}"></div>
                 <p id="feedback" aria-live="assertive"></p>
             </div>
 
             <div style="margin-top: 20px;">
-                <button id="next-btn" class="hidden" onclick="loadQuestion()" aria-label="Next question">Next ➡️</button>
-                <button id="finish-btn" class="hidden" onclick="finishSession()" aria-label="Finish and save your progress">Finish & Save 💾</button>
+                <button id="next-btn" class="hidden" onclick="loadQuestion()" aria-label="{{ _('Next question') }}">{{ _('Next') }} ➡️</button>
+                <button id="finish-btn" class="hidden" onclick="finishSession()" aria-label="{{ _('Finish and save your progress') }}">{{ _('Finish & Save') }} 💾</button>
             </div>
         </div>
     </div>
 
     <!-- Mascot -->
     <div id="mascot" class="mascot hidden">
-        <div class="mascot-bubble" id="mascot-text">You've got this!</div>
+        <div class="mascot-bubble" id="mascot-text">{{ _('You have got this!') }}</div>
         <div class="mascot-emoji" aria-hidden="true">🦊</div>
     </div>
 
 <script>
+    // Translations for JavaScript
+    const i18n = {
+        question: "{{ _('Question') }}",
+        correct: "{{ _('Correct!') }}",
+        loading: "{{ _('Loading...') }}",
+        couldNotLoad: "{{ _('Oops! Could not load question. Please try again.') }}",
+        saving: "{{ _('Saving...') }}",
+        couldNotSave: "{{ _('Could not save. Please try again.') }}",
+        theAnswerWas: "{{ _('The answer was') }}",
+        // Mascot messages
+        start: ["{{ _('You have got this!') }}", "{{ _('Let us learn together!') }}", "{{ _('Math is fun!') }}", "{{ _('Ready to explore?') }}"],
+        correctMsg: ["{{ _('Amazing!') }}", "{{ _('You are so smart!') }}", "{{ _('Keep going!') }}", "{{ _('Fantastic!') }}", "{{ _('Wonderful!') }}", "{{ _('Great job!') }}"],
+        wrongMsg: ["{{ _('It is okay!') }}", "{{ _('You are learning!') }}", "{{ _('Try the next one!') }}", "{{ _('Keep trying!') }}", "{{ _('Almost there!') }}"],
+        streak3: ["{{ _('Wow! 3 in a row!') }}", "{{ _('You are on fire!') }} 🔥"],
+        streak5: ["{{ _('5 in a row! Super Star!') }}", "{{ _('Incredible!') }}"],
+        finish: ["{{ _('Great job today!') }}", "{{ _('You did awesome!') }}", "{{ _('See you next time!') }}"],
+        // Growth mindset feedback
+        growthMindset: [
+            "{{ _('Not quite yet! Mistakes help your brain grow.') }} 🧠",
+            "{{ _('Close! Take a deep breath and try the next one.') }}",
+            "{{ _('That was tricky! You are still learning.') }}",
+            "{{ _('Keep going! Every mistake teaches you something new.') }}"
+        ],
+        // Achievements
+        onFire: "{{ _('On Fire!') }} 🔥",
+        threeInRow: "{{ _('3 in a row!') }}",
+        superStar: "{{ _('Super Star!') }} ⭐",
+        fiveInRow: "{{ _('5 in a row!') }}",
+        mathWizard: "{{ _('Math Wizard!') }} 🧙",
+        tenInRow: "{{ _('10 in a row!') }}"
+    };
+
     // Game state
     let currentScore = 0;
     let totalQuestions = 0;
@@ -131,18 +164,16 @@
     let sessionLog = [];
     let startMood = "";
 
-    // Mascot messages
-    const mascotMessages = {
-        start: ["You've got this!", "Let's learn together!", "Math is fun!", "Ready to explore?"],
-        correct: ["Amazing!", "You're so smart!", "Keep going!", "Fantastic!", "Wonderful!", "Great job!"],
-        wrong: ["It's okay!", "You're learning!", "Try the next one!", "Keep trying!", "Almost there!"],
-        streak3: ["Wow! 3 in a row!", "You're on fire! 🔥"],
-        streak5: ["5 in a row! Super Star!", "Incredible!"],
-        finish: ["Great job today!", "You did awesome!", "See you next time!"]
-    };
-
     function updateMascot(state) {
-        const messages = mascotMessages[state] || mascotMessages.start;
+        let messages;
+        if (state === 'start') messages = i18n.start;
+        else if (state === 'correct') messages = i18n.correctMsg;
+        else if (state === 'wrong') messages = i18n.wrongMsg;
+        else if (state === 'streak3') messages = i18n.streak3;
+        else if (state === 'streak5') messages = i18n.streak5;
+        else if (state === 'finish') messages = i18n.finish;
+        else messages = i18n.start;
+
         const msg = messages[Math.floor(Math.random() * messages.length)];
         document.getElementById('mascot-text').innerText = msg;
     }
@@ -170,13 +201,13 @@
 
             // Achievement badges at milestones
             if (currentStreak === 3) {
-                showAchievementBadge("On Fire! 🔥", "3 in a row!");
+                showAchievementBadge(i18n.onFire, i18n.threeInRow);
                 updateMascot('streak3');
             } else if (currentStreak === 5) {
-                showAchievementBadge("Super Star! ⭐", "5 in a row!");
+                showAchievementBadge(i18n.superStar, i18n.fiveInRow);
                 updateMascot('streak5');
             } else if (currentStreak === 10) {
-                showAchievementBadge("Math Wizard! 🧙", "10 in a row!");
+                showAchievementBadge(i18n.mathWizard, i18n.tenInRow);
             }
         } else {
             currentStreak = 0;
@@ -185,7 +216,7 @@
     }
 
     function updateProgress() {
-        document.getElementById('progress-text').innerText = `Question ${totalQuestions + 1}`;
+        document.getElementById('progress-text').innerText = `${i18n.question} ${totalQuestions + 1}`;
         // Progress bar fills based on questions answered (assuming ~10 questions per session)
         const progress = Math.min((totalQuestions / 10) * 100, 100);
         document.getElementById('progress-fill').style.width = `${progress}%`;
@@ -224,7 +255,7 @@
             })
             .catch(err => {
                 console.error('Error loading question:', err);
-                document.getElementById('question-text').innerHTML = "Oops! Could not load question. Please try again.";
+                document.getElementById('question-text').innerHTML = i18n.couldNotLoad;
             });
     }
 
@@ -245,19 +276,13 @@
         if (isCorrect) {
             currentScore++;
             document.getElementById('score-board').innerText = `⭐ ${currentScore}`;
-            feedback.innerHTML = "<h2 style='color:#2ecc71'>🎉 Correct!</h2>";
+            feedback.innerHTML = `<h2 style='color:#2ecc71'>🎉 ${i18n.correct}</h2>`;
             confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
             if (currentStreak < 3) updateMascot('correct');
         } else {
             // Growth mindset feedback
-            const messages = [
-                "Not quite yet! Mistakes help your brain grow. 🧠",
-                "Close! Take a deep breath and try the next one.",
-                "That was tricky! You're still learning.",
-                "Keep going! Every mistake teaches you something new."
-            ];
-            const msg = messages[Math.floor(Math.random() * messages.length)];
-            feedback.innerHTML = `<h2 style='color:#e67e22'>${msg}</h2><p>The answer was <strong>${correct}</strong></p>`;
+            const msg = i18n.growthMindset[Math.floor(Math.random() * i18n.growthMindset.length)];
+            feedback.innerHTML = `<h2 style='color:#e67e22'>${msg}</h2><p>${i18n.theAnswerWas} <strong>${correct}</strong></p>`;
             updateMascot('wrong');
         }
 
@@ -273,7 +298,7 @@
     async function finishSession() {
         const btn = document.getElementById('finish-btn');
         btn.disabled = true;
-        btn.innerHTML = 'Saving... <span class="spinner"></span>';
+        btn.innerHTML = `${i18n.saving} <span class="spinner"></span>`;
 
         updateMascot('finish');
         const today = new Date().toLocaleString();
@@ -309,8 +334,8 @@
                 window.location.href = '/history';
             } catch (err) {
                 btn.disabled = false;
-                btn.innerHTML = 'Finish & Save 💾';
-                alert('Could not save. Please try again.');
+                btn.innerHTML = '{{ _("Finish & Save") }} 💾';
+                alert(i18n.couldNotSave);
             }
         }
     }

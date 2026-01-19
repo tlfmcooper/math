@@ -4,13 +4,14 @@ import uuid
 from dotenv import load_dotenv
 load_dotenv()  # Load .env file before accessing env vars
 
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, g
 from curriculum import generate_question
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from authlib.integrations.flask_client import OAuth
 from werkzeug.middleware.proxy_fix import ProxyFix
+from flask_babel import Babel, gettext as _
 
 app = Flask(__name__)
 # Fix for running behind a reverse proxy (Railway, Heroku, etc.)
@@ -19,6 +20,23 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 HISTORY_FILE = 'history.json'
 DATABASE_URL = os.environ.get('DATABASE_URL')
+
+# Flask-Babel configuration for i18n
+app.config['BABEL_DEFAULT_LOCALE'] = 'en'
+app.config['BABEL_SUPPORTED_LOCALES'] = ['en', 'fr']
+
+def get_locale():
+    # Check user preference in session first
+    if 'lang' in session:
+        return session['lang']
+    # Then check browser Accept-Language header
+    return request.accept_languages.best_match(['en', 'fr'], default='en')
+
+babel = Babel(app, locale_selector=get_locale)
+
+@app.before_request
+def before_request():
+    g.locale = get_locale()
 
 # Flask-Login setup
 login_manager = LoginManager()
@@ -197,6 +215,12 @@ def auth_callback():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+@app.route('/lang/<lang>')
+def set_language(lang):
+    if lang in ['en', 'fr']:
+        session['lang'] = lang
+    return redirect(request.referrer or url_for('index'))
 
 @app.route('/quiz/<strand>')
 def quiz(strand):
