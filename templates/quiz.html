@@ -4,72 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>{{ _('Quiz Time!') }}</title>
-    <!-- Preconnect for faster font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
-    <!-- Non-blocking font load -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap"></noscript>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <!-- PWA -->
+    <script src="{{ url_for('static', filename='animation-engine.js') }}" defer></script>
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     <meta name="theme-color" content="#667eea">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.svg') }}">
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icons/favicon.svg') }}">
-    <!-- Load confetti async -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js" async></script>
     <style>
-        /* Internal styles for the overlay logic */
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, #f0f8ff 0%, #e8f4fc 100%);
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
-            z-index: 100;
-            padding: 20px;
+            z-index: 100; padding: 20px;
         }
-        .overlay h2 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            color: #333;
-        }
+        .overlay h2 { font-size: 1.5rem; margin-bottom: 10px; color: #333; }
         .mood-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-            max-width: 350px;
+            display: grid; grid-template-columns: repeat(2, 1fr);
+            gap: 15px; margin-top: 20px; max-width: 350px;
         }
         @media (min-width: 480px) {
-            .mood-grid {
-                grid-template-columns: repeat(4, 1fr);
-                max-width: 600px;
-            }
+            .mood-grid { grid-template-columns: repeat(4, 1fr); max-width: 600px; }
         }
         .mood-grid button {
-            font-size: 1.3rem;
-            padding: 20px 15px;
-            border: 3px solid #e0e0e0;
-            border-radius: 15px;
-            background: white;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            min-width: 80px;
-            font-family: inherit;
+            font-size: 1.3rem; padding: 20px 15px; border: 3px solid #e0e0e0;
+            border-radius: 15px; background: white; cursor: pointer;
+            transition: all 0.2s ease; min-width: 80px; font-family: inherit;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        .mood-grid button:hover {
-            transform: translateY(-3px);
-            border-color: #3498db;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-        }
-        .mood-grid button:focus {
-            outline: 3px solid #3498db;
-            outline-offset: 2px;
-        }
+        .mood-grid button:hover { transform: translateY(-3px); border-color: #3498db; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+        .mood-grid button:focus { outline: 3px solid #3498db; outline-offset: 2px; }
     </style>
 </head>
 <body>
@@ -95,7 +67,6 @@
                 <span id="score-board">⭐ 0</span>
             </div>
 
-            <!-- Progress Bar -->
             <div class="progress-container">
                 <div class="progress-text" id="progress-text">{{ _('Question') }} 1</div>
                 <div class="progress-bar">
@@ -107,11 +78,42 @@
                 <h2 id="question-text" aria-live="polite">{{ _('Loading...') }}</h2>
                 <div id="options-container" role="group" aria-label="{{ _('Answer options') }}"></div>
                 <p id="feedback" aria-live="assertive"></p>
+
+                <!-- Animation Stage -->
+                <div id="animation-stage" class="hidden" role="region" aria-label="Math animation">
+                    <div id="animation-objects"></div>
+                    <div id="animation-toolbar" class="hidden">
+                        <button class="anim-tool-btn" onclick="window.animEngine && window.animEngine.replay()" aria-label="Watch Again">&#9654; Again</button>
+                        <button class="anim-tool-btn" id="speed-btn" onclick="toggleSpeed()" aria-label="Slow motion">&#128034; Slow</button>
+                        <button class="anim-tool-btn" id="mute-btn" onclick="toggleMute()" aria-label="Toggle sound">&#128266;</button>
+                        <button class="anim-tool-btn" onclick="window.animEngine && window.animEngine.showDrawCanvas()" aria-label="Draw it yourself">&#9999; Draw</button>
+                    </div>
+                    <div id="draw-canvas-wrapper" class="hidden">
+                        <canvas id="draw-canvas" role="img" aria-label="Drawing canvas" style="touch-action:none"></canvas>
+                        <div style="text-align:center;margin-top:8px;display:flex;gap:10px;justify-content:center;">
+                            <button class="anim-tool-btn" onclick="clearDrawCanvas()">&#128465; Clear</button>
+                            <button class="anim-tool-btn" onclick="hideDrawCanvas()">&#10003; Done</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chatbot Interface -->
+                <div id="chat-container" class="hidden" style="margin-top:20px;text-align:left;border:2px solid #e0e0e0;border-radius:15px;padding:15px;background:#fff;">
+                    <h3 style="margin-top:0;color:var(--primary-blue);">&#129302; {{ _('Math Helper') }}</h3>
+                    <div id="chat-messages" style="margin-bottom:15px;padding-right:5px;"></div>
+                    <div style="display:flex;gap:10px;">
+                        <input type="text" id="chat-input" placeholder="{{ _('Type your answer...') }}"
+                            style="flex:1;padding:15px;border:2px solid #ddd;border-radius:10px;font-size:1.2rem;"
+                            onkeypress="if(event.key === 'Enter') sendChatMessage()">
+                        <button onclick="sendChatMessage()" aria-label="{{ _('Send message') }}"
+                            style="padding:10px 20px;background:var(--primary-blue);color:white;border:none;border-radius:10px;cursor:pointer;font-weight:bold;font-size:1.2rem;">{{ _('Send') }}</button>
+                    </div>
+                </div>
             </div>
 
-            <div style="margin-top: 20px;">
-                <button id="next-btn" class="hidden" onclick="loadQuestion()" aria-label="{{ _('Next question') }}">{{ _('Next') }} ➡️</button>
-                <button id="finish-btn" class="hidden" onclick="finishSession()" aria-label="{{ _('Finish and save your progress') }}">{{ _('Finish & Save') }} 💾</button>
+            <div style="margin-top:20px;">
+                <button id="next-btn" class="hidden" onclick="loadQuestion()" aria-label="{{ _('Next question') }}">{{ _('Next') }} &#10145;</button>
+                <button id="finish-btn" class="hidden" onclick="finishSession()" aria-label="{{ _('Finish and save your progress') }}">{{ _('Finish & Save') }} &#128190;</button>
             </div>
         </div>
     </div>
@@ -119,11 +121,10 @@
     <!-- Mascot -->
     <div id="mascot" class="mascot hidden">
         <div class="mascot-bubble" id="mascot-text">{{ _('You have got this!') }}</div>
-        <div class="mascot-emoji" aria-hidden="true">🦊</div>
+        <div class="mascot-emoji" aria-hidden="true">&#128568;</div>
     </div>
 
 <script>
-    // Translations for JavaScript
     const i18n = {
         question: "{{ _('Question') }}",
         correct: "{{ _('Correct!') }}",
@@ -132,30 +133,26 @@
         saving: "{{ _('Saving...') }}",
         couldNotSave: "{{ _('Could not save. Please try again.') }}",
         theAnswerWas: "{{ _('The answer was') }}",
-        // Mascot messages
         start: ["{{ _('You have got this!') }}", "{{ _('Let us learn together!') }}", "{{ _('Math is fun!') }}", "{{ _('Ready to explore?') }}"],
         correctMsg: ["{{ _('Amazing!') }}", "{{ _('You are so smart!') }}", "{{ _('Keep going!') }}", "{{ _('Fantastic!') }}", "{{ _('Wonderful!') }}", "{{ _('Great job!') }}"],
         wrongMsg: ["{{ _('It is okay!') }}", "{{ _('You are learning!') }}", "{{ _('Try the next one!') }}", "{{ _('Keep trying!') }}", "{{ _('Almost there!') }}"],
-        streak3: ["{{ _('Wow! 3 in a row!') }}", "{{ _('You are on fire!') }} 🔥"],
+        streak3: ["{{ _('Wow! 3 in a row!') }}", "{{ _('You are on fire!') }} \uD83D\uDD25"],
         streak5: ["{{ _('5 in a row! Super Star!') }}", "{{ _('Incredible!') }}"],
         finish: ["{{ _('Great job today!') }}", "{{ _('You did awesome!') }}", "{{ _('See you next time!') }}"],
-        // Growth mindset feedback
         growthMindset: [
-            "{{ _('Not quite yet! Mistakes help your brain grow.') }} 🧠",
+            "{{ _('Not quite yet! Mistakes help your brain grow.') }} \uD83E\uDDE0",
             "{{ _('Close! Take a deep breath and try the next one.') }}",
             "{{ _('That was tricky! You are still learning.') }}",
             "{{ _('Keep going! Every mistake teaches you something new.') }}"
         ],
-        // Achievements
-        onFire: "{{ _('On Fire!') }} 🔥",
+        onFire: "{{ _('On Fire!') }} \uD83D\uDD25",
         threeInRow: "{{ _('3 in a row!') }}",
-        superStar: "{{ _('Super Star!') }} ⭐",
+        superStar: "{{ _('Super Star!') }} \u2B50",
         fiveInRow: "{{ _('5 in a row!') }}",
-        mathWizard: "{{ _('Math Wizard!') }} 🧙",
+        mathWizard: "{{ _('Math Wizard!') }} \uD83E\uDDD9",
         tenInRow: "{{ _('10 in a row!') }}"
     };
 
-    // Game state
     let currentScore = 0;
     let totalQuestions = 0;
     let currentStreak = 0;
@@ -163,52 +160,141 @@
     const strand = "{{ strand }}";
     let sessionLog = [];
     let startMood = "";
+    let chatHistory = [];
+    window.lastWrongAnswer = "";
+    window.animEngine = null;
+    let _slowMode = false;
 
-    function updateMascot(state) {
-        let messages;
-        if (state === 'start') messages = i18n.start;
-        else if (state === 'correct') messages = i18n.correctMsg;
-        else if (state === 'wrong') messages = i18n.wrongMsg;
-        else if (state === 'streak3') messages = i18n.streak3;
-        else if (state === 'streak5') messages = i18n.streak5;
-        else if (state === 'finish') messages = i18n.finish;
-        else messages = i18n.start;
+    // ── DOM helpers ───────────────────────────────────────────────────────────
 
-        const msg = messages[Math.floor(Math.random() * messages.length)];
-        document.getElementById('mascot-text').innerText = msg;
+    /** Set element text content, clearing all children first. */
+    function setText(el, text) {
+        el.textContent = text;
     }
+
+    /** Clear all children of an element. */
+    function clearEl(el) {
+        while (el.firstChild) el.removeChild(el.firstChild);
+    }
+
+    /**
+     * Set trusted server-generated HTML on an element.
+     * Only use for content that comes from our own curriculum.py, never user input.
+     */
+    function setServerHTML(el, html) {
+        // This content originates from curriculum.py (server-side, not user input).
+        // Using a DOMParser to create a safe document fragment.
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        clearEl(el);
+        Array.from(doc.body.childNodes).forEach(node => el.appendChild(node.cloneNode(true)));
+    }
+
+    // ── Sound / mute ──────────────────────────────────────────────────────────
+
+    function _initMuteState() {
+        const muted = localStorage.getItem('mathSoundMuted') === 'true';
+        window.animSoundEnabled = !muted;
+        const btn = document.getElementById('mute-btn');
+        if (btn) btn.textContent = muted ? '\uD83D\uDD07' : '\uD83D\uDD0A';
+    }
+
+    function toggleMute() {
+        window.animSoundEnabled = !window.animSoundEnabled;
+        const muted = !window.animSoundEnabled;
+        localStorage.setItem('mathSoundMuted', muted ? 'true' : 'false');
+        const btn = document.getElementById('mute-btn');
+        if (btn) btn.textContent = muted ? '\uD83D\uDD07' : '\uD83D\uDD0A';
+    }
+
+    function toggleSpeed() {
+        _slowMode = !_slowMode;
+        if (window.animEngine) window.animEngine.setSpeed(_slowMode ? 0.4 : 1.0);
+        const btn = document.getElementById('speed-btn');
+        if (btn) btn.textContent = _slowMode ? '\uD83D\uDC07 Normal' : '\uD83D\uDC22 Slow';
+    }
+
+    function clearDrawCanvas() {
+        if (window.animEngine && window.animEngine._drawCanvas) {
+            window.animEngine._drawCanvas.clear();
+        }
+    }
+
+    function hideDrawCanvas() {
+        const wrapper = document.getElementById('draw-canvas-wrapper');
+        if (wrapper) wrapper.classList.add('hidden');
+    }
+
+    // ── Mascot / speech ───────────────────────────────────────────────────────
+
+    function speakAndAnimate(msg, state) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const cleanMsg = msg.replace(/[\u{1F000}-\u{1FFFF}]|[\u{2600}-\u{27BF}]/gu, '').trim();
+            const utter = new SpeechSynthesisUtterance(cleanMsg);
+            const voices = window.speechSynthesis.getVoices();
+            const preferred = voices.find(v => /zira|google uk|google us/i.test(v.name) || v.gender === 'female');
+            if (preferred) utter.voice = preferred;
+            window.speechSynthesis.speak(utter);
+        }
+        const mascot = document.getElementById('mascot');
+        const animClass = (state === 'wrong') ? 'mascot-shake' : 'mascot-jump';
+        mascot.classList.remove('mascot-jump', 'mascot-shake');
+        void mascot.offsetWidth;
+        mascot.classList.add(animClass);
+        mascot.addEventListener('animationend', () => mascot.classList.remove(animClass), { once: true });
+    }
+
+    async function updateMascot(state, question, userAnswer, correctAnswer) {
+        question = question || '';
+        userAnswer = userAnswer || '';
+        correctAnswer = correctAnswer || '';
+        const mascotText = document.getElementById('mascot-text');
+        mascotText.textContent = '...';
+        try {
+            const res = await fetch('/api/mascot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ state, question, user_answer: userAnswer, correct_answer: correctAnswer })
+            });
+            const data = await res.json();
+            const msg = data.message || '...';
+            mascotText.textContent = msg;
+            speakAndAnimate(msg, state);
+        } catch (e) {
+            mascotText.textContent = '\uD83D\uDE38';
+            speakAndAnimate('Keep going!', state);
+        }
+    }
+
+    // ── Achievements ──────────────────────────────────────────────────────────
 
     function showAchievementBadge(title, subtitle) {
         const badge = document.createElement('div');
         badge.className = 'achievement-badge';
-        badge.innerHTML = `<h3>${title}</h3><p>${subtitle}</p>`;
         badge.setAttribute('role', 'alert');
+        const h3 = document.createElement('h3');
+        h3.textContent = title;
+        const p = document.createElement('p');
+        p.textContent = subtitle;
+        badge.appendChild(h3);
+        badge.appendChild(p);
         document.body.appendChild(badge);
         setTimeout(() => badge.remove(), 3000);
     }
 
     function updateStreak(isCorrect) {
         const streakDisplay = document.getElementById('streak-display');
-
         if (isCorrect) {
             currentStreak++;
             maxStreak = Math.max(currentStreak, maxStreak);
-
             if (currentStreak >= 3) {
                 streakDisplay.className = 'streak-counter';
-                streakDisplay.innerHTML = `🔥 ${currentStreak}`;
+                streakDisplay.textContent = '\uD83D\uDD25 ' + currentStreak;
             }
-
-            // Achievement badges at milestones
-            if (currentStreak === 3) {
-                showAchievementBadge(i18n.onFire, i18n.threeInRow);
-                updateMascot('streak3');
-            } else if (currentStreak === 5) {
-                showAchievementBadge(i18n.superStar, i18n.fiveInRow);
-                updateMascot('streak5');
-            } else if (currentStreak === 10) {
-                showAchievementBadge(i18n.mathWizard, i18n.tenInRow);
-            }
+            if (currentStreak === 3) { showAchievementBadge(i18n.onFire, i18n.threeInRow); updateMascot('streak3'); }
+            else if (currentStreak === 5) { showAchievementBadge(i18n.superStar, i18n.fiveInRow); updateMascot('streak5'); }
+            else if (currentStreak === 10) { showAchievementBadge(i18n.mathWizard, i18n.tenInRow); }
         } else {
             currentStreak = 0;
             streakDisplay.className = 'streak-counter hidden';
@@ -216,107 +302,297 @@
     }
 
     function updateProgress() {
-        document.getElementById('progress-text').innerText = `${i18n.question} ${totalQuestions + 1}`;
-        // Progress bar fills based on questions answered (assuming ~10 questions per session)
-        const progress = Math.min((totalQuestions / 10) * 100, 100);
-        document.getElementById('progress-fill').style.width = `${progress}%`;
+        document.getElementById('progress-text').textContent = i18n.question + ' ' + (totalQuestions + 1);
+        document.getElementById('progress-fill').style.width = Math.min((totalQuestions / 10) * 100, 100) + '%';
     }
+
+    // ── Game flow ─────────────────────────────────────────────────────────────
 
     function startGame(mood) {
         startMood = mood;
         document.getElementById('mood-overlay').classList.add('hidden');
         document.getElementById('game-ui').classList.remove('hidden');
         document.getElementById('mascot').classList.remove('hidden');
+
+        if (typeof initAudio === 'function') initAudio();
+        _initMuteState();
+
+        window.animEngine = new AnimationEngine(
+            document.getElementById('animation-stage'),
+            document.getElementById('animation-objects'),
+            document.getElementById('animation-toolbar'),
+            document.getElementById('mascot')
+        );
+        window.animEngine.setSpeed(_slowMode ? 0.4 : 1.0);
+
         updateMascot('start');
         loadQuestion();
     }
 
     function loadQuestion() {
-        document.getElementById('feedback').innerHTML = "";
+        if (window.animEngine) window.animEngine.cancel();
+
+        const stage = document.getElementById('animation-stage');
+        stage.classList.add('hidden');
+        stage.classList.remove('stage-playing', 'stage-complete');
+        document.getElementById('animation-toolbar').classList.add('hidden');
+        document.getElementById('draw-canvas-wrapper').classList.add('hidden');
+
+        clearEl(document.getElementById('feedback'));
+        document.getElementById('chat-container').classList.add('hidden');
         document.getElementById('next-btn').classList.add('hidden');
         updateProgress();
 
-        fetch(`/api/get_question/${strand}`)
+        fetch('/api/get_question/' + strand)
             .then(r => r.json())
             .then(data => {
                 window.currentQ = data;
-                document.getElementById('question-text').innerHTML = data.q;
-                const container = document.getElementById('options-container');
-                container.innerHTML = '';
+                // Question text from curriculum.py — server-generated, not user input
+                setServerHTML(document.getElementById('question-text'), data.q);
 
+                const container = document.getElementById('options-container');
+                clearEl(container);
                 data.options.forEach((opt, index) => {
-                    let btn = document.createElement('button');
+                    const btn = document.createElement('button');
                     btn.className = 'option-btn';
-                    btn.innerHTML = opt;
-                    btn.setAttribute('aria-label', `Option ${index + 1}: ${opt}`);
+                    // Option text from curriculum.py — server-generated
+                    setServerHTML(btn, String(opt));
+                    btn.setAttribute('aria-label', 'Option ' + (index + 1) + ': ' + opt);
                     btn.onclick = () => checkAnswer(opt, data.a);
                     container.appendChild(btn);
                 });
             })
             .catch(err => {
                 console.error('Error loading question:', err);
-                document.getElementById('question-text').innerHTML = i18n.couldNotLoad;
+                document.getElementById('question-text').textContent = i18n.couldNotLoad;
             });
     }
 
     function checkAnswer(selected, correct) {
-        const feedback = document.getElementById('feedback');
         totalQuestions++;
         const isCorrect = String(selected) === String(correct);
 
-        sessionLog.push({
-            q_html: window.currentQ.q,
-            user_ans: selected,
-            correct_ans: correct,
-            is_correct: isCorrect
-        });
-
+        const logEntry = { q_html: window.currentQ.q, user_ans: selected, correct_ans: correct, is_correct: isCorrect };
+        sessionLog.push(logEntry);
         updateStreak(isCorrect);
+
+        const feedback = document.getElementById('feedback');
+        clearEl(feedback);
 
         if (isCorrect) {
             currentScore++;
-            document.getElementById('score-board').innerText = `⭐ ${currentScore}`;
-            feedback.innerHTML = `<h2 style='color:#2ecc71'>🎉 ${i18n.correct}</h2>`;
+            document.getElementById('score-board').textContent = '\u2B50 ' + currentScore;
+            const h2 = document.createElement('h2');
+            h2.style.color = '#2ecc71';
+            h2.textContent = '\uD83C\uDF89 ' + i18n.correct;
+            feedback.appendChild(h2);
             confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-            if (currentStreak < 3) updateMascot('correct');
+            if (currentStreak < 3) updateMascot('correct', window.currentQ.q, selected, correct);
         } else {
-            // Growth mindset feedback
             const msg = i18n.growthMindset[Math.floor(Math.random() * i18n.growthMindset.length)];
-            feedback.innerHTML = `<h2 style='color:#e67e22'>${msg}</h2><p>${i18n.theAnswerWas} <strong>${correct}</strong></p>`;
-            updateMascot('wrong');
+            const h2 = document.createElement('h2');
+            h2.style.color = '#e67e22';
+            h2.textContent = msg;
+            feedback.appendChild(h2);
+            updateMascot('wrong', window.currentQ.q, selected, correct);
+            triggerChatbot(selected, correct, logEntry);
         }
 
         document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
         document.getElementById('next-btn').classList.remove('hidden');
         document.getElementById('finish-btn').classList.remove('hidden');
-
-        // Update progress bar
-        const progress = Math.min((totalQuestions / 10) * 100, 100);
-        document.getElementById('progress-fill').style.width = `${progress}%`;
+        document.getElementById('progress-fill').style.width = Math.min((totalQuestions / 10) * 100, 100) + '%';
     }
+
+    // ── Shared chat response handler ──────────────────────────────────────────
+
+    function handleChatResponse(data, logEntry) {
+        const messagesDiv = document.getElementById('chat-messages');
+        if (messagesDiv.lastChild) messagesDiv.removeChild(messagesDiv.lastChild);
+
+        let hadAnimation = false;
+        if (data.animation && window.animEngine) {
+            const played = window.animEngine.play(data.animation);
+            hadAnimation = played;
+            if (!played) renderAnimationLegacy(data.animation);
+        }
+
+        appendChatMessage('model', data.reply || "Oops! I couldn't think of anything.");
+        if (hadAnimation && logEntry) logEntry.had_animation = true;
+    }
+
+    // ── Chatbot ───────────────────────────────────────────────────────────────
+
+    async function triggerChatbot(wrongAnswer, correctAnswer, logEntry) {
+        document.getElementById('chat-container').classList.remove('hidden');
+        clearEl(document.getElementById('chat-messages'));
+        chatHistory = [];
+        window.lastWrongAnswer = wrongAnswer;
+
+        if (window.animEngine) window.animEngine.showLoading();
+        appendChatMessage('model', '...');
+
+        try {
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    question: window.currentQ.q,
+                    user_answer: wrongAnswer,
+                    correct_answer: correctAnswer,
+                    messages: chatHistory,
+                    strand: strand
+                })
+            });
+            const data = await res.json();
+            handleChatResponse(data, logEntry);
+        } catch (e) {
+            const messagesDiv = document.getElementById('chat-messages');
+            if (messagesDiv.lastChild) messagesDiv.removeChild(messagesDiv.lastChild);
+            appendChatMessage('model', 'Oops! Something went wrong.');
+        }
+    }
+
+    async function sendChatMessage() {
+        const input = document.getElementById('chat-input');
+        const text = input.value.trim();
+        if (!text) return;
+
+        appendChatMessage('user', text);
+        input.value = '';
+        input.disabled = true;
+        appendChatMessage('model', '...');
+
+        try {
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    question: window.currentQ.q,
+                    user_answer: window.lastWrongAnswer,
+                    correct_answer: window.currentQ.a,
+                    messages: chatHistory,
+                    strand: strand
+                })
+            });
+            const data = await res.json();
+            handleChatResponse(data, null);
+        } catch (e) {
+            const messagesDiv = document.getElementById('chat-messages');
+            if (messagesDiv.lastChild) messagesDiv.removeChild(messagesDiv.lastChild);
+            appendChatMessage('model', i18n.couldNotLoad);
+        }
+        input.disabled = false;
+        input.focus();
+    }
+
+    // ── Legacy animation fallback ─────────────────────────────────────────────
+
+    function renderAnimationLegacy(anim) {
+        if (!anim || anim.type === 'none' || !anim.type) return;
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText = 'margin:10px 0;padding:15px;background:#f0f8ff;border-radius:10px;border:2px dashed #3498db;text-align:center;';
+        if (anim.message) {
+            const h4 = document.createElement('h4');
+            h4.style.cssText = 'margin-top:0;margin-bottom:10px;color:#3498db;';
+            h4.textContent = anim.message;
+            wrapper.appendChild(h4);
+        }
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;flex-wrap:wrap;justify-content:center;gap:10px;font-size:2.5rem;min-height:50px;line-height:1.4;padding:10px 0;';
+        let emoji = '\uD83C\uDF4E';
+        if (anim.type && anim.type.includes('block')) emoji = '\uD83E\uDDF1';
+        const count = Math.min(anim.count || 0, 15);
+        for (let i = 0; i < count; i++) {
+            const item = document.createElement('div');
+            item.className = 'anim-pop-in';
+            item.style.cssText = 'animation-duration:0.6s;animation-fill-mode:both;animation-delay:' + (i * 0.15) + 's';
+            item.textContent = emoji;
+            row.appendChild(item);
+        }
+        wrapper.appendChild(row);
+        const messagesDiv = document.getElementById('chat-messages');
+        messagesDiv.appendChild(wrapper);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // ── Chat bubble builder ───────────────────────────────────────────────────
+
+    function appendChatMessage(role, content) {
+        if (content !== '...') chatHistory.push({ role: role, content: content });
+
+        const messagesDiv = document.getElementById('chat-messages');
+        const bubble = document.createElement('div');
+        bubble.style.cssText = 'margin-bottom:10px;padding:12px 16px;border-radius:15px;max-width:85%;line-height:1.4;font-size:1.3rem;';
+
+        if (role === 'user') {
+            bubble.style.cssText += 'background:var(--primary-blue);color:white;margin-left:auto;border-bottom-right-radius:4px;';
+            bubble.textContent = content;
+        } else {
+            bubble.style.cssText += 'background:#f5f7fa;color:#333;margin-right:auto;border-bottom-left-radius:4px;border:1px solid #e1e4e8;';
+            if (content === '...') {
+                ['.', '.', '.'].forEach(dot => {
+                    const span = document.createElement('span');
+                    span.className = 'typing-dot';
+                    span.textContent = dot;
+                    bubble.appendChild(span);
+                });
+                let i = 0;
+                bubble.typingInterval = setInterval(() => {
+                    const dots = bubble.querySelectorAll('.typing-dot');
+                    if (!dots.length) return clearInterval(bubble.typingInterval);
+                    dots.forEach(d => d.style.opacity = '0.3');
+                    if (dots[i % 3]) dots[i % 3].style.opacity = '1';
+                    i++;
+                }, 300);
+            } else {
+                // Render model reply with basic markdown (bold + line breaks)
+                // content comes from Gemini's reply field — we process as plain text with limited markdown
+                const segments = content.split('\n');
+                segments.forEach((line, li) => {
+                    if (li > 0) bubble.appendChild(document.createElement('br'));
+                    // Handle **bold** spans
+                    const parts = line.split(/\*\*(.*?)\*\*/g);
+                    parts.forEach((part, pi) => {
+                        if (pi % 2 === 1) {
+                            const strong = document.createElement('strong');
+                            strong.textContent = part;
+                            bubble.appendChild(strong);
+                        } else {
+                            bubble.appendChild(document.createTextNode(part));
+                        }
+                    });
+                });
+            }
+        }
+
+        messagesDiv.appendChild(bubble);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        return bubble;
+    }
+
+    // ── Finish ────────────────────────────────────────────────────────────────
 
     async function finishSession() {
         const btn = document.getElementById('finish-btn');
         btn.disabled = true;
-        btn.innerHTML = `${i18n.saving} <span class="spinner"></span>`;
+        btn.textContent = i18n.saving;
+        const spinner = document.createElement('span');
+        spinner.className = 'spinner';
+        btn.appendChild(spinner);
 
         updateMascot('finish');
         const today = new Date().toLocaleString();
         const sessionData = {
-            date: today,
-            strand: strand,
-            mood: startMood,
-            score_str: `${currentScore}/${totalQuestions}`,
+            date: today, strand: strand, mood: startMood,
+            score_str: currentScore + '/' + totalQuestions,
             percent: Math.round((currentScore / totalQuestions) * 100),
-            details: sessionLog,
-            max_streak: maxStreak
+            details: sessionLog, max_streak: maxStreak
         };
 
-        // Check if user is logged in (passed from template)
         const isGuest = {{ 'false' if user.is_authenticated else 'true' }};
 
         if (isGuest) {
-            // Save to localStorage for guests
             const localHistory = JSON.parse(localStorage.getItem('mathHistory') || '[]');
             sessionData.id = 'local-' + Date.now();
             sessionData.isLocal = true;
@@ -324,38 +600,32 @@
             localStorage.setItem('mathHistory', JSON.stringify(localHistory.slice(0, 50)));
             window.location.href = '/history';
         } else {
-            // Save to server for logged-in users
             try {
                 await fetch('/api/save_session', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(sessionData)
                 });
                 window.location.href = '/history';
             } catch (err) {
                 btn.disabled = false;
-                btn.innerHTML = '{{ _("Finish & Save") }} 💾';
+                btn.textContent = '{{ _("Finish & Save") }} \uD83D\uDCBE';
                 alert(i18n.couldNotSave);
             }
         }
     }
 
-    // Keyboard navigation for answer options (1-4 keys)
+    // ── Keyboard navigation ───────────────────────────────────────────────────
+
     document.addEventListener('keydown', (e) => {
         const options = document.querySelectorAll('.option-btn:not([disabled])');
         if (e.key >= '1' && e.key <= '4') {
-            const index = parseInt(e.key) - 1;
-            if (options[index]) {
-                options[index].click();
-            }
+            const idx = parseInt(e.key) - 1;
+            if (options[idx]) options[idx].click();
         }
-        // Enter or Space to go to next question
         if (e.key === 'Enter' || e.key === ' ') {
             const nextBtn = document.getElementById('next-btn');
-            if (!nextBtn.classList.contains('hidden')) {
-                e.preventDefault();
-                nextBtn.click();
-            }
+            if (!nextBtn.classList.contains('hidden')) { e.preventDefault(); nextBtn.click(); }
         }
     });
 </script>
