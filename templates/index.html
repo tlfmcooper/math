@@ -27,16 +27,25 @@
 
     <style>
       @media (min-width: 768px) {
-        #missions .grid > a { padding: 0.75rem; gap: 0.5rem; }
-        #missions .grid > a > div { padding: 0.6rem; }
-        #missions .grid .material-symbols-outlined { font-size: 1.75rem; }
+        #missions .grid > a { padding: 0.625rem; gap: 0.5rem; }
+        #missions .grid > a > div {
+          padding: 0; width: 3.5rem; height: 3.5rem;
+          display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        #missions .grid > a > div .material-symbols-outlined { font-size: 1.75rem; }
         #missions .grid > a > span { font-size: 0.75rem; }
       }
       @media (min-width: 1024px) {
-        #missions .grid > a { padding: 1rem; gap: 0.625rem; }
-        #missions .grid > a > div { padding: 0.75rem; }
-        #missions .grid .material-symbols-outlined { font-size: 2.25rem; }
+        #missions .grid > a { padding: 0.75rem; gap: 0.625rem; }
+        #missions .grid > a > div { width: 4.5rem; height: 4.5rem; }
+        #missions .grid > a > div .material-symbols-outlined { font-size: 2.25rem; }
         #missions .grid > a > span { font-size: 0.875rem; }
+      }
+      @media (min-width: 1280px) {
+        #missions .grid > a { padding: 1rem; gap: 0.75rem; }
+        #missions .grid > a > div { width: 5.5rem; height: 5.5rem; }
+        #missions .grid > a > div .material-symbols-outlined { font-size: 2.75rem; }
+        #missions .grid > a > span { font-size: 1rem; }
       }
     </style>
 
@@ -91,7 +100,7 @@
                 <h2 class="font-headline text-2xl sm:text-3xl md:text-4xl font-extrabold text-on-background leading-tight mb-2">
                     {{ _("Let's count and") }} <span class="text-primary-container">{{ _('play!') }}</span>
                 </h2>
-                <a href="#missions" class="inline-flex bg-primary-container hover:bg-primary text-white font-headline text-base sm:text-lg px-5 sm:px-8 py-2.5 sm:py-3 rounded-xl chunky-shadow transition-all active:translate-y-1 active:shadow-none items-center gap-2 no-underline" onclick="document.getElementById('missions-scroll').scrollTo({top:0,behavior:'smooth'});return false;">
+                <a href="/quiz/number" class="inline-flex bg-primary-container hover:bg-primary text-white font-headline text-base sm:text-lg px-5 sm:px-8 py-2.5 sm:py-3 rounded-xl chunky-shadow transition-all active:translate-y-1 active:shadow-none items-center gap-2 no-underline">
                     <span>{{ _('Start Practice') }}</span>
                     <span class="material-symbols-outlined text-xl">play_circle</span>
                 </a>
