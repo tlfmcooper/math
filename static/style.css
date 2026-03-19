@@ -208,6 +208,67 @@ p {
 .lime { background: linear-gradient(135deg, #a3e635, #84cc16); box-shadow: 0 4px 15px rgba(163, 230, 53, 0.3); }
 .gray { background: linear-gradient(135deg, #9ca3af, #6b7280); box-shadow: 0 4px 15px rgba(156, 163, 175, 0.3); }
 
+.onboarding-btn {
+    background: white;
+    color: #667eea;
+    border: none;
+    padding: 12px 30px;
+    font-size: 1.2rem;
+    font-weight: 800;
+    border-radius: 25px;
+    margin-top: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+}
+
+.onboarding-btn:active {
+    transform: scale(0.95);
+}
+
+/* ============================================
+   CHATBOT ANIMATIONS
+   ============================================ */
+@keyframes bounceIn {
+    0% { transform: scale(0.1); opacity: 0; }
+    60% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+@keyframes fadeOutLate {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.9); }
+    100% { opacity: 0; transform: scale(0.1); display: none; }
+}
+
+@keyframes pulseAnim {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); filter: drop-shadow(0 0 10px #f1c40f); }
+    100% { transform: scale(1); }
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.anim-bounce-in {
+    animation-name: bounceIn;
+}
+
+.anim-fade-out-late {
+    animation-name: fadeOutLate;
+}
+
+.anim-pulse {
+    animation-name: pulseAnim;
+    animation-iteration-count: infinite;
+}
+
+.anim-pop-in {
+    animation-name: popIn;
+}
+
 /* ============================================
    QUIZ BUTTONS - Large touch targets
    ============================================ */
@@ -314,6 +375,35 @@ p {
     font-size: 1.3rem;
     font-weight: 700;
     color: var(--primary-gold);
+}
+
+/* ============================================
+   CHATBOT
+   ============================================ */
+#chat-container {
+    margin-top: 20px;
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 15px;
+    border: 2px solid #e1e4e8;
+}
+
+#chat-header {
+    font-weight: 800;
+    color: var(--primary-blue);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+}
+
+#chat-messages {
+    min-height: 100px;
+    margin-bottom: 15px;
+    overflow-y: visible; /* Let animations grow smoothly */
+    display: flex;
+    flex-direction: column;
 }
 
 /* ============================================
@@ -1004,4 +1094,282 @@ a.btn-secondary.btn-light:hover {
 .lang-switcher a.active {
     background: rgba(255,255,255,0.25);
     color: white;
+}
+
+/* ============================================
+   MASCOT ANIMATIONS
+   ============================================ */
+@keyframes mascotJump {
+    0%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-30px); }
+    60% { transform: translateY(-15px); }
+    80% { transform: translateY(-25px); }
+}
+
+@keyframes mascotShake {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    25% { transform: translateX(-10px) rotate(-10deg); }
+    75% { transform: translateX(10px) rotate(10deg); }
+}
+
+.mascot-jump .mascot-emoji {
+    animation: mascotJump 0.8s cubic-bezier(0.28, 0.84, 0.42, 1);
+}
+
+.mascot-shake .mascot-emoji {
+    animation: mascotShake 0.6s ease-in-out;
+}
+
+/* Animation badge (shown on history cards that used animations) */
+.anim-badge {
+    display: inline-block;
+    font-size: 0.9rem;
+    margin-left: 4px;
+    vertical-align: middle;
+    opacity: 0.85;
+}
+
+/* ============================================
+   GEMINI ANIMATION ENGINE — Stage, Objects, Toolbar
+   ============================================ */
+
+/* Animation Stage */
+#animation-stage {
+    background: var(--bg-light);
+    border: 2px dashed var(--primary-blue);
+    border-radius: var(--radius);
+    min-height: 180px;
+    padding: 16px;
+    margin: 16px 0;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.5s ease;
+}
+
+#animation-stage.stage-complete {
+    border: 2px solid var(--primary-green);
+}
+
+#animation-objects {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    min-height: 80px;
+    padding: 8px 0;
+}
+
+/* Loading phrase */
+.anim-loading-phrase {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    text-align: center;
+    padding: 20px;
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Animation objects */
+.anim-object {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.anim-object:focus {
+    outline: 3px solid var(--primary-blue);
+    outline-offset: 2px;
+}
+
+.anim-object.tapped {
+    transform: scale(1.3);
+    box-shadow: 0 0 0 3px var(--primary-gold);
+}
+
+.anim-object.crossed-out {
+    opacity: 0.4;
+    text-decoration: line-through;
+}
+
+/* Floating count label on tap */
+.tap-count-label {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--primary-gold);
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 8px;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+/* Reveal number */
+.anim-reveal-number {
+    font-family: 'Nunito', sans-serif;
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--primary-gold);
+    text-align: center;
+    width: 100%;
+    padding: 16px;
+    animation: revealPop 0.5s cubic-bezier(0.28, 0.84, 0.42, 1);
+}
+
+/* Toolbar */
+#animation-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0,0,0,0.08);
+}
+
+.anim-tool-btn {
+    background: white;
+    border: 2px solid var(--primary-blue);
+    border-radius: 20px;
+    padding: 8px 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--primary-blue);
+    min-height: 44px;
+    transition: all 0.2s ease;
+}
+
+.anim-tool-btn:hover {
+    background: var(--primary-blue);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.anim-tool-btn:focus {
+    outline: 3px solid var(--primary-blue);
+    outline-offset: 2px;
+}
+
+/* Draw-along canvas wrapper */
+#draw-canvas-wrapper {
+    margin-top: 12px;
+    border-radius: var(--radius-small);
+    overflow: hidden;
+    background: rgba(255,255,255,0.85);
+}
+
+#draw-canvas {
+    display: block;
+    border-radius: var(--radius-small);
+    cursor: crosshair;
+    width: 100%;
+}
+
+/* Confetti pieces */
+.confetti-piece {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    top: 0;
+    animation: confettiFall 1s ease-out forwards;
+    pointer-events: none;
+}
+
+/* ============================================
+   ANIMATION KEYFRAMES
+   ============================================ */
+
+@media (prefers-reduced-motion: no-preference) {
+    @keyframes revealPop {
+        0%   { transform: scale(0); opacity: 0; }
+        60%  { transform: scale(1.2); opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes confettiFall {
+        0%   { transform: translateX(0) translateY(0) rotate(0deg); opacity: 1; }
+        100% { transform: translateX(var(--tx)) translateY(100px) rotate(var(--rot)); opacity: 0; }
+    }
+
+    @keyframes anim-pop-in {
+        0%   { transform: scale(0) rotate(-10deg); opacity: 0; }
+        60%  { transform: scale(1.15) rotate(5deg); }
+        100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    @keyframes anim-fly-in {
+        0%   { transform: translateX(80px); opacity: 0; }
+        100% { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+
+    @keyframes badgePop {
+        0%   { transform: scale(0.8); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    .anim-pop-in {
+        animation: anim-pop-in 0.35s cubic-bezier(0.28, 0.84, 0.42, 1) both;
+    }
+
+    .anim-fly-in {
+        animation: anim-fly-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .anim-pop-in,
+    .anim-fly-in,
+    .anim-reveal-number,
+    .confetti-piece,
+    #animation-stage {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* Tablet+ adjustments */
+@media (min-width: 480px) {
+    #animation-stage {
+        min-height: 240px;
+    }
+
+    .anim-object {
+        width: 60px;
+        height: 60px;
+        font-size: 2rem;
+    }
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+    #animation-stage {
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
