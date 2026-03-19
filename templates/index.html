@@ -2,7 +2,7 @@
 
 {% block title %}{{ _('Ontario Math Adventure') }}{% endblock %}
 
-{% block body_class %}bg-surface font-body text-on-surface selection:bg-primary-fixed min-h-screen{% endblock %}
+{% block body_class %}bg-surface font-body text-on-surface selection:bg-primary-fixed h-screen overflow-hidden flex flex-col{% endblock %}
 
 {% block body %}
     {% if not user.is_authenticated %}
@@ -62,214 +62,199 @@
         </div>
     </header>
 
-    <main class="relative overflow-hidden">
-        <!-- Hero Section -->
-        <section class="relative px-4 sm:px-6 pt-8 sm:pt-12 pb-16 sm:pb-24 max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-8 sm:gap-12">
-            <div class="flex-1 text-center md:text-left z-10">
-                <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-surface-container-highest rounded-full mb-4 sm:mb-6">
-                    <span class="material-symbols-outlined text-secondary text-lg sm:text-xl" style="font-variation-settings:'FILL' 1;">school</span>
-                    <span class="font-label font-semibold text-secondary text-sm sm:text-base">{{ _('Ontario Grade 1 Math') }}</span>
+    <main class="flex-1 flex flex-col min-h-0 overflow-hidden">
+        <!-- Hero Section — compact, fixed height -->
+        <section class="flex-shrink-0 px-4 sm:px-6 py-3 sm:py-4 max-w-7xl w-full mx-auto flex flex-row items-center gap-4">
+            <div class="flex-1 min-w-0">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container-highest rounded-full mb-2">
+                    <span class="material-symbols-outlined text-secondary text-base" style="font-variation-settings:'FILL' 1;">school</span>
+                    <span class="font-label font-semibold text-secondary text-xs">{{ _('Ontario Grade 1 Math') }}</span>
                 </div>
-                <h2 class="font-headline text-4xl sm:text-5xl md:text-7xl font-extrabold text-on-background leading-tight mb-4 sm:mb-6">
+                <h2 class="font-headline text-2xl sm:text-3xl md:text-4xl font-extrabold text-on-background leading-tight mb-2">
                     {{ _("Let's count and") }} <span class="text-primary-container">{{ _('play!') }}</span>
                 </h2>
-                <p class="font-body text-lg sm:text-xl text-on-surface-variant mb-8 sm:mb-10 max-w-lg mx-auto md:mx-0">
-                    {{ _('Join Mapley the Leaf for a magical math journey. Solve fun puzzles and earn shiny stars!') }}
-                </p>
-                <a href="#missions" class="inline-flex bg-primary-container hover:bg-primary text-white font-headline text-lg sm:text-2xl px-8 sm:px-12 py-4 sm:py-6 rounded-xl chunky-shadow transition-all active:translate-y-1 active:shadow-none items-center gap-3 sm:gap-4 no-underline">
+                <a href="#missions" class="inline-flex bg-primary-container hover:bg-primary text-white font-headline text-base sm:text-lg px-5 sm:px-8 py-2.5 sm:py-3 rounded-xl chunky-shadow transition-all active:translate-y-1 active:shadow-none items-center gap-2 no-underline" onclick="document.getElementById('missions-scroll').scrollTo({top:0,behavior:'smooth'});return false;">
                     <span>{{ _('Start Practice') }}</span>
-                    <span class="material-symbols-outlined text-2xl sm:text-3xl">play_circle</span>
+                    <span class="material-symbols-outlined text-xl">play_circle</span>
                 </a>
             </div>
-            <div class="flex-1 relative">
-                <div class="absolute inset-0 bg-primary-fixed rounded-full blur-3xl opacity-20 -z-10 animate-pulse"></div>
-                <div class="relative w-full aspect-square max-w-xs sm:max-w-md mx-auto">
-                    <img alt="Mapley the Leaf mascot" class="w-full h-full object-contain drop-shadow-2xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvGNbKKPwLOmEWlhG5HcystkbIfq8MH_A1ZwPlgC4KW2XzuWLY32hamxdf72ovA-25x4NFqRXebvNz8mLDz6M7RGB-7u-QesZbwLH97XAtI4MQPtH9sYgcwyg8tbT3MBr9FqEy2Xzfiq9Ppvbyzc9F063P5zOHjvZDa3EAELshcV6V8saQciFmrhODKU_dgLAeaNz9stMuyy_OoSq8a5_K1hzlSfIABA6qAIid225MVOmnvcjphvi9ZrHYa_addV4ma5iWx1PUdg">
-                    <div class="absolute -top-2 -right-2 sm:-top-4 sm:-right-4 bg-surface-container-lowest p-4 sm:p-6 rounded-lg toy-card-shadow rotate-3 border-2 border-surface-container-high max-w-[160px] sm:max-w-[200px]">
-                        <p class="font-label font-bold text-on-background text-base sm:text-lg leading-tight m-0">{{ _('Ready for a big adventure?') }}</p>
-                    </div>
-                </div>
+            <div class="flex-shrink-0 relative w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44">
+                <div class="absolute inset-0 bg-primary-fixed rounded-full blur-2xl opacity-30 -z-10 animate-pulse"></div>
+                <img alt="Mapley the Leaf mascot" class="w-full h-full object-contain drop-shadow-xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvGNbKKPwLOmEWlhG5HcystkbIfq8MH_A1ZwPlgC4KW2XzuWLY32hamxdf72ovA-25x4NFqRXebvNz8mLDz6M7RGB-7u-QesZbwLH97XAtI4MQPtH9sYgcwyg8tbT3MBr9FqEy2Xzfiq9Ppvbyzc9F063P5zOHjvZDa3EAELshcV6V8saQciFmrhODKU_dgLAeaNz9stMuyy_OoSq8a5_K1hzlSfIABA6qAIid225MVOmnvcjphvi9ZrHYa_addV4ma5iWx1PUdg">
             </div>
         </section>
 
-        <!-- Bento Grid — Your Fun Missions -->
-        <section id="missions" class="bg-surface-container-low px-4 sm:px-6 py-12 sm:py-20 rounded-t-[3rem] sm:rounded-t-[4rem]">
-            <div class="max-w-7xl mx-auto">
-                <div class="flex justify-between items-end mb-8 sm:mb-12">
+        <!-- Bento Grid — Your Fun Missions — scrolls inside its own container -->
+        <section id="missions" class="flex-1 min-h-0 bg-surface-container-low rounded-t-[2rem] sm:rounded-t-[3rem] overflow-y-auto overscroll-contain">
+        <div class="px-4 sm:px-6 pt-4 sm:pt-5 pb-24 md:pb-8 max-w-7xl mx-auto">
+                <div class="flex justify-between items-end mb-4 sm:mb-5">
                     <div>
-                        <h3 class="font-headline text-2xl sm:text-3xl font-bold text-on-background m-0">{{ _('Your Fun Missions') }}</h3>
-                        <p class="font-body text-on-surface-variant m-0 mt-1">{{ _('Pick a topic to start learning') }}</p>
+                        <h3 class="font-headline text-lg sm:text-xl font-bold text-on-background m-0">{{ _('Your Fun Missions') }}</h3>
+                        <p class="font-body text-sm text-on-surface-variant m-0">{{ _('Pick a topic to start learning') }}</p>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
                     <!-- Numbers — featured 2-col span -->
-                    <a href="/quiz/number" class="col-span-2 bg-surface-container-lowest p-6 sm:p-8 rounded-2xl toy-card-shadow flex flex-col justify-between group hover:-translate-y-2 transition-transform duration-300 no-underline min-h-[180px] sm:min-h-[220px]">
+                    <a href="/quiz/number" class="col-span-2 bg-surface-container-lowest p-4 sm:p-6 rounded-2xl toy-card-shadow flex flex-col justify-between group hover:-translate-y-1 transition-transform duration-300 no-underline min-h-[130px] sm:min-h-[160px]">
                         <div class="flex justify-between items-start">
-                            <div class="p-3 sm:p-4 bg-surface-container-highest rounded-2xl">
-                                <span class="material-symbols-outlined text-3xl sm:text-4xl text-primary" style="font-variation-settings:'FILL' 1;">counter_1</span>
+                            <div class="p-2 sm:p-3 bg-surface-container-highest rounded-xl">
+                                <span class="material-symbols-outlined text-xl sm:text-2xl text-primary" style="font-variation-settings:'FILL' 1;">counter_1</span>
                             </div>
                             <span class="bg-tertiary-fixed text-on-tertiary-fixed px-2 sm:px-3 py-1 rounded-full font-label text-[10px] sm:text-xs font-bold">{{ _('POPULAR') }}</span>
                         </div>
-                        <div class="mt-6 sm:mt-12">
-                            <h4 class="font-headline text-xl sm:text-2xl font-bold mb-1 sm:mb-2 text-on-surface">{{ _('Numbers') }}</h4>
-                            <p class="font-body text-sm sm:text-base text-on-surface-variant m-0">{{ _('Addition and Subtraction') }}</p>
+                        <div class="mt-3 sm:mt-6">
+                            <h4 class="font-headline text-lg sm:text-xl font-bold mb-0.5 text-on-surface">{{ _('Numbers') }}</h4>
+                            <p class="font-body text-xs sm:text-sm text-on-surface-variant m-0">{{ _('Addition and Subtraction') }}</p>
                         </div>
                     </a>
 
                     <!-- Place Value -->
-                    <a href="/quiz/placevalue" class="bg-secondary-container p-5 sm:p-8 rounded-2xl toy-card-shadow text-white flex flex-col justify-between group hover:-translate-y-2 transition-transform duration-300 no-underline min-h-[160px] sm:min-h-[220px]">
-                        <div class="p-3 sm:p-4 bg-white/20 rounded-2xl w-fit">
-                            <span class="material-symbols-outlined text-2xl sm:text-4xl" style="font-variation-settings:'FILL' 1;">grid_view</span>
+                    <a href="/quiz/placevalue" class="bg-secondary-container p-4 sm:p-6 rounded-2xl toy-card-shadow text-white flex flex-col justify-between group hover:-translate-y-1 transition-transform duration-300 no-underline min-h-[120px] sm:min-h-[150px]">
+                        <div class="p-2 sm:p-3 bg-white/20 rounded-xl w-fit">
+                            <span class="material-symbols-outlined text-xl sm:text-2xl" style="font-variation-settings:'FILL' 1;">grid_view</span>
                         </div>
-                        <div class="mt-4 sm:mt-8">
+                        <div class="mt-2 sm:mt-3">
                             <h4 class="font-headline text-lg sm:text-2xl font-bold mb-1 sm:mb-2">{{ _('Place Value') }}</h4>
                             <p class="text-white/80 m-0 text-sm sm:text-base">{{ _('Tens and Ones') }}</p>
                         </div>
                     </a>
 
                     <!-- Patterns -->
-                    <a href="/quiz/algebra" class="bg-tertiary p-5 sm:p-8 rounded-2xl toy-card-shadow text-white flex flex-col justify-between group hover:-translate-y-2 transition-transform duration-300 no-underline min-h-[160px] sm:min-h-[220px]">
-                        <div class="p-3 sm:p-4 bg-white/20 rounded-2xl w-fit">
-                            <span class="material-symbols-outlined text-2xl sm:text-4xl" style="font-variation-settings:'FILL' 1;">extension</span>
+                    <a href="/quiz/algebra" class="bg-tertiary p-4 sm:p-6 rounded-2xl toy-card-shadow text-white flex flex-col justify-between group hover:-translate-y-1 transition-transform duration-300 no-underline min-h-[120px] sm:min-h-[150px]">
+                        <div class="p-2 sm:p-3 bg-white/20 rounded-xl w-fit">
+                            <span class="material-symbols-outlined text-xl sm:text-2xl" style="font-variation-settings:'FILL' 1;">extension</span>
                         </div>
-                        <div class="mt-4 sm:mt-8">
+                        <div class="mt-2 sm:mt-3">
                             <h4 class="font-headline text-lg sm:text-2xl font-bold mb-1 sm:mb-2">{{ _('Patterns') }}</h4>
                             <p class="text-white/80 m-0 text-sm sm:text-base">{{ _('Find what comes next') }}</p>
                         </div>
                     </a>
 
                     <!-- Shapes -->
-                    <a href="/quiz/spatial" class="bg-primary-container p-5 sm:p-8 rounded-2xl toy-card-shadow text-white flex flex-col justify-between group hover:-translate-y-2 transition-transform duration-300 no-underline min-h-[160px] sm:min-h-[220px]">
-                        <div class="p-3 sm:p-4 bg-white/20 rounded-2xl w-fit">
-                            <span class="material-symbols-outlined text-2xl sm:text-4xl" style="font-variation-settings:'FILL' 1;">category</span>
+                    <a href="/quiz/spatial" class="bg-primary-container p-4 sm:p-6 rounded-2xl toy-card-shadow text-white flex flex-col justify-between group hover:-translate-y-1 transition-transform duration-300 no-underline min-h-[120px] sm:min-h-[150px]">
+                        <div class="p-2 sm:p-3 bg-white/20 rounded-xl w-fit">
+                            <span class="material-symbols-outlined text-xl sm:text-2xl" style="font-variation-settings:'FILL' 1;">category</span>
                         </div>
-                        <div class="mt-4 sm:mt-8">
+                        <div class="mt-2 sm:mt-3">
                             <h4 class="font-headline text-lg sm:text-2xl font-bold mb-1 sm:mb-2">{{ _('Shapes') }}</h4>
                             <p class="text-white/80 m-0 text-sm sm:text-base">{{ _('Learn your shapes') }}</p>
                         </div>
                     </a>
 
                     <!-- Graphs -->
-                    <a href="/quiz/data" class="bg-surface-container-lowest p-5 sm:p-8 rounded-2xl toy-card-shadow flex flex-col justify-between group hover:-translate-y-2 transition-transform duration-300 no-underline min-h-[160px] sm:min-h-[220px]">
-                        <div class="p-3 sm:p-4 bg-surface-container-highest rounded-2xl">
+                    <a href="/quiz/data" class="bg-surface-container-lowest p-4 sm:p-6 rounded-2xl toy-card-shadow flex flex-col justify-between group hover:-translate-y-1 transition-transform duration-300 no-underline min-h-[120px] sm:min-h-[150px]">
+                        <div class="p-2 sm:p-3 bg-surface-container-highest rounded-xl">
                             <span class="material-symbols-outlined text-2xl sm:text-4xl text-secondary" style="font-variation-settings:'FILL' 1;">bar_chart</span>
                         </div>
-                        <div class="mt-4 sm:mt-8">
+                        <div class="mt-2 sm:mt-3">
                             <h4 class="font-headline text-lg sm:text-2xl font-bold mb-1 sm:mb-2 text-on-surface">{{ _('Graphs') }}</h4>
                             <p class="font-body text-sm sm:text-base text-on-surface-variant m-0">{{ _('Read simple graphs') }}</p>
                         </div>
                     </a>
 
                     <!-- Money -->
-                    <a href="/quiz/financial" class="bg-primary-fixed p-5 sm:p-8 rounded-2xl toy-card-shadow flex flex-col justify-between group hover:-translate-y-2 transition-transform duration-300 no-underline min-h-[160px] sm:min-h-[220px]">
-                        <div class="p-3 sm:p-4 bg-white/30 rounded-2xl w-fit">
+                    <a href="/quiz/financial" class="bg-primary-fixed p-4 sm:p-6 rounded-2xl toy-card-shadow flex flex-col justify-between group hover:-translate-y-1 transition-transform duration-300 no-underline min-h-[120px] sm:min-h-[150px]">
+                        <div class="p-2 sm:p-3 bg-white/30 rounded-xl w-fit">
                             <span class="material-symbols-outlined text-2xl sm:text-4xl text-on-primary-fixed" style="font-variation-settings:'FILL' 1;">paid</span>
                         </div>
-                        <div class="mt-4 sm:mt-8">
+                        <div class="mt-2 sm:mt-3">
                             <h4 class="font-headline text-lg sm:text-2xl font-bold mb-1 sm:mb-2 text-on-primary-fixed">{{ _('Money') }}</h4>
                             <p class="text-on-primary-fixed/70 m-0 text-sm sm:text-base">{{ _('Canadian coins') }}</p>
                         </div>
                     </a>
 
                     <!-- Time -->
-                    <a href="/quiz/time" class="bg-surface-container-lowest p-5 sm:p-8 rounded-2xl toy-card-shadow flex flex-col justify-between group hover:-translate-y-2 transition-transform duration-300 no-underline min-h-[160px] sm:min-h-[220px]">
-                        <div class="p-3 sm:p-4 bg-surface-container-highest rounded-2xl">
+                    <a href="/quiz/time" class="bg-surface-container-lowest p-4 sm:p-6 rounded-2xl toy-card-shadow flex flex-col justify-between group hover:-translate-y-1 transition-transform duration-300 no-underline min-h-[120px] sm:min-h-[150px]">
+                        <div class="p-2 sm:p-3 bg-surface-container-highest rounded-xl">
                             <span class="material-symbols-outlined text-2xl sm:text-4xl text-tertiary" style="font-variation-settings:'FILL' 1;">schedule</span>
                         </div>
-                        <div class="mt-4 sm:mt-8">
+                        <div class="mt-2 sm:mt-3">
                             <h4 class="font-headline text-lg sm:text-2xl font-bold mb-1 sm:mb-2 text-on-surface">{{ _('Time') }}</h4>
                             <p class="font-body text-sm sm:text-base text-on-surface-variant m-0">{{ _('Read clocks') }}</p>
                         </div>
                     </a>
 
                     <!-- Measurement -->
-                    <a href="/quiz/measurement" class="bg-tertiary-container p-5 sm:p-8 rounded-2xl toy-card-shadow flex flex-col justify-between group hover:-translate-y-2 transition-transform duration-300 no-underline min-h-[160px] sm:min-h-[220px]">
-                        <div class="p-3 sm:p-4 bg-white/20 rounded-2xl w-fit">
+                    <a href="/quiz/measurement" class="bg-tertiary-container p-4 sm:p-6 rounded-2xl toy-card-shadow flex flex-col justify-between group hover:-translate-y-1 transition-transform duration-300 no-underline min-h-[120px] sm:min-h-[150px]">
+                        <div class="p-2 sm:p-3 bg-white/20 rounded-xl w-fit">
                             <span class="material-symbols-outlined text-2xl sm:text-4xl text-on-tertiary-container" style="font-variation-settings:'FILL' 1;">straighten</span>
                         </div>
-                        <div class="mt-4 sm:mt-8">
+                        <div class="mt-2 sm:mt-3">
                             <h4 class="font-headline text-lg sm:text-2xl font-bold mb-1 sm:mb-2 text-on-tertiary-container">{{ _('Measurement') }}</h4>
                             <p class="text-on-tertiary-container/70 m-0 text-sm sm:text-base">{{ _('Compare lengths') }}</p>
                         </div>
                     </a>
 
                     <!-- Word Problems -->
-                    <a href="/quiz/wordproblems" class="bg-error-container p-5 sm:p-8 rounded-2xl toy-card-shadow flex flex-col justify-between group hover:-translate-y-2 transition-transform duration-300 no-underline min-h-[160px] sm:min-h-[220px]">
-                        <div class="p-3 sm:p-4 bg-white/20 rounded-2xl w-fit">
+                    <a href="/quiz/wordproblems" class="bg-error-container p-4 sm:p-6 rounded-2xl toy-card-shadow flex flex-col justify-between group hover:-translate-y-1 transition-transform duration-300 no-underline min-h-[120px] sm:min-h-[150px]">
+                        <div class="p-2 sm:p-3 bg-white/20 rounded-xl w-fit">
                             <span class="material-symbols-outlined text-2xl sm:text-4xl text-on-error-container" style="font-variation-settings:'FILL' 1;">menu_book</span>
                         </div>
-                        <div class="mt-4 sm:mt-8">
+                        <div class="mt-2 sm:mt-3">
                             <h4 class="font-headline text-lg sm:text-2xl font-bold mb-1 sm:mb-2 text-on-error-container">{{ _('Word Problems') }}</h4>
                             <p class="text-on-error-container/70 m-0 text-sm sm:text-base">{{ _('Math stories') }}</p>
                         </div>
                     </a>
 
                     <!-- Compare -->
-                    <a href="/quiz/comparing" class="bg-surface-container-lowest p-5 sm:p-8 rounded-2xl toy-card-shadow flex flex-col justify-between group hover:-translate-y-2 transition-transform duration-300 no-underline min-h-[160px] sm:min-h-[220px]">
-                        <div class="p-3 sm:p-4 bg-surface-container-highest rounded-2xl">
+                    <a href="/quiz/comparing" class="bg-surface-container-lowest p-4 sm:p-6 rounded-2xl toy-card-shadow flex flex-col justify-between group hover:-translate-y-1 transition-transform duration-300 no-underline min-h-[120px] sm:min-h-[150px]">
+                        <div class="p-2 sm:p-3 bg-surface-container-highest rounded-xl">
                             <span class="material-symbols-outlined text-2xl sm:text-4xl text-primary" style="font-variation-settings:'FILL' 1;">balance</span>
                         </div>
-                        <div class="mt-4 sm:mt-8">
+                        <div class="mt-2 sm:mt-3">
                             <h4 class="font-headline text-lg sm:text-2xl font-bold mb-1 sm:mb-2 text-on-surface">{{ _('Compare') }}</h4>
                             <p class="font-body text-sm sm:text-base text-on-surface-variant m-0">{{ _('Greater than or less than') }}</p>
                         </div>
                     </a>
 
                     <!-- Skip Counting -->
-                    <a href="/quiz/skipcounting" class="bg-secondary p-5 sm:p-8 rounded-2xl toy-card-shadow text-white flex flex-col justify-between group hover:-translate-y-2 transition-transform duration-300 no-underline min-h-[160px] sm:min-h-[220px]">
-                        <div class="p-3 sm:p-4 bg-white/20 rounded-2xl w-fit">
-                            <span class="material-symbols-outlined text-2xl sm:text-4xl" style="font-variation-settings:'FILL' 1;">filter_2</span>
+                    <a href="/quiz/skipcounting" class="bg-secondary p-4 sm:p-6 rounded-2xl toy-card-shadow text-white flex flex-col justify-between group hover:-translate-y-1 transition-transform duration-300 no-underline min-h-[120px] sm:min-h-[150px]">
+                        <div class="p-2 sm:p-3 bg-white/20 rounded-xl w-fit">
+                            <span class="material-symbols-outlined text-xl sm:text-2xl" style="font-variation-settings:'FILL' 1;">filter_2</span>
                         </div>
-                        <div class="mt-4 sm:mt-8">
+                        <div class="mt-2 sm:mt-3">
                             <h4 class="font-headline text-lg sm:text-2xl font-bold mb-1 sm:mb-2">{{ _('Skip Counting') }}</h4>
                             <p class="text-white/80 m-0 text-sm sm:text-base">{{ _('Count by 2s, 5s, 10s') }}</p>
                         </div>
                     </a>
 
                     <!-- Coding -->
-                    <a href="/quiz/coding" class="bg-surface-container-high p-5 sm:p-8 rounded-2xl toy-card-shadow flex flex-col justify-between group hover:-translate-y-2 transition-transform duration-300 no-underline min-h-[160px] sm:min-h-[220px]">
-                        <div class="p-3 sm:p-4 bg-surface-container-highest rounded-2xl">
+                    <a href="/quiz/coding" class="bg-surface-container-high p-4 sm:p-6 rounded-2xl toy-card-shadow flex flex-col justify-between group hover:-translate-y-1 transition-transform duration-300 no-underline min-h-[120px] sm:min-h-[150px]">
+                        <div class="p-2 sm:p-3 bg-surface-container-highest rounded-xl">
                             <span class="material-symbols-outlined text-2xl sm:text-4xl text-on-surface-variant" style="font-variation-settings:'FILL' 1;">smart_toy</span>
                         </div>
-                        <div class="mt-4 sm:mt-8">
+                        <div class="mt-2 sm:mt-3">
                             <h4 class="font-headline text-lg sm:text-2xl font-bold mb-1 sm:mb-2 text-on-surface">{{ _('Coding') }}</h4>
                             <p class="font-body text-sm sm:text-base text-on-surface-variant m-0">{{ _('Help the robot') }}</p>
                         </div>
                     </a>
 
-                    <!-- Today's Big Challenge — Glassmorphism card -->
-                    <div class="col-span-2 md:col-span-4 mt-4 sm:mt-6 bg-surface-container-lowest/40 backdrop-blur-md p-6 sm:p-10 rounded-2xl border-2 border-surface-container-lowest/50 flex flex-col md:flex-row items-center gap-6 sm:gap-8 shadow-xl">
-                        <div class="flex-1">
-                            <h4 class="font-headline text-2xl sm:text-3xl font-extrabold text-on-background mb-3 sm:mb-4 mt-0">{{ _("Today's Big Challenge") }}</h4>
-                            <p class="font-body text-base sm:text-lg text-on-surface-variant mb-4 sm:mb-6">{{ _('Complete 3 counting games today to earn the "Golden Acorn" badge!') }}</p>
-                            <div class="w-full h-3 sm:h-4 bg-surface-container rounded-full overflow-hidden">
-                                <div class="w-2/3 h-full bg-primary-container chunky-shadow"></div>
+                    <!-- Today's Big Challenge — compact -->
+                    <div class="col-span-2 md:col-span-4 mt-2 bg-surface-container-lowest/60 backdrop-blur-md p-4 sm:p-6 rounded-2xl border border-surface-container-low flex flex-row items-center gap-4 shadow-md">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-headline text-base sm:text-lg font-extrabold text-on-background mb-1 mt-0">{{ _("Today's Big Challenge") }}</h4>
+                            <p class="font-body text-xs sm:text-sm text-on-surface-variant mb-2">{{ _('Complete 3 counting games today!') }}</p>
+                            <div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+                                <div class="w-2/3 h-full bg-primary-container"></div>
                             </div>
-                            <div class="flex justify-between mt-2 font-label font-bold text-primary text-sm sm:text-base">
+                            <div class="flex justify-between mt-1 font-label font-bold text-primary text-xs">
                                 <span>2 {{ _('of') }} 3 {{ _('done') }}</span>
                                 <span>66%</span>
                             </div>
                         </div>
-                        <div class="w-24 h-24 sm:w-32 sm:h-32 bg-primary-fixed rounded-full flex items-center justify-center chunky-shadow flex-shrink-0">
-                            <span class="material-symbols-outlined text-5xl sm:text-6xl text-primary" style="font-variation-settings:'FILL' 1;">workspace_premium</span>
-                        </div>
+                        <a href="/history" class="flex-shrink-0 flex flex-col items-center gap-1 text-secondary no-underline hover:opacity-80">
+                            <span class="material-symbols-outlined text-3xl sm:text-4xl" style="font-variation-settings:'FILL' 1;">military_tech</span>
+                            <span class="font-label text-xs font-bold">{{ _('Quest Log') }}</span>
+                        </a>
                     </div>
                 </div>
-
-                <!-- Quest Log link -->
-                <div class="mt-8 sm:mt-12 text-center">
-                    <a href="/history" class="inline-flex items-center gap-3 bg-surface-container-lowest px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-headline font-bold text-base sm:text-lg text-secondary hover:-translate-y-1 transition-transform no-underline shadow-lg">
-                        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">military_tech</span>
-                        {{ _('View Quest Log') }}
-                    </a>
-                </div>
-            </div>
+        </div>
         </section>
     </main>
 
     <!-- Bottom Nav (Mobile) -->
-    <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-surface-container-lowest border-t-4 border-surface-container-low shadow-[0_-10px_30px_rgba(0,0,0,0.04)] rounded-t-[3rem] md:hidden">
+    <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pt-2 bg-surface-container-lowest border-t-4 border-surface-container-low shadow-[0_-10px_30px_rgba(0,0,0,0.04)] rounded-t-[3rem] md:hidden" style="padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 1.5rem));">
         <a class="flex flex-col items-center justify-center bg-primary-container text-white rounded-[2rem] px-6 py-2 shadow-[inset_0_-4px_0_rgba(0,0,0,0.1)] active:translate-y-1 transition-all duration-100 no-underline" href="/">
             <span class="material-symbols-outlined text-2xl" style="font-variation-settings:'FILL' 1;">school</span>
             <span class="font-label font-medium text-sm">{{ _('Learn') }}</span>
@@ -290,8 +275,19 @@
         </a>
         {% endif %}
     </nav>
-    <!-- Spacer for mobile nav -->
-    <div class="h-24 md:hidden"></div>
+
+
+    <!-- PWA Install Banner -->
+    <div id="pwa-install-banner" class="hidden fixed top-0 left-0 right-0 z-[60] flex items-center justify-between gap-3 px-4 py-3 shadow-lg" style="background: rgb(var(--c-primary)); color: rgb(var(--c-on-primary));">
+        <div class="flex items-center gap-2 min-w-0">
+            <span class="material-symbols-outlined text-xl flex-shrink-0" style="font-variation-settings:'FILL' 1;">install_mobile</span>
+            <span class="font-label font-semibold text-sm leading-tight">{{ _("Add Math Adventure to your home screen!") }}</span>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+            <button id="pwa-install-btn" class="font-label font-bold text-sm px-4 py-1.5 rounded-full" style="background: rgb(var(--c-on-primary)); color: rgb(var(--c-primary));">{{ _("Install") }}</button>
+            <button id="pwa-dismiss-btn" class="font-label text-lg leading-none opacity-70 hover:opacity-100 px-1" aria-label="Dismiss">✕</button>
+        </div>
+    </div>
 {% endblock %}
 
 {% block scripts %}
@@ -302,5 +298,29 @@
         function closeOnboarding() {
             document.getElementById('onboarding-overlay').style.display = 'none';
         }
+
+        // PWA install prompt
+        let _pwaPrompt;
+        window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault();
+            _pwaPrompt = e;
+            var banner = document.getElementById('pwa-install-banner');
+            if (banner) banner.classList.remove('hidden');
+        });
+        (function() {
+            var installBtn = document.getElementById('pwa-install-btn');
+            var dismissBtn = document.getElementById('pwa-dismiss-btn');
+            var banner = document.getElementById('pwa-install-banner');
+            if (installBtn) installBtn.addEventListener('click', function() {
+                if (_pwaPrompt) {
+                    _pwaPrompt.prompt();
+                    _pwaPrompt.userChoice.then(function() { _pwaPrompt = null; });
+                    if (banner) banner.classList.add('hidden');
+                }
+            });
+            if (dismissBtn) dismissBtn.addEventListener('click', function() {
+                if (banner) banner.classList.add('hidden');
+            });
+        })();
     </script>
 {% endblock %}

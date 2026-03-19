@@ -204,15 +204,26 @@ html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    /* Prevent horizontal overflow on any screen */
+    overflow-x: hidden;
 }
 
 body {
     font-family: var(--font-body);
     min-height: 100vh;
+    min-height: 100dvh;
     margin: 0;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+}
+
+/* Safe area support for notch & home indicator devices */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .safe-area-bottom {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
 }
 
 button, input, textarea, select { font: inherit; }
@@ -383,6 +394,47 @@ button, input, textarea, select { font: inherit; }
     overflow-y: visible;
     display: flex;
     flex-direction: column;
+}
+
+/* ============================================
+   QUIZ PAGE CONTAINER
+   ============================================ */
+.container-card {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    background: rgb(var(--c-surface-container-lowest));
+    padding: 1.25rem 1rem 5rem;
+    min-height: 100dvh;
+    min-height: 100vh;
+}
+
+@media (min-width: 480px) {
+    .container-card { padding: 1.5rem 1.25rem 5rem; }
+}
+
+@media (min-width: 768px) {
+    .container-card {
+        max-width: 720px;
+        padding: 2rem 2.5rem 3rem;
+        min-height: auto;
+        margin: 2rem auto 4rem;
+        border-radius: 2rem;
+        box-shadow: 0 10px 40px rgb(var(--c-on-background) / 0.08);
+    }
+    .quiz-page-bg {
+        min-height: 100dvh;
+        min-height: 100vh;
+        background: radial-gradient(ellipse at 20% 10%,
+            rgb(var(--c-primary-fixed) / 0.25) 0%, transparent 55%),
+            radial-gradient(ellipse at 80% 90%,
+            rgb(var(--c-secondary-container) / 0.2) 0%, transparent 55%),
+            rgb(var(--c-surface));
+    }
+}
+
+@media (min-width: 1024px) {
+    .container-card { max-width: 780px; padding: 2.5rem 3rem 3rem; }
 }
 
 /* ============================================

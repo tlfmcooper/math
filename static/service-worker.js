@@ -1,10 +1,10 @@
-const CACHE_NAME = 'math-adventure-v1';
+const CACHE_NAME = 'math-adventure-v3';
 const STATIC_ASSETS = [
   '/',
   '/static/style.css',
   '/static/manifest.json',
-  '/static/icons/icon-192.png',
-  '/static/icons/icon-512.png'
+  '/static/icons/icon-192.svg',
+  '/static/icons/icon-512.svg'
 ];
 
 // Install event - cache static assets
