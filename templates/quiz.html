@@ -1,32 +1,20 @@
-<!DOCTYPE html>
-<html lang="{{ g.locale }}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>{{ _('Quiz Time!') }}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+{% extends 'base.html' %}
+
+{% block title %}{{ _('Quiz Time!') }}{% endblock %}
+
+{% block head %}
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap"></noscript>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="{{ url_for('static', filename='animation-engine.js') }}" defer></script>
-    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
-    <meta name="theme-color" content="#667eea">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.svg') }}">
-    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icons/favicon.svg') }}">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js" async></script>
     <style>
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #f0f8ff 0%, #e8f4fc 100%);
+            background: var(--theme-overlay);
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
             z-index: 100; padding: 20px;
         }
-        .overlay h2 { font-size: 1.5rem; margin-bottom: 10px; color: #333; }
+        .overlay h2 { font-size: 1.5rem; margin-bottom: 10px; color: rgb(var(--c-on-surface)); }
         .mood-grid {
             display: grid; grid-template-columns: repeat(2, 1fr);
             gap: 15px; margin-top: 20px; max-width: 350px;
@@ -35,22 +23,30 @@
             .mood-grid { grid-template-columns: repeat(4, 1fr); max-width: 600px; }
         }
         .mood-grid button {
-            font-size: 1.3rem; padding: 20px 15px; border: 3px solid #e0e0e0;
-            border-radius: 15px; background: white; cursor: pointer;
+            font-size: 1.3rem; padding: 20px 15px; border: 1px solid rgb(var(--c-outline-variant) / 0.5);
+            border-radius: 20px; background: rgb(var(--c-surface-container-lowest)); cursor: pointer;
             transition: all 0.2s ease; min-width: 80px; font-family: inherit;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgb(var(--c-on-background) / 0.1);
+            color: rgb(var(--c-on-surface));
         }
-        .mood-grid button:hover { transform: translateY(-3px); border-color: #3498db; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
-        .mood-grid button:focus { outline: 3px solid #3498db; outline-offset: 2px; }
+        .mood-grid button:hover { transform: translateY(-3px); border-color: rgb(var(--c-secondary)); box-shadow: 0 8px 25px rgb(var(--c-on-background) / 0.15); }
+        .mood-grid button:focus { outline: 3px solid rgb(var(--c-secondary)); outline-offset: 2px; }
     </style>
-</head>
-<body>
+{% endblock %}
+
+{% block body %}
     <div class="container-card">
+        <div class="theme-toolbar" style="margin-bottom:10px;">
+            <div class="theme-switcher" role="group" aria-label="{{ _('Theme selection') }}" style="gap:4px;padding:4px;">
+                <button type="button" data-theme-choice="stitch-light" onclick="setStitchTheme('stitch-light')" style="padding:6px 12px;min-height:0;font-size:.85rem;">☀️</button>
+                <button type="button" data-theme-choice="stitch-neon" onclick="setStitchTheme('stitch-neon')" style="padding:6px 12px;min-height:0;font-size:.85rem;">🌙</button>
+            </div>
+        </div>
 
         <!-- Mood Check-in Overlay -->
         <div id="mood-overlay" class="overlay" role="dialog" aria-labelledby="mood-title">
             <h2 id="mood-title">{{ _('How are you feeling today?') }}</h2>
-            <p style="color:#666;margin-bottom:10px;">{{ _('This helps us understand how you are doing!') }}</p>
+            <p style="color:var(--text-light);margin-bottom:10px;">{{ _('This helps us understand how you are doing!') }}</p>
             <div class="mood-grid" role="group" aria-label="{{ _('Mood selection') }}">
                 <button onclick="startGame('🤩 {{ _('Excited') }}')" aria-label="{{ _('I am feeling excited') }}">🤩<br>{{ _('Excited') }}</button>
                 <button onclick="startGame('🙂 {{ _('Calm') }}')" aria-label="{{ _('I am feeling calm') }}">🙂<br>{{ _('Calm') }}</button>
@@ -635,5 +631,5 @@
         }
     });
 </script>
-</body>
-</html>
+    </div>
+{% endblock %}

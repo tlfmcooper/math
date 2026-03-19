@@ -1,155 +1,73 @@
-<!DOCTYPE html>
-<html lang="{{ g.locale }}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>{{ _('Session Review') }}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap"></noscript>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
-    <meta name="theme-color" content="#667eea">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.svg') }}">
-    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icons/favicon.svg') }}">
+{% extends 'base.html' %}
+
+{% block title %}{{ _('Session Review') }}{% endblock %}
+
+{% block head %}
     <style>
         .review-card {
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
+            border: 2px solid rgb(var(--c-outline-variant) / 0.3);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
             text-align: left;
-            background: #fff;
+            background: rgb(var(--c-surface-container-lowest));
+            color: rgb(var(--c-on-surface));
         }
-        .correct { border-left: 10px solid #2ecc71; }
-        .wrong { border-left: 10px solid #e74c3c; background: #fff0f0; }
+        .correct { border-left: 8px solid rgb(var(--c-secondary)); }
+        .wrong { border-left: 8px solid rgb(var(--c-error)); background: rgb(var(--c-error-container) / 0.15); }
         .ans-tag {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-weight: bold;
-            color: white;
-            margin-right: 10px;
+            display: inline-block; padding: 6px 12px; border-radius: 8px;
+            font-weight: 700; color: white; margin: 5px 5px 5px 0; font-size: 0.9rem;
         }
-        .bg-green { background: #2ecc71; }
-        .bg-red { background: #e74c3c; }
-        .bg-blue { background: #3498db; }
+        .bg-green { background: rgb(var(--c-secondary)); }
+        .bg-red { background: rgb(var(--c-error)); }
+        .bg-blue { background: rgb(var(--c-primary)); }
     </style>
-</head>
-<body>
-    <div class="container-card">
-        <h1>&#128202; {{ _('Session Review') }}</h1>
+{% endblock %}
 
+{% block body %}
+    <!-- TopAppBar -->
+    <header class="bg-surface sticky top-0 z-50">
+        <div class="flex justify-between items-center w-full px-4 sm:px-6 py-3 sm:py-4 max-w-7xl mx-auto">
+            <div class="flex items-center gap-2 sm:gap-3">
+                <a href="/history" class="flex items-center gap-2 sm:gap-3 no-underline">
+                    <span class="material-symbols-outlined text-2xl text-on-surface-variant">arrow_back</span>
+                    <span class="font-headline font-black text-xl sm:text-3xl text-primary tracking-tight">{{ _('Session Review') }}</span>
+                </a>
+            </div>
+            <div class="flex items-center gap-2 sm:gap-4">
+                <div class="theme-switcher !p-1 !gap-1">
+                    <button type="button" data-theme-choice="stitch-light" onclick="setStitchTheme('stitch-light')" class="!px-2 sm:!px-3 !py-1.5 !text-xs !min-h-0">☀️</button>
+                    <button type="button" data-theme-choice="stitch-neon" onclick="setStitchTheme('stitch-neon')" class="!px-2 sm:!px-3 !py-1.5 !text-xs !min-h-0">🌙</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {% if is_local %}
         <!-- Local session review - data loaded from localStorage -->
         <div id="local-review-content">
             <p>{{ _('Loading...') }}</p>
         </div>
 
-        <script>
-            const i18n = {
-                local: "{{ _('Local') }}",
-                date: "{{ _('Date') }}",
-                mission: "{{ _('Mission') }}",
-                mood: "{{ _('Mood') }}",
-                score: "{{ _('Score') }}",
-                answered: "{{ _('Answered') }}",
-                correct: "{{ _('Correct') }}",
-                sessionNotFound: "{{ _('Session not found.') }}",
-                backToHistory: "{{ _('Back to History') }}"
-            };
-
-            (function() {
-                const session = JSON.parse(localStorage.getItem('currentReview') || 'null');
-                const container = document.getElementById('local-review-content');
-
-                if (!session) {
-                    const p = document.createElement('p');
-                    p.textContent = i18n.sessionNotFound + ' ';
-                    const link = document.createElement('a');
-                    link.href = '/history';
-                    link.textContent = i18n.backToHistory;
-                    p.appendChild(link);
-                    container.textContent = '';
-                    container.appendChild(p);
-                    return;
-                }
-
-                container.textContent = '';
-
-                // Session meta
-                const meta = document.createElement('p');
-                const boldDate = document.createElement('b'); boldDate.textContent = i18n.date + ':';
-                const boldMission = document.createElement('b'); boldMission.textContent = i18n.mission + ':';
-                const boldMood = document.createElement('b'); boldMood.textContent = i18n.mood + ':';
-                const badge = document.createElement('span'); badge.className = 'local-badge'; badge.textContent = i18n.local;
-                meta.appendChild(boldDate);
-                meta.appendChild(document.createTextNode(' ' + session.date + ' | '));
-                meta.appendChild(boldMission);
-                meta.appendChild(document.createTextNode(' ' + session.strand + ' | '));
-                meta.appendChild(boldMood);
-                meta.appendChild(document.createTextNode(' ' + (session.mood || 'N/A') + ' '));
-                meta.appendChild(badge);
-                container.appendChild(meta);
-
-                const h2 = document.createElement('h2');
-                h2.textContent = i18n.score + ': ' + session.score_str;
-                container.appendChild(h2);
-                container.appendChild(document.createElement('hr'));
-
-                (session.details || []).forEach(function(q) {
-                    const card = document.createElement('div');
-                    card.className = 'review-card ' + (q.is_correct ? 'correct' : 'wrong');
-
-                    // Question text (server-generated curriculum content)
-                    const qDiv = document.createElement('div');
-                    qDiv.style.cssText = 'font-size:1.2rem;margin-bottom:10px;';
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(q.q_html || '', 'text/html');
-                    Array.from(doc.body.childNodes).forEach(function(node) {
-                        qDiv.appendChild(node.cloneNode(true));
-                    });
-                    card.appendChild(qDiv);
-
-                    if (q.is_correct) {
-                        const tag = document.createElement('span');
-                        tag.className = 'ans-tag bg-green';
-                        tag.textContent = '\u2705 ' + i18n.answered + ': ' + q.user_ans;
-                        card.appendChild(tag);
-                    } else {
-                        const wrongTag = document.createElement('span');
-                        wrongTag.className = 'ans-tag bg-red';
-                        wrongTag.textContent = '\u274C ' + i18n.answered + ': ' + q.user_ans;
-                        card.appendChild(wrongTag);
-
-                        const correctTag = document.createElement('span');
-                        correctTag.className = 'ans-tag bg-blue';
-                        correctTag.textContent = i18n.correct + ': ' + q.correct_ans;
-                        card.appendChild(correctTag);
-
-                        if (q.had_animation) {
-                            const animBadge = document.createElement('span');
-                            animBadge.className = 'anim-badge';
-                            animBadge.title = 'Animation was shown';
-                            animBadge.textContent = ' \uD83C\uDDFB';
-                            card.appendChild(animBadge);
-                        }
-                    }
-
-                    container.appendChild(card);
-                });
-            })();
-        </script>
-
         {% else %}
         <!-- Server-side session review -->
-        <p><b>{{ _('Date') }}:</b> {{ session.date }} | <b>{{ _('Mission') }}:</b> {{ session.strand }} | <b>{{ _('Mood') }}:</b> {{ session.mood }}</p>
-        <h2>{{ _('Score') }}: {{ session.score_str }}</h2>
-        <hr>
+        <div class="bg-surface-container-lowest p-6 rounded-2xl toy-card-shadow mb-8">
+            <div class="flex flex-wrap gap-4 items-center">
+                <div class="flex-1 min-w-[200px]">
+                    <p class="font-label text-sm text-on-surface-variant m-0"><b>{{ _('Date') }}:</b> {{ session.date }}</p>
+                    <p class="font-headline text-xl font-bold text-on-surface m-0 mt-1 capitalize">{{ session.strand }}</p>
+                    {% if session.mood %}<p class="text-sm m-0 mt-1">{{ session.mood }}</p>{% endif %}
+                </div>
+                <div class="text-center">
+                    <div class="font-headline text-3xl font-extrabold text-secondary">{{ session.score_str }}</div>
+                    <span class="font-label text-xs text-on-surface-variant">{{ _('Score') }}</span>
+                </div>
+            </div>
+        </div>
 
+        <div class="space-y-4">
         {% for q in session.details %}
         <div class="review-card {% if q.is_correct %}correct{% else %}wrong{% endif %}">
             <div style="font-size: 1.2rem; margin-bottom: 10px;">
@@ -166,10 +84,142 @@
             {% endif %}
         </div>
         {% endfor %}
+        </div>
         {% endif %}
 
-        <br>
-        <a href="/history" class="btn-secondary">&#8592; {{ _('Back to Logs') }}</a>
-    </div>
-</body>
-</html>
+        <div class="mt-8 text-center">
+            <a href="/history" class="inline-flex items-center gap-3 bg-surface-container-lowest px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-headline font-bold text-base sm:text-lg text-secondary hover:-translate-y-1 transition-transform no-underline shadow-lg">
+                <span class="material-symbols-outlined">arrow_back</span>
+                {{ _('Back to Logs') }}
+            </a>
+        </div>
+    </main>
+{% endblock %}
+
+{% block scripts %}
+    {% if is_local %}
+    <script>
+        const i18n = {
+            local: "{{ _('Local') }}",
+            date: "{{ _('Date') }}",
+            mission: "{{ _('Mission') }}",
+            mood: "{{ _('Mood') }}",
+            score: "{{ _('Score') }}",
+            answered: "{{ _('Answered') }}",
+            correct: "{{ _('Correct') }}",
+            sessionNotFound: "{{ _('Session not found.') }}",
+            backToHistory: "{{ _('Back to History') }}"
+        };
+
+        (function() {
+            const session = JSON.parse(localStorage.getItem('currentReview') || 'null');
+            const container = document.getElementById('local-review-content');
+
+            if (!session) {
+                const p = document.createElement('p');
+                p.textContent = i18n.sessionNotFound + ' ';
+                const link = document.createElement('a');
+                link.href = '/history';
+                link.textContent = i18n.backToHistory;
+                p.appendChild(link);
+                container.textContent = '';
+                container.appendChild(p);
+                return;
+            }
+
+            container.textContent = '';
+
+            // Session meta card
+            const metaCard = document.createElement('div');
+            metaCard.className = 'bg-surface-container-lowest p-6 rounded-2xl toy-card-shadow mb-8';
+            const metaInner = document.createElement('div');
+            metaInner.className = 'flex flex-wrap gap-4 items-center';
+
+            const metaInfo = document.createElement('div');
+            metaInfo.className = 'flex-1 min-w-[200px]';
+
+            const dateP = document.createElement('p');
+            dateP.className = 'font-label text-sm text-on-surface-variant m-0';
+            const boldDate = document.createElement('b');
+            boldDate.textContent = i18n.date + ':';
+            dateP.appendChild(boldDate);
+            dateP.appendChild(document.createTextNode(' ' + session.date + ' '));
+            const badge = document.createElement('span');
+            badge.className = 'text-xs bg-surface-container-high px-2 py-0.5 rounded-full font-label font-bold';
+            badge.textContent = i18n.local;
+            dateP.appendChild(badge);
+            metaInfo.appendChild(dateP);
+
+            const strandP = document.createElement('p');
+            strandP.className = 'font-headline text-xl font-bold text-on-surface m-0 mt-1 capitalize';
+            strandP.textContent = session.strand;
+            metaInfo.appendChild(strandP);
+
+            if (session.mood) {
+                const moodP = document.createElement('p');
+                moodP.className = 'text-sm m-0 mt-1';
+                moodP.textContent = session.mood;
+                metaInfo.appendChild(moodP);
+            }
+
+            metaInner.appendChild(metaInfo);
+
+            const scoreWrap = document.createElement('div');
+            scoreWrap.className = 'text-center';
+            const scoreVal = document.createElement('div');
+            scoreVal.className = 'font-headline text-3xl font-extrabold text-secondary';
+            scoreVal.textContent = session.score_str;
+            scoreWrap.appendChild(scoreVal);
+            const scoreLbl = document.createElement('span');
+            scoreLbl.className = 'font-label text-xs text-on-surface-variant';
+            scoreLbl.textContent = i18n.score;
+            scoreWrap.appendChild(scoreLbl);
+            metaInner.appendChild(scoreWrap);
+
+            metaCard.appendChild(metaInner);
+            container.appendChild(metaCard);
+
+            (session.details || []).forEach(function(q) {
+                const card = document.createElement('div');
+                card.className = 'review-card ' + (q.is_correct ? 'correct' : 'wrong');
+
+                const qDiv = document.createElement('div');
+                qDiv.style.cssText = 'font-size:1.2rem;margin-bottom:10px;';
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(q.q_html || '', 'text/html');
+                Array.from(doc.body.childNodes).forEach(function(node) {
+                    qDiv.appendChild(node.cloneNode(true));
+                });
+                card.appendChild(qDiv);
+
+                if (q.is_correct) {
+                    const tag = document.createElement('span');
+                    tag.className = 'ans-tag bg-green';
+                    tag.textContent = '\u2705 ' + i18n.answered + ': ' + q.user_ans;
+                    card.appendChild(tag);
+                } else {
+                    const wrongTag = document.createElement('span');
+                    wrongTag.className = 'ans-tag bg-red';
+                    wrongTag.textContent = '\u274C ' + i18n.answered + ': ' + q.user_ans;
+                    card.appendChild(wrongTag);
+
+                    const correctTag = document.createElement('span');
+                    correctTag.className = 'ans-tag bg-blue';
+                    correctTag.textContent = i18n.correct + ': ' + q.correct_ans;
+                    card.appendChild(correctTag);
+
+                    if (q.had_animation) {
+                        const animBadge = document.createElement('span');
+                        animBadge.className = 'anim-badge';
+                        animBadge.title = 'Animation was shown';
+                        animBadge.textContent = ' 🎬';
+                        card.appendChild(animBadge);
+                    }
+                }
+
+                container.appendChild(card);
+            });
+        })();
+    </script>
+    {% endif %}
+{% endblock %}
