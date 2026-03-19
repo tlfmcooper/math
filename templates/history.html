@@ -4,14 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>{{ _('Quest Log') }}</title>
-    <!-- Preconnect for faster font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Non-blocking font load -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap"></noscript>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <!-- PWA -->
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     <meta name="theme-color" content="#667eea">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -21,9 +18,8 @@
 </head>
 <body>
     <div class="container-card">
-        <h1>📜 {{ _('Past Adventures') }}</h1>
+        <h1>&#128220; {{ _('Past Adventures') }}</h1>
 
-        <!-- User header for context -->
         <div class="user-header" style="margin-bottom: 20px;">
             {% if user.is_authenticated %}
                 <span class="user-info">
@@ -45,17 +41,19 @@
                         <span class="history-date">{{ item.date }}</span>
                         <span class="history-strand">{{ item.strand }}</span>
                         {% if item.mood %}<span class="history-mood">{{ item.mood }}</span>{% endif %}
+                        {% if item.details and item.details | selectattr('had_animation', 'defined') | list %}
+                            <span class="anim-badge" title="Animations used">&#127916;</span>
+                        {% endif %}
                     </div>
                     <div class="history-score {% if item.percent >= 80 %}score-good{% else %}score-needs-work{% endif %}">
                         {{ item.score_str }}
                     </div>
-                    <a href="/review/{{ item.id }}" class="btn-small" aria-label="{{ _('Review') }} {{ item.strand }}">🔍 {{ _('Review') }}</a>
+                    <a href="/review/{{ item.id }}" class="btn-small" aria-label="{{ _('Review') }} {{ item.strand }}">&#128269; {{ _('Review') }}</a>
                 </div>
                 {% endfor %}
             </div>
             {% endif %}
 
-            <!-- Local history placeholder (filled by JS for guests) -->
             <div class="history-list" id="local-history"></div>
 
             <div id="empty-state" class="empty-state" style="{% if history %}display:none{% endif %}">
@@ -64,17 +62,15 @@
         </div>
 
         <br>
-        <a href="/" class="btn-secondary">🏠 {{ _('Back Home') }}</a>
+        <a href="/" class="btn-secondary">&#127968; {{ _('Back Home') }}</a>
     </div>
 
     <script>
-        // Translations for JavaScript
         const i18n = {
             local: "{{ _('Local') }}",
             review: "{{ _('Review') }}"
         };
 
-        // Load and display local history for guests
         (function() {
             const isLoggedIn = {{ 'true' if user.is_authenticated else 'false' }};
             const localHistory = JSON.parse(localStorage.getItem('mathHistory') || '[]');
@@ -84,21 +80,58 @@
             if (!isLoggedIn && localHistory.length > 0) {
                 emptyState.style.display = 'none';
 
-                localHistory.forEach(item => {
+                localHistory.forEach(function(item) {
                     const scoreClass = item.percent >= 80 ? 'score-good' : 'score-needs-work';
+                    const hadAnimation = Array.isArray(item.details) && item.details.some(function(d) { return d.had_animation; });
+
                     const card = document.createElement('div');
                     card.className = 'history-card';
-                    card.innerHTML = `
-                        <div class="history-info">
-                            <span class="history-date">${item.date} <span class="local-badge">${i18n.local}</span></span>
-                            <span class="history-strand">${item.strand}</span>
-                            ${item.mood ? `<span class="history-mood">${item.mood}</span>` : ''}
-                        </div>
-                        <div class="history-score ${scoreClass}">
-                            ${item.score_str}
-                        </div>
-                        <button class="btn-small" onclick="viewLocalReview('${item.id}')">🔍 ${i18n.review}</button>
-                    `;
+
+                    const info = document.createElement('div');
+                    info.className = 'history-info';
+
+                    const dateSpan = document.createElement('span');
+                    dateSpan.className = 'history-date';
+                    dateSpan.textContent = item.date + ' ';
+                    const localBadge = document.createElement('span');
+                    localBadge.className = 'local-badge';
+                    localBadge.textContent = i18n.local;
+                    dateSpan.appendChild(localBadge);
+                    info.appendChild(dateSpan);
+
+                    const strandSpan = document.createElement('span');
+                    strandSpan.className = 'history-strand';
+                    strandSpan.textContent = item.strand;
+                    info.appendChild(strandSpan);
+
+                    if (item.mood) {
+                        const moodSpan = document.createElement('span');
+                        moodSpan.className = 'history-mood';
+                        moodSpan.textContent = item.mood;
+                        info.appendChild(moodSpan);
+                    }
+
+                    if (hadAnimation) {
+                        const animBadge = document.createElement('span');
+                        animBadge.className = 'anim-badge';
+                        animBadge.title = 'Animations used';
+                        animBadge.textContent = '\uD83C\uDDFB';
+                        info.appendChild(animBadge);
+                    }
+
+                    card.appendChild(info);
+
+                    const scoreDiv = document.createElement('div');
+                    scoreDiv.className = 'history-score ' + scoreClass;
+                    scoreDiv.textContent = item.score_str;
+                    card.appendChild(scoreDiv);
+
+                    const reviewBtn = document.createElement('button');
+                    reviewBtn.className = 'btn-small';
+                    reviewBtn.textContent = '\uD83D\uDD0D ' + i18n.review;
+                    reviewBtn.onclick = function() { viewLocalReview(item.id); };
+                    card.appendChild(reviewBtn);
+
                     localContainer.appendChild(card);
                 });
             } else if (!isLoggedIn && localHistory.length === 0) {
@@ -106,10 +139,9 @@
             }
         })();
 
-        // View local review (stored in localStorage)
         function viewLocalReview(id) {
             const localHistory = JSON.parse(localStorage.getItem('mathHistory') || '[]');
-            const session = localHistory.find(s => s.id === id);
+            const session = localHistory.find(function(s) { return s.id === id; });
             if (session) {
                 localStorage.setItem('currentReview', JSON.stringify(session));
                 window.location.href = '/review/local';
