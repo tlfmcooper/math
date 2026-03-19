@@ -110,12 +110,12 @@ function _randomFrom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function _speakText(text) {
+function _speakText(text, rate) {
   if (!('speechSynthesis' in window)) return;
   if (window.animSoundEnabled === false) return;
   window.speechSynthesis.cancel();
   const utt = new SpeechSynthesisUtterance(text);
-  utt.rate = 0.9;
+  utt.rate = rate !== undefined ? rate : 0.77;
   utt.pitch = 1.1;
   window.speechSynthesis.speak(utt);
 }
@@ -245,7 +245,9 @@ class AnimationEngine {
     playTone(step.sound || 'pop');
 
     if (step.narration) {
-      _speakText(step.narration);
+      // Normal speech rate 0.77; slow mode (this._speed=0.4) reduces it by a further 15%
+      const speechRate = this._speed < 1.0 ? 0.77 * 0.85 : 0.77;
+      _speakText(step.narration, speechRate);
     }
 
     const isLastStep = index === total - 1;
@@ -253,6 +255,8 @@ class AnimationEngine {
 
     if (isReveal || isLastStep) {
       this._renderReveal(step);
+    } else if (step.action === 'number_badge') {
+      this._renderNumberBadge(step);
     } else if (step.action === 'merge') {
       this._renderMerge(step);
     } else if (step.action === 'cross_out') {
@@ -291,26 +295,42 @@ class AnimationEngine {
   }
 
   _renderCrossOut(step) {
+    // Clear first so we start with exactly the objects being crossed out (clean slate).
+    this._objects.textContent = '';
     this._renderObjects(step);
-    const crossDelay = (step.objects.length * 100 + 200) / this._speed;
+    const crossDelay = (step.objects.length * 100 + 300) / this._speed;
     const id = setTimeout(() => {
       const els = this._objects.querySelectorAll('.anim-object');
       els.forEach((el, i) => {
-        const cId = setTimeout(() => el.classList.add('crossed-out'), i * (80 / this._speed));
+        const cId = setTimeout(() => el.classList.add('crossed-out'), i * (150 / this._speed));
         this._timeouts.push(cId);
       });
     }, crossDelay);
     this._timeouts.push(id);
   }
 
+  _renderNumberBadge(step) {
+    // Show a large number badge instead of individual objects (for quantities > 10).
+    // Clears the stage first — treats this as a new scene start.
+    this._objects.textContent = '';
+    const badge = document.createElement('div');
+    badge.className = 'anim-number-badge anim-pop-in';
+    badge.textContent = step.value || '?';
+    this._objects.appendChild(badge);
+    playTone(step.sound || 'whoosh');
+  }
+
   _renderReveal(step) {
     playTone('ding');
 
-    const count = step.objects ? step.objects.length : 0;
+    // Prefer the explicit value field, then narration, then object count as last resort
+    const answer = step.value
+      || (step.objects && step.objects.length > 0 ? String(step.objects.length) : null)
+      || (step.narration || '');
 
     const revealEl = document.createElement('div');
     revealEl.className = 'anim-reveal-number';
-    revealEl.textContent = count > 0 ? String(count) : (step.narration || '');
+    revealEl.textContent = answer;
 
     this._objects.textContent = '';
     this._objects.appendChild(revealEl);

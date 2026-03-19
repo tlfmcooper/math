@@ -310,23 +310,31 @@ def save_session_route():
     save_history(data, user_id)
     return jsonify({"status": "success"})
 
+def _sanitize_prompt_field(value, max_len=200):
+    """Strip newlines and truncate user-supplied values before embedding in prompts."""
+    return str(value).replace('\n', ' ').replace('\r', ' ').replace('"', "'")[:max_len]
+
+
 @app.route('/api/mascot', methods=['POST'])
 @limiter.limit('10 per minute')
 def api_mascot():
     import logging
+    from google.genai import types
+    from chatbot import _get_client
     data = request.json
     state = data.get('state', 'correct')
-    question = data.get('question', '')
-    user_answer = data.get('user_answer', '')
-    correct_answer = data.get('correct_answer', '')
+    # Sanitize user-supplied fields before embedding in prompts
+    question = _sanitize_prompt_field(data.get('question', ''))
+    user_answer = _sanitize_prompt_field(data.get('user_answer', ''))
+    correct_answer = _sanitize_prompt_field(data.get('correct_answer', ''))
 
-    api_key = os.environ.get('GEMINI_API_KEY')
-    if not api_key:
+    client = _get_client()
+    if not client:
         return jsonify({"message": "You are doing great!"})
 
     prompts = {
-        'correct': f"A Grade 1 student just answered the math question \"{question}\" correctly with \"{user_answer}\". Give ONE short excited reaction that mentions what they just did right (max 12 words, no quotes, keep it fun and specific).",
-        'wrong': f"A Grade 1 student answered \"{user_answer}\" to the math question \"{question}\". Give ONE warm, specific encouragement that acknowledges their try without revealing \"{correct_answer}\" (max 12 words, no quotes).",
+        'correct': f"A Grade 1 student just answered the math question '{question}' correctly with '{user_answer}'. Give ONE short excited reaction that mentions what they just did right (max 12 words, no quotes, keep it fun and specific).",
+        'wrong': f"A Grade 1 student answered '{user_answer}' to the math question '{question}'. Give ONE warm, specific encouragement that acknowledges their try without revealing '{correct_answer}' (max 12 words, no quotes).",
         'streak3': "A Grade 1 student just got 3 math questions correct in a row! ONE very excited reaction, max 10 words, no quotes.",
         'streak5': "A Grade 1 student just got 5 math questions correct in a row — on a roll! ONE super excited reaction, max 10 words, no quotes.",
         'finish': "A Grade 1 student just finished a math quiz. ONE warm proud send-off, max 10 words, no quotes.",
@@ -335,9 +343,6 @@ def api_mascot():
     prompt = prompts.get(state, prompts['start'])
 
     try:
-        from google import genai
-        from google.genai import types
-        client = genai.Client(api_key=api_key)
         response = client.models.generate_content(
             model='gemini-3.1-flash-lite-preview',
             contents=prompt,
@@ -353,11 +358,13 @@ def api_mascot():
 @limiter.limit('10 per minute')
 def api_chat():
     data = request.json
-    question = data.get('question', '')
-    user_answer = data.get('user_answer', '')
-    correct_answer = data.get('correct_answer', '')
+    # Sanitize user-supplied fields before embedding in prompts
+    question = _sanitize_prompt_field(data.get('question', ''))
+    user_answer = _sanitize_prompt_field(data.get('user_answer', ''))
+    correct_answer = _sanitize_prompt_field(data.get('correct_answer', ''))
     messages = data.get('messages', [])
     strand = data.get('strand', 'number')
+    attempt = max(1, int(data.get('attempt', 1)))
 
     # Validate strand to prevent prompt injection via this field
     if strand not in VALID_STRANDS:
@@ -367,7 +374,7 @@ def api_chat():
 
     try:
         from chatbot import get_chat_response
-        response_data = get_chat_response(messages, context, strand=strand)
+        response_data = get_chat_response(messages, context, strand=strand, attempt=attempt)
         if "error" in response_data:
             return jsonify(response_data), 500
         return jsonify(response_data)

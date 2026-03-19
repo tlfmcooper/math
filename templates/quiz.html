@@ -161,6 +161,7 @@
     let sessionLog = [];
     let startMood = "";
     let chatHistory = [];
+    let chatAttempt = 1;   // 1 = first wrong answer, increments with each student reply
     window.lastWrongAnswer = "";
     window.animEngine = null;
     let _slowMode = false;
@@ -232,6 +233,7 @@
             window.speechSynthesis.cancel();
             const cleanMsg = msg.replace(/[\u{1F000}-\u{1FFFF}]|[\u{2600}-\u{27BF}]/gu, '').trim();
             const utter = new SpeechSynthesisUtterance(cleanMsg);
+            utter.rate = 0.85;
             const voices = window.speechSynthesis.getVoices();
             const preferred = voices.find(v => /zira|google uk|google us/i.test(v.name) || v.gender === 'female');
             if (preferred) utter.voice = preferred;
@@ -427,6 +429,7 @@
         document.getElementById('chat-container').classList.remove('hidden');
         clearEl(document.getElementById('chat-messages'));
         chatHistory = [];
+        chatAttempt = 1;   // reset on each new wrong answer
         window.lastWrongAnswer = wrongAnswer;
 
         if (window.animEngine) window.animEngine.showLoading();
@@ -441,7 +444,8 @@
                     user_answer: wrongAnswer,
                     correct_answer: correctAnswer,
                     messages: chatHistory,
-                    strand: strand
+                    strand: strand,
+                    attempt: chatAttempt
                 })
             });
             const data = await res.json();
@@ -461,6 +465,7 @@
         appendChatMessage('user', text);
         input.value = '';
         input.disabled = true;
+        chatAttempt++;   // each student reply increments attempt
         appendChatMessage('model', '...');
 
         try {
@@ -472,7 +477,8 @@
                     user_answer: window.lastWrongAnswer,
                     correct_answer: window.currentQ.a,
                     messages: chatHistory,
-                    strand: strand
+                    strand: strand,
+                    attempt: chatAttempt
                 })
             });
             const data = await res.json();

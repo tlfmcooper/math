@@ -150,7 +150,7 @@ class TestGetChatResponse:
         assert STRAND_GRAMMAR['financial'] == 'coins'
 
     def test_empty_steps_in_response(self, monkeypatch):
-        """Response with empty steps list should still be returned (engine handles fallback)."""
+        """On attempt=1 with empty steps, animation is nulled out (no spoiler)."""
         monkeypatch.setenv('GEMINI_API_KEY', 'test-key')
         import chatbot
         chatbot._client = None
@@ -166,10 +166,71 @@ class TestGetChatResponse:
         mock_client.models.generate_content.return_value = mock_response
 
         with patch('chatbot._get_client', return_value=mock_client):
-            result = chatbot.get_chat_response([], 'test', strand='number')
+            result = chatbot.get_chat_response([], 'test', strand='number', attempt=1)
 
         assert result['reply'] == 'Let me explain!'
-        assert result['animation']['steps'] == []
+        # attempt=1: no reveal steps → filtered list empty → animation nulled to prevent spoiler
+        assert result['animation'] is None
+
+    def test_reveal_stripped_on_attempt1(self, monkeypatch):
+        """Reveal steps are stripped server-side on attempt=1 regardless of Gemini output."""
+        monkeypatch.setenv('GEMINI_API_KEY', 'test-key')
+        import chatbot
+        chatbot._client = None
+
+        response_with_reveal = {
+            'reply': 'Let me show you!',
+            'animation': {'grammar': 'grouping', 'steps': [
+                {'id': 1, 'action': 'number_badge', 'value': '22', 'objects': [],
+                 'narration': 'Start with 22', 'sound': 'whoosh', 'duration_ms': 800},
+                {'id': 2, 'action': 'reveal', 'value': '44', 'objects': [],
+                 'narration': '22 + 22 = 44', 'sound': 'ding', 'duration_ms': 800},
+            ]}
+        }
+
+        mock_client = MagicMock()
+        mock_response = MagicMock()
+        mock_response.text = json.dumps(response_with_reveal)
+        mock_client.models.generate_content.return_value = mock_response
+
+        with patch('chatbot._get_client', return_value=mock_client):
+            result = chatbot.get_chat_response([], 'test', strand='number', attempt=1)
+
+        assert result['reply'] == 'Let me show you!'
+        # The reveal step must be stripped — only number_badge remains
+        steps = result['animation']['steps']
+        assert all(s['action'] != 'reveal' for s in steps)
+        assert len(steps) == 1
+        assert steps[0]['action'] == 'number_badge'
+
+    def test_reveal_kept_on_attempt2(self, monkeypatch):
+        """Reveal steps are preserved on attempt=2 (student has already been guided once)."""
+        monkeypatch.setenv('GEMINI_API_KEY', 'test-key')
+        import chatbot
+        chatbot._client = None
+
+        response_with_reveal = {
+            'reply': 'The answer is 44!',
+            'animation': {'grammar': 'grouping', 'steps': [
+                {'id': 1, 'action': 'number_badge', 'value': '22', 'objects': [],
+                 'narration': 'Start with 22', 'sound': 'whoosh', 'duration_ms': 800},
+                {'id': 2, 'action': 'reveal', 'value': '44', 'objects': [],
+                 'narration': '22 + 22 = 44', 'sound': 'ding', 'duration_ms': 800},
+            ]}
+        }
+
+        mock_client = MagicMock()
+        mock_response = MagicMock()
+        mock_response.text = json.dumps(response_with_reveal)
+        mock_client.models.generate_content.return_value = mock_response
+
+        with patch('chatbot._get_client', return_value=mock_client):
+            result = chatbot.get_chat_response([], 'test', strand='number', attempt=2)
+
+        assert result['reply'] == 'The answer is 44!'
+        # On attempt=2+, reveal is preserved
+        steps = result['animation']['steps']
+        assert any(s['action'] == 'reveal' for s in steps)
 
     def test_api_exception_returns_error(self, monkeypatch):
         monkeypatch.setenv('GEMINI_API_KEY', 'test-key')

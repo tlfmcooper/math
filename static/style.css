@@ -1221,6 +1221,23 @@ a.btn-secondary.btn-light:hover {
     white-space: nowrap;
 }
 
+/* Number badge — represents a large quantity as a single labelled circle */
+.anim-number-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-indigo));
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+    box-shadow: 0 4px 18px rgba(52, 152, 219, 0.45);
+    margin: 8px;
+}
+
 /* Reveal number */
 .anim-reveal-number {
     font-family: 'Nunito', sans-serif;
