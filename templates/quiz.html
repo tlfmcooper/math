@@ -576,14 +576,7 @@
 
     // ── Finish ────────────────────────────────────────────────────────────────
 
-    async function finishSession() {
-        const btn = document.getElementById('finish-btn');
-        btn.disabled = true;
-        btn.textContent = i18n.saving;
-        const spinner = document.createElement('span');
-        spinner.className = 'spinner';
-        btn.appendChild(spinner);
-
+    function finishSession() {
         updateMascot('finish');
         const today = new Date().toLocaleString();
         const sessionData = {
@@ -601,21 +594,14 @@
             sessionData.isLocal = true;
             localHistory.unshift(sessionData);
             localStorage.setItem('mathHistory', JSON.stringify(localHistory.slice(0, 50)));
-            window.location.href = '/history';
         } else {
-            try {
-                await fetch('/api/save_session', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(sessionData)
-                });
-                window.location.href = '/history';
-            } catch (err) {
-                btn.disabled = false;
-                btn.textContent = '{{ _("Finish & Save") }} \uD83D\uDCBE';
-                alert(i18n.couldNotSave);
-            }
+            // Fire-and-forget: save in background, redirect immediately
+            navigator.sendBeacon('/api/save_session', new Blob(
+                [JSON.stringify(sessionData)],
+                { type: 'application/json' }
+            ));
         }
+        window.location.href = '/history';
     }
 
     // ── Keyboard navigation ───────────────────────────────────────────────────

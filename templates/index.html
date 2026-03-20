@@ -2,7 +2,7 @@
 
 {% block title %}{{ _('Ontario Math Adventure') }}{% endblock %}
 
-{% block body_class %}bg-surface font-body text-on-surface selection:bg-primary-fixed h-screen overflow-hidden flex flex-col md:h-auto md:overflow-visible md:min-h-screen{% endblock %}
+{% block body_class %}bg-surface font-body text-on-surface selection:bg-primary-fixed overflow-hidden flex flex-col md:overflow-visible md:min-h-screen{% endblock %}
 
 {% block body %}
     {% if not user.is_authenticated %}
@@ -26,6 +26,33 @@
     {% endif %}
 
     <style>
+      /* ===== Mobile: fix bottom nav overlap ===== */
+      /* 6.5rem = 104px — measured actual nav rendered height (including safe-area padding) */
+      :root { --nav-h: 6.5rem; }
+
+      /* Equal row heights on mobile — minmax(0,1fr) prevents tall content from expanding rows */
+      #missions .grid { grid-auto-rows: minmax(0, 1fr); }
+
+      @media (max-width: 767px) {
+        /* Replace h-screen (100vh) with 100dvh so Android browser chrome is excluded */
+        body { height: 100dvh; }
+        /* Reserve nav height inside main — overflow-hidden clips at this padding edge */
+        main { padding-bottom: var(--nav-h); }
+      }
+
+      /* Hide mascot on short screens to give strand grid more room */
+      @media (max-width: 767px) and (max-height: 700px) {
+        .hero-mascot { display: none !important; }
+      }
+
+      /* Scroll escape hatch for extreme short screens (< 600px usable height) */
+      @media (max-width: 767px) and (max-height: 600px) {
+        body  { height: auto !important; overflow: visible !important; }
+        main  { padding-bottom: 0 !important; overflow: visible !important; }
+        #missions { overflow: visible !important; }
+        #missions > div { padding-bottom: calc(var(--nav-h) + 1rem) !important; }
+      }
+
       @media (min-width: 768px) {
         #missions .grid > a { padding: 0.625rem; gap: 0.5rem; min-height: 7rem; }
         #missions .grid > a > div {
@@ -68,16 +95,19 @@
                 {% endif %}
             </nav>
             <div class="flex items-center gap-2 sm:gap-4">
-                <!-- Language Switcher -->
-                <div class="flex gap-1 bg-surface-container-high rounded-full px-1 py-0.5">
+                <!-- Language + Theme Switcher — desktop only; mobile via bottom sheet -->
+                <div class="hidden md:flex gap-1 bg-surface-container-high rounded-full px-1 py-0.5">
                     <a href="/lang/en" class="px-2 sm:px-3 py-1 rounded-full font-label text-xs font-bold no-underline transition-all {% if g.locale == 'en' %}bg-primary-container text-white{% else %}text-on-surface-variant hover:bg-surface-container{% endif %}">EN</a>
                     <a href="/lang/fr" class="px-2 sm:px-3 py-1 rounded-full font-label text-xs font-bold no-underline transition-all {% if g.locale == 'fr' %}bg-primary-container text-white{% else %}text-on-surface-variant hover:bg-surface-container{% endif %}">FR</a>
                 </div>
-                <!-- Theme Switcher -->
-                <div class="theme-switcher !p-1 !gap-1">
+                <div class="hidden md:block theme-switcher !p-1 !gap-1">
                     <button type="button" data-theme-choice="stitch-light" onclick="setStitchTheme('stitch-light')" class="!px-2 sm:!px-3 !py-1.5 !text-xs !min-h-0">☀️</button>
                     <button type="button" data-theme-choice="stitch-neon" onclick="setStitchTheme('stitch-neon')" class="!px-2 sm:!px-3 !py-1.5 !text-xs !min-h-0">🌙</button>
                 </div>
+                <!-- Mobile: settings gear -->
+                <button class="md:hidden w-9 h-9 flex items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant active:scale-95 transition-all" onclick="openSettings()" aria-label="{{ _('Settings') }}">
+                    <span class="material-symbols-outlined text-xl">settings</span>
+                </button>
                 {% if user.is_authenticated %}
                 <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-4 border-surface-container-highest shadow-sm">
                     {% if user.picture %}
@@ -91,11 +121,34 @@
         </div>
     </header>
 
-    <main class="flex-1 flex flex-col min-h-0 overflow-hidden md:flex-none md:overflow-visible">
+    <!-- Settings bottom sheet (mobile only) -->
+    <div id="settings-backdrop" class="md:hidden fixed inset-0 z-[70] bg-black/40 opacity-0 pointer-events-none transition-opacity duration-200" onclick="closeSettings()"></div>
+    <div id="settings-sheet" class="md:hidden fixed inset-x-0 bottom-0 z-[80] bg-surface-container-lowest rounded-t-3xl px-6 pt-5 pb-8 translate-y-full transition-transform duration-300 shadow-2xl">
+        <div class="w-10 h-1 bg-outline-variant rounded-full mx-auto mb-5"></div>
+        <h2 class="font-headline font-bold text-base text-on-background mb-4 m-0">{{ _('Settings') }}</h2>
+        <div class="flex flex-col gap-4">
+            <div>
+                <p class="font-label text-xs font-bold text-on-surface-variant mb-2">{{ _('Language') }}</p>
+                <div class="flex gap-2">
+                    <a href="/lang/en" class="flex-1 py-2.5 rounded-xl font-label text-sm font-bold text-center no-underline transition-all {% if g.locale == 'en' %}bg-primary-container text-white{% else %}bg-surface-container text-on-surface-variant{% endif %}">EN</a>
+                    <a href="/lang/fr" class="flex-1 py-2.5 rounded-xl font-label text-sm font-bold text-center no-underline transition-all {% if g.locale == 'fr' %}bg-primary-container text-white{% else %}bg-surface-container text-on-surface-variant{% endif %}">FR</a>
+                </div>
+            </div>
+            <div>
+                <p class="font-label text-xs font-bold text-on-surface-variant mb-2">{{ _('Theme') }}</p>
+                <div class="flex gap-2">
+                    <button type="button" data-theme-choice="stitch-light" onclick="setStitchTheme('stitch-light')" class="flex-1 py-2.5 rounded-xl font-label text-sm font-bold bg-surface-container text-on-surface transition-all">☀️ {{ _('Light') }}</button>
+                    <button type="button" data-theme-choice="stitch-neon" onclick="setStitchTheme('stitch-neon')" class="flex-1 py-2.5 rounded-xl font-label text-sm font-bold bg-surface-container text-on-surface transition-all">🌙 {{ _('Dark') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="flex-1 flex flex-col min-h-0 overflow-hidden md:overflow-visible">
         <!-- Hero Section — compact, fixed height -->
         <section class="flex-shrink-0 px-4 sm:px-6 py-3 sm:py-4 max-w-7xl w-full mx-auto flex flex-row items-center gap-4">
             <div class="flex-1 min-w-0">
-                <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container-highest rounded-full mb-2">
+                <div class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container-highest rounded-full mb-2">
                     <span class="material-symbols-outlined text-secondary text-base" style="font-variation-settings:'FILL' 1;">school</span>
                     <span class="font-label font-semibold text-secondary text-xs">{{ _('Ontario Grade 1 Math') }}</span>
                 </div>
@@ -107,15 +160,15 @@
                     <span class="material-symbols-outlined text-xl">play_circle</span>
                 </a>
             </div>
-            <div class="flex-shrink-0 relative w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44">
+            <div class="flex-shrink-0 relative w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 hero-mascot">
                 <div class="absolute inset-0 bg-primary-fixed rounded-full blur-2xl opacity-30 -z-10 animate-pulse"></div>
                 <img alt="Mapley the Leaf mascot" class="w-full h-full object-contain drop-shadow-xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvGNbKKPwLOmEWlhG5HcystkbIfq8MH_A1ZwPlgC4KW2XzuWLY32hamxdf72ovA-25x4NFqRXebvNz8mLDz6M7RGB-7u-QesZbwLH97XAtI4MQPtH9sYgcwyg8tbT3MBr9FqEy2Xzfiq9Ppvbyzc9F063P5zOHjvZDa3EAELshcV6V8saQciFmrhODKU_dgLAeaNz9stMuyy_OoSq8a5_K1hzlSfIABA6qAIid225MVOmnvcjphvi9ZrHYa_addV4ma5iWx1PUdg">
             </div>
         </section>
 
         <!-- Missions Panel — compact icon grid, no scroll -->
-        <section id="missions" class="flex-1 min-h-0 bg-surface-container-low rounded-t-[2rem] sm:rounded-t-[3rem] overflow-hidden md:flex-none md:overflow-visible">
-            <div class="h-full flex flex-col px-4 sm:px-6 pt-3 sm:pt-4 pb-28 md:h-auto md:max-w-7xl md:mx-auto md:w-full">
+        <section id="missions" class="flex-1 min-h-0 bg-surface-container-low rounded-t-[2rem] sm:rounded-t-[3rem] overflow-hidden md:overflow-visible">
+            <div class="h-full flex flex-col px-4 sm:px-6 pt-3 sm:pt-4 pb-4 md:pb-28 md:max-w-7xl md:mx-auto md:w-full">
                 <!-- Section header -->
                 <div class="flex items-center justify-between mb-2 sm:mb-3 flex-shrink-0">
                     <div>
@@ -125,65 +178,69 @@
                 </div>
 
                 <!-- 3-column app-icon grid (4 rows = 12 topics, no scroll) -->
-                <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 sm:gap-3 flex-1 min-h-0 md:flex-none" style="grid-auto-rows: 1fr;">
-                    <a href="/quiz/number" class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow">
+                <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 sm:gap-3 flex-1 min-h-0 md:flex-none">
+                    <a href="/quiz/number" class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow overflow-hidden">
                         <div class="p-2 bg-surface-container-highest rounded-xl"><span class="material-symbols-outlined text-xl text-primary" style="font-variation-settings:'FILL' 1;">counter_1</span></div>
-                        <span class="font-label text-[11px] font-bold text-on-surface text-center leading-tight">{{ _('Numbers') }}</span>
+                        <span class="font-label text-[13px] font-bold text-on-surface text-center leading-tight">{{ _('Numbers') }}</span>
                     </a>
-                    <a href="/quiz/placevalue" class="bg-secondary-container rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow">
+                    <a href="/quiz/placevalue" class="bg-secondary-container rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow overflow-hidden">
                         <div class="p-2 bg-white/20 rounded-xl"><span class="material-symbols-outlined text-xl text-white" style="font-variation-settings:'FILL' 1;">grid_view</span></div>
-                        <span class="font-label text-[11px] font-bold text-white text-center leading-tight">{{ _('Place Value') }}</span>
+                        <span class="font-label text-[13px] font-bold text-white text-center leading-tight">{{ _('Place Value') }}</span>
                     </a>
-                    <a href="/quiz/algebra" class="bg-tertiary rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow">
+                    <a href="/quiz/algebra" class="bg-tertiary rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow overflow-hidden">
                         <div class="p-2 bg-white/20 rounded-xl"><span class="material-symbols-outlined text-xl text-white" style="font-variation-settings:'FILL' 1;">extension</span></div>
-                        <span class="font-label text-[11px] font-bold text-white text-center leading-tight">{{ _('Patterns') }}</span>
+                        <span class="font-label text-[13px] font-bold text-white text-center leading-tight">{{ _('Patterns') }}</span>
                     </a>
-                    <a href="/quiz/spatial" class="bg-primary-container rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow">
+                    <a href="/quiz/spatial" class="bg-primary-container rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow overflow-hidden">
                         <div class="p-2 bg-white/20 rounded-xl"><span class="material-symbols-outlined text-xl text-white" style="font-variation-settings:'FILL' 1;">category</span></div>
-                        <span class="font-label text-[11px] font-bold text-white text-center leading-tight">{{ _('Shapes') }}</span>
+                        <span class="font-label text-[13px] font-bold text-white text-center leading-tight">{{ _('Shapes') }}</span>
                     </a>
-                    <a href="/quiz/data" class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow">
+                    <a href="/quiz/data" class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow overflow-hidden">
                         <div class="p-2 bg-surface-container-highest rounded-xl"><span class="material-symbols-outlined text-xl text-secondary" style="font-variation-settings:'FILL' 1;">bar_chart</span></div>
-                        <span class="font-label text-[11px] font-bold text-on-surface text-center leading-tight">{{ _('Graphs') }}</span>
+                        <span class="font-label text-[13px] font-bold text-on-surface text-center leading-tight">{{ _('Graphs') }}</span>
                     </a>
-                    <a href="/quiz/financial" class="bg-primary-fixed rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow">
+                    <a href="/quiz/financial" class="bg-primary-fixed rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow overflow-hidden">
                         <div class="p-2 bg-white/30 rounded-xl"><span class="material-symbols-outlined text-xl text-on-primary-fixed" style="font-variation-settings:'FILL' 1;">paid</span></div>
-                        <span class="font-label text-[11px] font-bold text-on-primary-fixed text-center leading-tight">{{ _('Money') }}</span>
+                        <span class="font-label text-[13px] font-bold text-on-primary-fixed text-center leading-tight">{{ _('Money') }}</span>
                     </a>
-                    <a href="/quiz/time" class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow">
+                    <a href="/quiz/time" class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow overflow-hidden">
                         <div class="p-2 bg-surface-container-highest rounded-xl"><span class="material-symbols-outlined text-xl text-tertiary" style="font-variation-settings:'FILL' 1;">schedule</span></div>
-                        <span class="font-label text-[11px] font-bold text-on-surface text-center leading-tight">{{ _('Time') }}</span>
+                        <span class="font-label text-[13px] font-bold text-on-surface text-center leading-tight">{{ _('Time') }}</span>
                     </a>
-                    <a href="/quiz/measurement" class="bg-tertiary-container rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow">
+                    <a href="/quiz/measurement" class="bg-tertiary-container rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow overflow-hidden">
                         <div class="p-2 bg-white/20 rounded-xl"><span class="material-symbols-outlined text-xl text-on-tertiary-container" style="font-variation-settings:'FILL' 1;">straighten</span></div>
-                        <span class="font-label text-[11px] font-bold text-on-tertiary-container text-center leading-tight">{{ _('Measure') }}</span>
+                        <span class="font-label text-[13px] font-bold text-on-tertiary-container text-center leading-tight">{{ _('Measure') }}</span>
                     </a>
-                    <a href="/quiz/wordproblems" class="bg-error-container rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow">
+                    <a href="/quiz/wordproblems" class="bg-error-container rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow overflow-hidden">
                         <div class="p-2 bg-white/20 rounded-xl"><span class="material-symbols-outlined text-xl text-on-error-container" style="font-variation-settings:'FILL' 1;">menu_book</span></div>
-                        <span class="font-label text-[11px] font-bold text-on-error-container text-center leading-tight">{{ _('Word Problems') }}</span>
+                        <span class="font-label text-[13px] font-bold text-on-error-container text-center leading-tight">{{ _('Word Problems') }}</span>
                     </a>
-                    <a href="/quiz/comparing" class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow">
+                    <a href="/quiz/comparing" class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow overflow-hidden">
                         <div class="p-2 bg-surface-container-highest rounded-xl"><span class="material-symbols-outlined text-xl text-primary" style="font-variation-settings:'FILL' 1;">balance</span></div>
-                        <span class="font-label text-[11px] font-bold text-on-surface text-center leading-tight">{{ _('Compare') }}</span>
+                        <span class="font-label text-[13px] font-bold text-on-surface text-center leading-tight">{{ _('Compare') }}</span>
                     </a>
-                    <a href="/quiz/skipcounting" class="bg-secondary rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow">
+                    <a href="/quiz/skipcounting" class="bg-secondary rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow overflow-hidden">
                         <div class="p-2 bg-white/20 rounded-xl"><span class="material-symbols-outlined text-xl text-white" style="font-variation-settings:'FILL' 1;">filter_2</span></div>
-                        <span class="font-label text-[11px] font-bold text-white text-center leading-tight">{{ _('Skip Counting') }}</span>
+                        <span class="font-label text-[13px] font-bold text-white text-center leading-tight">{{ _('Skip Counting') }}</span>
                     </a>
-                    <a href="/quiz/coding" class="bg-surface-container-high rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow">
+                    <a href="/quiz/coding" class="bg-surface-container-high rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 no-underline active:scale-95 transition-all toy-card-shadow overflow-hidden">
                         <div class="p-2 bg-surface-container-highest rounded-xl"><span class="material-symbols-outlined text-xl text-on-surface-variant" style="font-variation-settings:'FILL' 1;">smart_toy</span></div>
-                        <span class="font-label text-[11px] font-bold text-on-surface text-center leading-tight">{{ _('Coding') }}</span>
+                        <span class="font-label text-[13px] font-bold text-on-surface text-center leading-tight">{{ _('Coding') }}</span>
                     </a>
                 </div>
 
                 <!-- Today's Challenge — slim progress strip -->
                 <div class="mt-2 sm:mt-3 flex-shrink-0 bg-surface-container-lowest rounded-xl px-3 py-2.5 flex items-center gap-3 shadow-sm">
-                    <span class="material-symbols-outlined text-2xl text-primary flex-shrink-0" style="font-variation-settings:'FILL' 1;">workspace_premium</span>
+                    <span class="material-symbols-outlined text-2xl {% if daily_completed == 0 %}text-primary animate-pulse{% else %}text-primary{% endif %} flex-shrink-0" style="font-variation-settings:'FILL' 1;">{% if daily_completed == 0 %}star{% else %}workspace_premium{% endif %}</span>
                     <div class="flex-1 min-w-0">
-                        <p class="font-label text-xs font-bold text-on-background m-0 leading-tight">{{ _("Today's Challenge") }}: 2/3 {{ _('done') }}</p>
+                        {% if daily_completed == 0 %}
+                        <p class="font-label text-xs font-bold text-on-background m-0 leading-tight">{{ _("Start today! Pick 3 topics") }} ⭐</p>
+                        {% else %}
+                        <p class="font-label text-xs font-bold text-on-background m-0 leading-tight">{{ _("Today's Challenge") }}: {{ daily_completed }}/3 {{ _('done') }}</p>
                         <div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden mt-1">
-                            <div class="w-2/3 h-full bg-primary-container"></div>
+                            <div class="h-full bg-primary-container" style="width: {{ (daily_completed / 3 * 100)|int }}%"></div>
                         </div>
+                        {% endif %}
                     </div>
                     <a href="/history" class="flex-shrink-0 flex items-center gap-1 text-secondary no-underline font-label text-xs font-bold px-2.5 py-1.5 bg-surface-container rounded-lg">
                         <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">military_tech</span>
@@ -238,6 +295,25 @@
         }
         function closeOnboarding() {
             document.getElementById('onboarding-overlay').style.display = 'none';
+        }
+
+        // Set --nav-h to actual rendered nav height (handles all devices/safe areas)
+        (function() {
+            var nav = document.querySelector('nav.fixed');
+            if (nav) document.documentElement.style.setProperty('--nav-h', nav.offsetHeight + 'px');
+        })();
+
+        function openSettings() {
+            document.getElementById('settings-sheet').style.transform = 'translateY(0)';
+            var bd = document.getElementById('settings-backdrop');
+            bd.style.opacity = '1';
+            bd.style.pointerEvents = 'auto';
+        }
+        function closeSettings() {
+            document.getElementById('settings-sheet').style.transform = 'translateY(100%)';
+            var bd = document.getElementById('settings-backdrop');
+            bd.style.opacity = '0';
+            bd.style.pointerEvents = 'none';
         }
 
         // PWA install prompt

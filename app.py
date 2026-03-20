@@ -1,6 +1,7 @@
 import json
 import os
 import uuid
+from datetime import datetime
 from dotenv import load_dotenv
 load_dotenv()  # Load .env file before accessing env vars
 
@@ -255,7 +256,11 @@ def get_or_create_user(google_id, email, name, picture):
 
 @app.route('/')
 def index():
-    return render_template('index.html', user=current_user)
+    user_id = current_user.id if current_user.is_authenticated else None
+    history = load_history(user_id)
+    today = datetime.now().strftime('%m/%d/%Y')
+    daily_completed = sum(1 for h in history if h.get('date', '').startswith(today))
+    return render_template('index.html', user=current_user, daily_completed=min(daily_completed, 3))
 
 @app.route('/login')
 def login():
