@@ -1,24 +1,65 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#667eea"/>
-      <stop offset="100%" style="stop-color:#764ba2"/>
+    <linearGradient id="bg192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#9b59b6"/>
     </linearGradient>
+    <linearGradient id="star192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f1c40f"/>
+      <stop offset="100%" stop-color="#f39c12"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
   </defs>
-  <!-- Background -->
-  <rect width="192" height="192" rx="32" fill="url(#bg)"/>
-  <!-- Maple Leaf -->
-  <g transform="translate(96,100)" fill="white">
-    <path d="M0,-55 L8,-35 L28,-40 L18,-25 L35,-15 L20,-10 L25,5 L12,0 L0,25 L-12,0 L-25,5 L-20,-10 L-35,-15 L-18,-25 L-28,-40 L-8,-35 Z" opacity="0.95"/>
-    <!-- Stem -->
-    <rect x="-4" y="20" width="8" height="20" rx="2" opacity="0.9"/>
+
+  <!-- Background with subtle inner highlight -->
+  <rect width="192" height="192" rx="36" fill="url(#bg192)"/>
+  <rect x="8" y="8" width="176" height="88" rx="28" fill="white" opacity="0.06"/>
+
+  <!-- Floating math symbols (background layer) -->
+  <text x="18" y="44" font-family="Arial Black, Arial, sans-serif" font-size="22" font-weight="900" fill="white" opacity="0.25">+</text>
+  <text x="152" y="40" font-family="Arial Black, Arial, sans-serif" font-size="18" font-weight="900" fill="white" opacity="0.20">=</text>
+  <text x="14" y="162" font-family="Arial Black, Arial, sans-serif" font-size="16" font-weight="900" fill="white" opacity="0.20">×</text>
+  <text x="156" y="168" font-family="Arial Black, Arial, sans-serif" font-size="20" font-weight="900" fill="white" opacity="0.22">−</text>
+  <circle cx="170" cy="96" r="5" fill="white" opacity="0.18"/>
+  <circle cx="22" cy="100" r="4" fill="white" opacity="0.15"/>
+  <circle cx="96" cy="18" r="3.5" fill="white" opacity="0.2"/>
+  <circle cx="96" cy="174" r="3.5" fill="white" opacity="0.2"/>
+
+  <!-- 8-point star burst (main icon element) -->
+  <g transform="translate(96,92)" filter="url(#glow)">
+    <polygon
+      points="0,-58 10,-32 36,-44 22,-20 52,-8 26,-2 34,24 14,12 0,42 -14,12 -34,24 -26,-2 -52,-8 -22,-20 -36,-44 -10,-32"
+      fill="url(#star192)"
+      opacity="0.97"
+    />
   </g>
-  <!-- Math symbols -->
-  <text x="55" y="60" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="white" opacity="0.8">+</text>
-  <text x="125" y="55" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="white" opacity="0.7">÷</text>
-  <text x="45" y="150" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="white" opacity="0.7">×</text>
-  <text x="135" y="155" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="white" opacity="0.75">=</text>
-  <!-- Small shapes -->
-  <circle cx="155" cy="95" r="6" fill="white" opacity="0.5"/>
-  <rect x="30" y="90" width="10" height="10" rx="1" fill="white" opacity="0.5" transform="rotate(15,35,95)"/>
+
+  <!-- Bold grade "1" centered in star -->
+  <text
+    x="96" y="100"
+    font-family="Arial Black, Arial, sans-serif"
+    font-size="52"
+    font-weight="900"
+    fill="white"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    opacity="0.98"
+  >1</text>
+
+  <!-- "Math Adventure" label strip at bottom -->
+  <rect x="20" y="148" width="152" height="28" rx="14" fill="white" opacity="0.15"/>
+  <text
+    x="96" y="165"
+    font-family="Arial Rounded MT Bold, Arial Black, Arial, sans-serif"
+    font-size="13"
+    font-weight="700"
+    fill="white"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    opacity="0.92"
+    letter-spacing="1"
+  >MATH ADVENTURE</text>
 </svg>

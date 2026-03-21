@@ -1,26 +1,82 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#667eea"/>
-      <stop offset="100%" style="stop-color:#764ba2"/>
+    <linearGradient id="bg512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="50%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#9b59b6"/>
     </linearGradient>
+    <linearGradient id="star512" x1="0%" y1="0%" x2="100%\" y2="100%">
+      <stop offset="0%" stop-color="#fde68a"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <radialGradient id="glow512" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow512" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#4c1d95" flood-opacity="0.4"/>
+    </filter>
+    <filter id="glow512f">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
   </defs>
+
   <!-- Background -->
-  <rect width="512" height="512" rx="80" fill="url(#bg)"/>
-  <!-- Maple Leaf -->
-  <g transform="translate(256,270)" fill="white">
-    <path d="M0,-150 L22,-95 L75,-110 L48,-68 L95,-40 L54,-27 L68,15 L32,0 L0,70 L-32,0 L-68,15 L-54,-27 L-95,-40 L-48,-68 L-75,-110 L-22,-95 Z" opacity="0.95"/>
-    <!-- Stem -->
-    <rect x="-12" y="55" width="24" height="55" rx="6" opacity="0.9"/>
+  <rect width="512" height="512" rx="96" fill="url(#bg512)"/>
+
+  <!-- Subtle inner top-left shine -->
+  <ellipse cx="180" cy="120" rx="220" ry="120" fill="white" opacity="0.06"/>
+
+  <!-- Decorative orbiting math symbols (faint) -->
+  <text x="38" y="108" font-family="Arial Black, Arial, sans-serif" font-size="56" font-weight="900" fill="white" opacity="0.18">+</text>
+  <text x="418" y="100" font-family="Arial Black, Arial, sans-serif" font-size="48" font-weight="900" fill="white" opacity="0.16">=</text>
+  <text x="32" y="432" font-family="Arial Black, Arial, sans-serif" font-size="44" font-weight="900" fill="white" opacity="0.16">×</text>
+  <text x="430" y="440" font-family="Arial Black, Arial, sans-serif" font-size="50" font-weight="900" fill="white" opacity="0.18">−</text>
+
+  <!-- Small floating circles/dots -->
+  <circle cx="460" cy="256" r="12" fill="white" opacity="0.14"/>
+  <circle cx="52" cy="260" r="10" fill="white" opacity="0.12"/>
+  <circle cx="256" cy="44" r="9" fill="white" opacity="0.18"/>
+  <circle cx="256" cy="468" r="9" fill="white" opacity="0.18"/>
+  <circle cx="90" cy="160" r="6" fill="white" opacity="0.12"/>
+  <circle cx="422" cy="352" r="6" fill="white" opacity="0.12"/>
+
+  <!-- Glow halo behind star -->
+  <circle cx="256" cy="236" r="130" fill="url(#glow512)"/>
+
+  <!-- 8-point star burst -->
+  <g transform="translate(256,236)" filter="url(#glow512f)">
+    <polygon
+      points="0,-148 26,-84 96,-116 58,-52 140,-20 72,-6 90,64 38,30 0,110 -38,30 -90,64 -72,-6 -140,-20 -58,-52 -96,-116 -26,-84"
+      fill="url(#star512)"
+      filter="url(#shadow512)"
+    />
   </g>
-  <!-- Math symbols -->
-  <text x="140" y="160" font-family="Arial, sans-serif" font-size="64" font-weight="bold" fill="white" opacity="0.8">+</text>
-  <text x="340" y="145" font-family="Arial, sans-serif" font-size="52" font-weight="bold" fill="white" opacity="0.7">÷</text>
-  <text x="110" y="400" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="white" opacity="0.7">×</text>
-  <text x="365" y="415" font-family="Arial, sans-serif" font-size="56" font-weight="bold" fill="white" opacity="0.75">=</text>
-  <!-- Small shapes -->
-  <circle cx="420" cy="250" r="16" fill="white" opacity="0.5"/>
-  <rect x="70" y="235" width="28" height="28" rx="3" fill="white" opacity="0.5" transform="rotate(15,84,249)"/>
-  <!-- Triangle -->
-  <polygon points="430,340 445,370 415,370" fill="white" opacity="0.45"/>
+
+  <!-- Large bold "1" centered in star -->
+  <text
+    x="256" y="252"
+    font-family="Arial Black, Arial, sans-serif"
+    font-size="148"
+    font-weight="900"
+    fill="white"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    opacity="0.97"
+  >1</text>
+
+  <!-- "MATH ADVENTURE" label banner -->
+  <rect x="56" y="390" width="400" height="72" rx="36" fill="white" opacity="0.15"/>
+  <text
+    x="256" y="430"
+    font-family="Arial Rounded MT Bold, Arial Black, Arial, sans-serif"
+    font-size="32"
+    font-weight="700"
+    fill="white"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    opacity="0.94"
+    letter-spacing="3"
+  >MATH ADVENTURE</text>
 </svg>
